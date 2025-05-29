@@ -23,6 +23,8 @@ public class SecurityConfig {
                                         "/images/**",
                                         "/include/**",
                                         "/js/**",
+                                        "/html/**",
+                                        "/upload/**",
                                         "/api/**",
                                         "/favicon.ico").permitAll()
                                 //.requestMatchers("/admin/**").hasRole("ADMIN")
