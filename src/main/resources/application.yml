@@ -10,7 +10,6 @@ spring :
       enabled: true
   profiles:
     active: dev
-    default: dev
   servlet:
     multipart:
       enabled: true
@@ -24,8 +23,7 @@ spring :
     hibernate:
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-      ddl-auto: update # update create ????? ??? update? ???
-    defer-datasource-initialization: true
+      ddl-auto: update # update create
   output :
     ansi :
       enabled : always
