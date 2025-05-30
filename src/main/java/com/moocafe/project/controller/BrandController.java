@@ -9,4 +9,12 @@ public class BrandController {
     public String index() {
         return "index/index";
     }
+    @GetMapping("/brand/franchise")
+    public String franchise(){
+        return "brand/franchise";
+    }
+    @GetMapping("/login")
+    public String login(){
+        return "index/login";
+    }
 }

@@ -13,7 +13,7 @@ import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 @EnableMethodSecurity
 public class SecurityConfig {
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, CustomAuthenticationSuccessHandler successHandler) throws Exception {
         httpSecurity.authorizeHttpRequests((auth) ->
                         auth.requestMatchers(
                                         "/",
@@ -27,21 +27,22 @@ public class SecurityConfig {
                                         "/upload/**",
                                         "/api/**",
                                         "/favicon.ico").permitAll()
-                                //.requestMatchers("/admin/**").hasRole("ADMIN")
+                                .requestMatchers("/headOffice/**").hasAnyRole("ADMIN", "MANAGER")
+                                .requestMatchers("/storeOwner/**").hasAnyRole("USER")
                                 .anyRequest().authenticated()
                 )
                 .formLogin((form) ->
-                        form.loginPage("/brand/login")
-                                .usernameParameter("user_id")
-                                .passwordParameter("user_pw")
-                                .loginProcessingUrl("/brand/login")
-                                //   .successHandler(successHandler)
-                                .defaultSuccessUrl("/index",true)
-                                .failureUrl("/brand/login?error")
+                        form.loginPage("/login")
+                                .usernameParameter("userId")
+                                .passwordParameter("userPw")
+                                .loginProcessingUrl("/login")
+                                .successHandler(successHandler)
+                                //.defaultSuccessUrl("/index",true)
+                                .failureUrl("/login?error")
                                 .permitAll()
                 ).requestCache(cache -> cache.requestCache(new HttpSessionRequestCache()))
                 .logout((logout) ->
-                        logout.logoutUrl("/brand/logout")
+                        logout.logoutUrl("/logout")
                                 .logoutSuccessUrl("/index")
                                 .invalidateHttpSession(true)
                                 .deleteCookies("JSESSIONID")
