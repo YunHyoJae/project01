@@ -1,0 +1,103 @@
+@charset "UTF-8";
+
+*{margin: 0; padding: 0;}
+ul{list-style: none;}
+a{font-style: normal; color: #000;}
+img{border: 0; vertical-align: top;}
+
+
+    /* #header */
+    #header{
+        width: 100%;
+        height: 120px;
+        background-color:bisque;
+    }
+    /* #header */
+    /* #section */
+    #section .main{
+        width: 100%;
+        height: 600px;
+        background-color: aquamarine;
+    }
+
+    #section .adver{
+        max-width: 1300px;
+        width: 80%;
+        height: 250px;
+        background-color: bisque;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        padding-top: 50px;
+    }
+    #section .adver div{
+        width: 600px;
+        height: 200px;
+        background-color: aquamarine;
+    }
+
+    #section .menu{
+        width: 100%;
+        height: 600px;
+        background-color: aquamarine;
+    }
+
+    #section .franchise{
+        width: 100%;
+        height: 600px;
+        background-color: bisque;
+    }
+
+    #section .franchise_from{
+        width: 100%;
+        height: 700px;
+        background-color: rgb(137, 150, 146);
+    }
+    #section .franchise_from table {
+    width: 700px;
+    border-collapse: collapse;
+    margin: 0 auto;
+    }
+    #section .franchise_from table th, td {
+    padding: 12px;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid #ddd;
+    }
+    #section .franchise_from table th {
+    width: 150px;
+    }
+    #section .franchise_from tabletextarea {
+    width: 100%;
+    resize: vertical;
+    }
+    #section .franchise_from table .full-width {
+    width: 100%;
+    }
+    
+    #section .side_fran_menu{
+        width: 90px;
+        height: 300px;
+        background-color: #ff00008a;
+        position: fixed;
+        top: 30%;
+        right: 50px;
+    }
+    #section .bt_fran_menu{
+        width: 100%;
+        height: 60px;
+        background-color: gold;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+    }
+    /* #section */
+
+    /* #footer */
+    #footer{
+        width: 100%;
+        height: 500px;
+        background-color: #333;
+    }
+    /* #footer */
+
