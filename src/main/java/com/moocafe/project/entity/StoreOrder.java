@@ -1,28 +1,26 @@
 package com.moocafe.project.entity;
 
 import jakarta.persistence.*;
-import org.apache.catalina.Store;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import lombok.*;
+import java.util.Date;
 
 @Entity
+@Table(name = "StoreOrder")
+@Getter
+@Setter
+@NoArgsConstructor
 public class StoreOrder {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 100)
     private String OrderNumber;
 
     @ManyToOne
     @JoinColumn(name = "StoreId", nullable = false)
     private Store store;
 
-    @Column(nullable = false)
-    private LocalDate OrderDate = LocalDate.now();
-
-    @OneToMany(mappedBy = "StoreOrder", cascade = CascadeType.ALL)
-    private List<StoreOrderDetail> OrderDetails = new ArrayList<>();
+    @Temporal(TemporalType.DATE)
+    private Date OrderDate = new Date();
 }
