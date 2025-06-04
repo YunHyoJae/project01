@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>매장별 재고현황</title>
+  <style>
+    .low-stock {
+      background-color: red;
+      color: white;
+      font-weight: bold;
+    }
+    table {
+      border-collapse: collapse;
+    }
+    td, th {
+      padding: 8px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<h2>매장별 재고현황</h2>
+<table>
+  <thead>
+  <tr>
+    <th>품목코드</th>
+    <th>품목명</th>
+    <th>본사창고</th>
+    <th>강남매장</th>
+    <th>강동매장</th>
+    <th>강서매장</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="row : ${pivotList}">
+    <td th:text="${row.itemCode}"></td>
+    <td th:text="${row.itemName}"></td>
+    <td th:text="${row.getStockByStoreId(101)}"
+        th:class="${row.getStockCssClass(101)}"></td>
+    <td th:text="${row.getStockByStoreId(102)}"
+        th:class="${row.getStockCssClass(102)}"></td>
+    <td th:text="${row.getStockByStoreId(103)}"
+        th:class="${row.getStockCssClass(103)}"></td>
+    <td th:text="${row.getStockByStoreId(104)}"
+        th:class="${row.getStockCssClass(104)}"></td>
+  </tr>
+  </tbody>
+</table>
+</body>
+</html>
