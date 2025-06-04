@@ -3,6 +3,7 @@ package com.moocafe.project.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access= AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
+@EntityListeners(AuditingEntityListener.class)
 public class MemberStore {
     @Id
     @GeneratedValue(strategy= GenerationType.SEQUENCE)
@@ -20,6 +22,7 @@ public class MemberStore {
     @ManyToOne
     private Store store;
 
+    @CreatedDate
     @Column(updatable = false)
     private LocalDateTime regDate = LocalDateTime.now();
 

@@ -36,6 +36,8 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "member",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private List<Faq> faqList;
+    @OneToMany(mappedBy = "member",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    private List<FranchiseReply> franchiseReplyList;
 
     public List<MemberStore> getStores() {
         if (stores == null){

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Table(name="franchiseBoard")
+@EntityListeners(AuditingEntityListener.class)
 public class FranchiseBoard extends BaseEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.SEQUENCE)
@@ -26,7 +28,10 @@ public class FranchiseBoard extends BaseEntity {
     private String time;
     private String course;
     private String content;
+    @CreatedDate
     @Column(updatable = false)
     private LocalDateTime regDate = LocalDateTime.now();
+    @OneToOne(mappedBy = "board", cascade = CascadeType.ALL)
+    private FranchiseReply reply;
     private String state;
 }
