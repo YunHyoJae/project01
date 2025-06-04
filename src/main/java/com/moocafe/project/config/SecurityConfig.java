@@ -26,8 +26,6 @@ public class SecurityConfig {
                                         "/html/**",
                                         "/upload/**",
                                         "/api/**",
-                                        "/inventory/**",
-                                        "/check-code/**",
                                         "/favicon.ico").permitAll()
                                 .requestMatchers("/headOffice/**").hasAnyRole("ADMIN", "MANAGER")
                                 .requestMatchers("/storeOwner/**").hasAnyRole("USER")

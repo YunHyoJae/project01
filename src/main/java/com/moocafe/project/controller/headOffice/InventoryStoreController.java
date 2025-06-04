@@ -1,4 +1,4 @@
-package com.moocafe.project.controller.inventory;
+package com.moocafe.project.controller.headOffice;
 
 import com.moocafe.project.dto.InventorySummaryDto;
 import com.moocafe.project.dto.InventorySummaryPivotRowDto;
