@@ -1,0 +1,22 @@
+server :
+  port : 8080
+spring :
+  security:
+    user :
+      name : user
+      password: 1234
+      roles : ADMIN
+  datasource:
+    driver-class-name: oracle.jdbc.OracleDriver
+    url: jdbc:oracle:thin:@hgx0hi4cecqm3yyb_high?TNS_ADMIN=D:/oracle_wallet/Wallet_HGX0HI4CECQM3YYB
+    username: admin
+    password: "123456789Kek"
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      ddl-auto: update # update create
