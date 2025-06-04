@@ -3,12 +3,16 @@ package com.moocafe.project.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
 @Table(name = "inventoryRegistration")
 @Getter
+@EntityListeners(AuditingEntityListener.class)
 public class InventoryItem {
 
     @Id
@@ -34,8 +38,9 @@ public class InventoryItem {
     @Temporal(TemporalType.DATE)
     private Date expirationDate;
 
-    @Temporal(TemporalType.DATE)
-    private Date itemDate;
+    @CreatedDate
+    @Column(updatable = false)
+    private LocalDateTime itemDate;
 
 
     protected InventoryItem() {}

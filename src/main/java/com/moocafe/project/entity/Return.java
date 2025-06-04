@@ -38,6 +38,6 @@ public class Return {
     @Column(nullable = false)
     private String typeReturn = "반품";
 
-    @OneToMany(mappedBy = "returnItem")
+    @OneToMany(mappedBy = "returnEntity")
     private List<ReturnItem> items;
 }

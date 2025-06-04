@@ -2,6 +2,10 @@ package com.moocafe.project.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -9,6 +13,7 @@ import java.util.Date;
 @Getter
 @Setter
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class StoreOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -21,6 +26,7 @@ public class StoreOrder {
     @JoinColumn(name = "StoreId", nullable = false)
     private Store store;
 
-    @Temporal(TemporalType.DATE)
-    private Date OrderDate = new Date();
+    @CreatedDate
+    @Column(updatable = false)
+    private LocalDateTime OrderDate;
 }

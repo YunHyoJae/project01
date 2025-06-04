@@ -31,6 +31,6 @@ public class Purchase {
     @Column(nullable = false)
     private String typeOrder = "발주";
 
-    @OneToMany(mappedBy = "purchase", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "purchaseNumber", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PurchaseItem> items;
 }

@@ -1,14 +1,21 @@
 package com.moocafe.project.config;
 import com.moocafe.project.constent.Role;
+import com.moocafe.project.dao.InventoryItemDao;
 import com.moocafe.project.dao.MemberDao;
+import com.moocafe.project.entity.InventoryItem;
 import com.moocafe.project.entity.Member;
 import com.moocafe.project.entity.Store;
+import com.moocafe.project.repository.InventoryItemRepository;
 import com.moocafe.project.service.MemberStoreService;
 import jakarta.persistence.Column;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -16,7 +23,9 @@ import java.util.List;
 public class DummyDataInitializer {
     private final MemberStoreService mss;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    public void setDummy(String adminID) {
+
+    private final InventoryItemRepository iir;
+    public void setDummy(String adminID) throws ParseException {
         Member adminMember = Member.builder().userId(adminID)
                 .role(Role.ROLE_ADMIN)
                 .userName("관리자")
@@ -109,6 +118,22 @@ public class DummyDataInitializer {
         mss.save(member01,store01);
         mss.save(member02,store02);
         mss.save(member03,store03);
+
+        //=================================================================================
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        InventoryItem inventoryItem01 = new InventoryItem("A001", "우유", "식품", "1L", 100, 2000, "냉장", sdf.parse("2025-06-30"));
+        InventoryItem inventoryItem02 = new InventoryItem("A002", "계란", "식품", "30구", 50, 5000, "냉장", sdf.parse("2025-06-15"));
+        InventoryItem inventoryItem03 = new InventoryItem("A003", "고무장갑", "생활용품", "대형", 200, 1500, "비냉장", sdf.parse("2026-01-01"));
+        InventoryItem inventoryItem04 = new InventoryItem("A004", "원두", "원재료", "EA", 0, 2000, "비냉장", sdf.parse("2026-01-01"));
+        InventoryItem inventoryItem05 = new InventoryItem("A005", "아라비카원두", "원재료", "EA", 0, 2000, "비냉장", sdf.parse("2026-01-01"));
+        iir.save(inventoryItem01);
+        iir.save(inventoryItem02);
+        iir.save(inventoryItem03);
+        iir.save(inventoryItem04);
+        iir.save(inventoryItem05);
+
+
+
         System.out.println("더미데이터를 생성하였습니다.");
     }
 }
