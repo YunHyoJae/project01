@@ -3,6 +3,16 @@ server :
 spring :
   application :
     name : project
+  security:
+    user:
+      name: user
+      password: 1234
+      roles: ADMIN
+  datasource:
+    driver-class-name: oracle.jdbc.OracleDriver
+    url: jdbc:oracle:thin:@localhost:1521:xe
+    username: test01
+    password: "12345"
   devtools :
     livereload :
       enabled: true
@@ -23,7 +33,7 @@ spring :
     hibernate:
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-      ddl-auto: update # update create
+      ddl-auto: create # update create
   output :
     ansi :
       enabled : always
