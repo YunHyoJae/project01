@@ -1,8 +1,6 @@
 package com.moocafe.project.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
@@ -13,20 +11,19 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access= AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-@Table(name="franchiseBoard")
-public class FranchiseBoard extends BaseEntity {
+public class MemberStore {
     @Id
     @GeneratedValue(strategy= GenerationType.SEQUENCE)
     private Integer id;
-    private String name;
-    private String tel;
-    private String email;
-    private String space;
-    private int store;
-    private String time;
-    private String course;
-    private String content;
+    @ManyToOne
+    private Member member;
+    @ManyToOne
+    private Store store;
+
     @Column(updatable = false)
     private LocalDateTime regDate = LocalDateTime.now();
-    private String state;
+
+    public static MemberStore toMemberStore(Member member, Store store) {
+        return MemberStore.builder().member(member).store(store).build();
+    }
 }
