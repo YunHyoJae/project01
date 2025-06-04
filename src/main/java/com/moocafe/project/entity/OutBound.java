@@ -14,9 +14,7 @@ public class OutBound {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long OutBoundId;
 
-    @ManyToOne
-    @JoinColumn(name = "StoreId", nullable = false)
-    private Store store;
+    private Integer storeId;
 
     @Temporal(TemporalType.DATE)
     private Date RequiredDate = new Date();

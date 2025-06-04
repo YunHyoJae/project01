@@ -13,8 +13,9 @@ import java.util.List;
 @Getter
 @RequiredArgsConstructor
 public class CustomUserDetails implements UserDetails {
-
     private final Member loggedMember;
+    private final LoginDto loginDto;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(loggedMember.getRole().name()));
@@ -38,6 +39,10 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public boolean isAccountNonLocked() {
         return UserDetails.super.isAccountNonLocked();
+    }
+
+    public LoginDto toDto() {
+        return loginDto;
     }
 
 }

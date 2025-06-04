@@ -26,7 +26,7 @@ public class MemberStore {
     @Column(updatable = false)
     private LocalDateTime regDate = LocalDateTime.now();
 
-    public static MemberStore toMemberStore(Member member, Store store) {
+    public static MemberStore toEntity(Member member, Store store) {
         return MemberStore.builder().member(member).store(store).build();
     }
 }

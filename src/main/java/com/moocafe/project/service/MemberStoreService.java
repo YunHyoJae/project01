@@ -4,6 +4,8 @@ import com.moocafe.project.constent.Role;
 import com.moocafe.project.dao.MemberDao;
 import com.moocafe.project.dao.MemberStoreDao;
 import com.moocafe.project.dao.StoreDao;
+import com.moocafe.project.dto.CustomUserDetails;
+import com.moocafe.project.dto.LoginDto;
 import com.moocafe.project.dto.MemberStoreDto;
 import com.moocafe.project.entity.Member;
 import com.moocafe.project.entity.MemberStore;
@@ -11,6 +13,8 @@ import com.moocafe.project.entity.Store;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

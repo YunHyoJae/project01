@@ -15,4 +15,5 @@ public class StoreDao {
     public Store save(Store store) {
         return storeRepository.save(store);
     }
+    public Optional<Store> findById(int id) {return storeRepository.findById(id);}
 }

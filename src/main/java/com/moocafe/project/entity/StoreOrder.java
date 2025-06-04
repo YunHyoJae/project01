@@ -22,9 +22,7 @@ public class StoreOrder {
     @Column(nullable = false, unique = true, length = 100)
     private String OrderNumber;
 
-    @ManyToOne
-    @JoinColumn(name = "StoreId", nullable = false)
-    private Store store;
+    private Integer storeId;
 
     @CreatedDate
     @Column(updatable = false)

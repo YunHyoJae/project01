@@ -26,7 +26,7 @@ public class Sales {
     private Integer quantity;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "saleTime", insertable = false, updatable = false)
+    @Column(name = "saleTime")
     private Date saleTime;
 
     protected Sales() {}
