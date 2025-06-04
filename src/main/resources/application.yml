@@ -8,6 +8,13 @@ spring :
       enabled: true
     restart:
       enabled: true
+
+  datasource:
+    driver-class-name: oracle.jdbc.OracleDriver
+    url: jdbc:oracle:thin:@hgx0hi4cecqm3yyb_high?TNS_ADMIN=D:/Eunnkyung/project/wallet
+    username: admin
+    password: "123456789Kek"
+
   profiles:
     active: dev
   servlet:
