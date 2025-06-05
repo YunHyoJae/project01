@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>프랜차이즈 신청</title>
+</head>
+<body>
+<a href="/headOffice/franchiseList">본사 관리자화면 임시링크</a>
+<form action="/brand/franchise" method="post" th:object="${dto}">
+    <div class="container">
+        <ul class="loginBox">
+            <li><label class="one_form_label">
+                <span>고객명</span><input type="text" name="name" th:field="*{name}" /></label>
+            </li>
+            <li><label class="one_form_label">
+                <span>연락처</span><input type="text" name="tel" th:field="*{tel}" /></label>
+            </li>
+            <li><label class="one_form_label">
+                <span>이메일</span><input type="email" name="email" th:field="*{email}" /></label>
+                <p class="error" th:errors="*{email}"></p>
+            </li>
+            <li><label class="one_form_label">
+                <span>희망지역</span><input type="text" name="space" th:field="*{space}" /></label>
+            </li>
+            <li><label class="one_form_label">
+                <span>점포유무</span><input type="text" name="store" th:field="*{store}" /></label>
+            </li>
+
+            <li><label class="one_form_label">
+                <span>창업시기</span><input type="text" name="time" th:field="*{time}" /></label>
+            </li>
+            <li><label class="one_form_label">
+                <span>문의경로</span><input type="text" name="course" th:field="*{course}" /></label>
+            </li>
+            <li><label class="one_form_label">
+                <span>상세문의내용</span><textarea name="content" cols="30" rows="10" th:field="*{content}"></textarea>
+                </label>
+            </li>
+            <li>
+                <button class="btn_login">프랜차이즈상담신청</button>
+            </li>
+            <li th:if="${error}">[[${error}]]</li>
+        </ul>
+    </div>
+</form>
+<script defer th:inline="javascript" >
+    window.onload = function() {
+        var successMessage = /*[[${successMessage}]]*/ '';
+        if (successMessage) {
+            alert(successMessage);
+        }
+    }
+</script>
+
+</body>
+</html>

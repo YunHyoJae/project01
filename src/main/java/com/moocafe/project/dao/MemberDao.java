@@ -15,8 +15,8 @@ public class MemberDao {
     public Member save(Member member) {
         return memberRepository.save(member);
     }
-    public Optional<Member> findByUserId(String userID) {
-        return memberRepository.findByUserId(userID);
+    public Optional<Member> findByUserId(String userId) {
+        return memberRepository.findByUserId(userId);
     }
     public List<Member> findAll() {
         return memberRepository.findAll();

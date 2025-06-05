@@ -4,6 +4,7 @@ import com.moocafe.project.constent.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -27,12 +28,22 @@ public class Member extends BaseEntity {
     private String zipcode;
     private String address01;
     private String address02;
-    private int storeId;
+    @OneToMany(mappedBy = "member",cascade = CascadeType.ALL)
+    private List<MemberStore> stores = new ArrayList<>();
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToMany(mappedBy = "member",fetch = FetchType.LAZY,cascade = CascadeType.ALL) //mappedBy는 테이블에 컬럼을 만들지 않겠다.
+    @OneToMany(mappedBy = "member",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private List<Faq> faqList;
+    @OneToMany(mappedBy = "member",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    private List<FranchiseReply> franchiseReplyList;
+
+    public List<MemberStore> getStores() {
+        if (stores == null){
+            stores = new ArrayList<>();
+        }
+        return stores;
+    }
 
 }

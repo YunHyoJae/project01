@@ -1,5 +1,8 @@
 package com.moocafe.project.controller.storeOwner;
 
+import org.springframework.ui.Model;
+import com.moocafe.project.dto.CustomUserDetails;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,7 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/storeOwner")
 public class StoreIndexController {
     @GetMapping("/index")
-    public String index() {
+    public String index(Model model, @AuthenticationPrincipal CustomUserDetails user) {
+        model.addAttribute("user", user.toDto());
         return "storeOwner/index";
     }
 }
