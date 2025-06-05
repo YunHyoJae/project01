@@ -7,8 +7,9 @@ import java.util.Date;
 @Entity
 @Table(name = "OutBound")
 @Getter
-@Setter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class OutBound {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

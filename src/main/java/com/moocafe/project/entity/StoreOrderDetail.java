@@ -7,7 +7,8 @@ import lombok.*;
 @Table(name = "StoreOrderDetail")
 @IdClass(StoreOrderDetailId.class)
 @Getter
-@Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class StoreOrderDetail {
     @Id

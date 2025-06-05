@@ -11,7 +11,8 @@ import java.util.Date;
 @Entity
 @Table(name = "StoreOrder")
 @Getter
-@Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class StoreOrder {

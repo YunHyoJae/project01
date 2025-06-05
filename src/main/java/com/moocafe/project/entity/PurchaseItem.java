@@ -6,6 +6,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @NoArgsConstructor(access= AccessLevel.PROTECTED )
@@ -20,16 +21,16 @@ public class PurchaseItem {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "itemCode", referencedColumnName = "itemCode", nullable = false)
-    private InventoryStore itemCode;
+    private InventoryItem itemCode;
 
     @Column(nullable = false)
     private int receivedQuantity;
 
     @Column(nullable = false)
-    private LocalDate dueDate;
+    private Date dueDate;
 
     @Column(nullable = false)
-    private LocalDate expirationDate;
+    private Date expirationDate;
 
     @Column(nullable = false)
     private String supplier;

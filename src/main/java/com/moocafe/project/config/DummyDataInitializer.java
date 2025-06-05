@@ -1,11 +1,11 @@
 package com.moocafe.project.config;
 import com.moocafe.project.constent.Role;
-import com.moocafe.project.dao.InventoryItemDao;
-import com.moocafe.project.dao.MemberDao;
-import com.moocafe.project.entity.InventoryItem;
-import com.moocafe.project.entity.Member;
-import com.moocafe.project.entity.Store;
+import com.moocafe.project.dao.*;
+import com.moocafe.project.entity.*;
 import com.moocafe.project.repository.InventoryItemRepository;
+import com.moocafe.project.repository.InventoryStoreRepository;
+import com.moocafe.project.repository.PurchaseItemRepository;
+import com.moocafe.project.repository.PurchaseRepository;
 import com.moocafe.project.service.MemberStoreService;
 import jakarta.persistence.Column;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +25,16 @@ public class DummyDataInitializer {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     private final InventoryItemRepository iir;
+    private final InventoryStoreRepository isr;
+    private final PurchaseDao pd;
+    private final PurchaseItemDao pid;
+    private final MenuDao md;
+    private final MenuPriceDao mpd;
+    private final SalesDao sd;
+    private final OutBoundDao obd;
+    private final OutBoundItemDao obid;
+    private final StoreOrderDao sod;
+    private final StoreOrderDetailDao sodd;
     public void setDummy(String adminID) throws ParseException {
         Member adminMember = Member.builder().userId(adminID)
                 .role(Role.ROLE_ADMIN)
@@ -132,6 +142,126 @@ public class DummyDataInitializer {
         iir.save(inventoryItem04);
         iir.save(inventoryItem05);
 
+        //=================================================================================
+        InventoryStore inventoryStore01 = new InventoryStore("A001",1,50,sdf.parse("2025-05-01"));
+        InventoryStore inventoryStore02 = new InventoryStore("A001",2,30,sdf.parse("2025-05-01"));
+        InventoryStore inventoryStore03 = new InventoryStore("A002",3,40,sdf.parse("2025-05-01"));
+        InventoryStore inventoryStore04 = new InventoryStore("A003",4,100,sdf.parse("2025-05-01"));
+        isr.save(inventoryStore01);
+        isr.save(inventoryStore02);
+        isr.save(inventoryStore03);
+        isr.save(inventoryStore04);
+
+        //=================================================================================
+        Purchase purchase01 = Purchase.builder()
+                .purchaseNumber("P20240603-004")
+                .typeOrder("발주")
+                .build();
+        pd.savePurchase(purchase01);
+        //=================================================================================
+        PurchaseItem purchaseItem01 = PurchaseItem.builder()
+                .itemCode(inventoryItem01)
+                .purchaseNumber(purchase01)
+                .receivedQuantity(100)
+                .dueDate(sdf.parse("2025-06-10"))
+                .expirationDate(sdf.parse("2025-06-30"))
+                .supplier("매일유업")
+                .status("진행중")
+                .build();
+        PurchaseItem purchaseItem02 = PurchaseItem.builder()
+                .itemCode(inventoryItem02)
+                .purchaseNumber(purchase01)
+                .receivedQuantity(200)
+                .dueDate(sdf.parse("2025-06-10"))
+                .expirationDate(sdf.parse("2025-06-30"))
+                .supplier("패키지업체")
+                .status("진행중")
+                .build();
+        PurchaseItem purchaseItem03 = PurchaseItem.builder()
+                .itemCode(inventoryItem03)
+                .purchaseNumber(purchase01)
+                .receivedQuantity(100)
+                .dueDate(sdf.parse("2025-06-10"))
+                .expirationDate(sdf.parse("2025-06-30"))
+                .supplier("패키지업체")
+                .status("진행중")
+                .build();
+        pid.savePurchaseItem(purchaseItem01);
+        pid.savePurchaseItem(purchaseItem02);
+        pid.savePurchaseItem(purchaseItem03);
+        //=================================================================================
+        Menu menu01 = new Menu("M001","아메리카노","A002",100);
+        Menu menu02 = new Menu("M001","아메리카노","A003",1);
+        md.insertMenu(menu01);
+        md.insertMenu(menu02);
+        //=================================================================================
+        MenuPrice menuPrice01 = new MenuPrice("M001",3500);
+        mpd.insertMenuPrice(menuPrice01);
+        //=================================================================================
+        Sales sales01 = new Sales(2,"M001","아메리카노",3);
+        sd.insertSale(sales01);
+        //=================================================================================
+        OutBound outBound01 = OutBound.builder()
+                .storeId(1)
+                .Approved('Y')
+                .DueDate(sdf.parse("2025-06-10"))
+                .status("출고완료")
+                .build();
+        obd.save(outBound01);
+        //=================================================================================
+        OutBoundItem outBoundItem01 = OutBoundItem.builder()
+                .outBound(outBound01)
+                .ItemCode("A001")
+                .ReceivedQuantity(30)
+                .build();
+        OutBoundItem outBoundItem02 = OutBoundItem.builder()
+                .outBound(outBound01)
+                .ItemCode("A002")
+                .ReceivedQuantity(20)
+                .build();
+        OutBoundItem outBoundItem03 = OutBoundItem.builder()
+                .outBound(outBound01)
+                .ItemCode("A003")
+                .ReceivedQuantity(50)
+                .build();
+        obid.save(outBoundItem01);
+        obid.save(outBoundItem02);
+        obid.save(outBoundItem03);
+        //=================================================================================
+        StoreOrder storeOrder01 = StoreOrder.builder()
+                .OrderNumber("20240602-007")
+                .storeId(2)
+                .build();
+        StoreOrder storeOrder= sod.save(storeOrder01);
+        StoreOrderDetailId storeOrderDetailId01 = new StoreOrderDetailId(storeOrder.getId(), "A001");
+        StoreOrderDetailId storeOrderDetailId02 = new StoreOrderDetailId(storeOrder.getId(), "A002");
+        StoreOrderDetailId storeOrderDetailId03 = new StoreOrderDetailId(storeOrder.getId(), "A003");
+        //=================================================================================
+        StoreOrderDetail storeOrderDetail01 = StoreOrderDetail.builder()
+                .orderId(storeOrderDetailId01.getOrderId())
+                .ItemCode(storeOrderDetailId01.getItemCode())
+                .status("출고중")
+                .OrderedQuantity(1000)
+                .build();
+        sodd.save(storeOrderDetail01);
+        StoreOrderDetail storeOrderDetail02 = StoreOrderDetail.builder()
+                .orderId(storeOrderDetailId02.getOrderId())
+                .ItemCode(storeOrderDetailId02.getItemCode())
+                .status("출고중")
+                .OrderedQuantity(1000)
+                .build();
+        sodd.save(storeOrderDetail02);
+        StoreOrderDetail storeOrderDetail03 = StoreOrderDetail.builder()
+                .orderId(storeOrderDetailId03.getOrderId())
+                .ItemCode(storeOrderDetailId03.getItemCode())
+                .status("출고중")
+                .OrderedQuantity(1000)
+                .build();
+        sodd.save(storeOrderDetail03);
+        //=================================================================================
+        //MenuPrice menuPrice01 = new MenuPrice("M001",3500);
+        //mpd.insertMenuPrice(menuPrice01);
+        //=================================================================================
 
 
         System.out.println("더미데이터를 생성하였습니다.");

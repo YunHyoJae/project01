@@ -6,8 +6,9 @@ import lombok.*;
 @Entity
 @Table(name = "OutBoundItem")
 @Getter
-@Setter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class OutBoundItem {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
