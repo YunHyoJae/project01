@@ -6,6 +6,8 @@ import com.moocafe.project.repository.FranchiseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 @RequiredArgsConstructor
 public class FranchiseDao {
@@ -14,5 +16,8 @@ public class FranchiseDao {
         FranchiseBoard entity = FranchiseBoardSaveDto.toEntity(dto);
         FranchiseBoard savedEntity = fr.save(entity);
         return (savedEntity.getId() != null) ? 1 : 0;
+    }
+    public List<FranchiseBoard> list() {
+        return fr.findAll();
     }
 }
