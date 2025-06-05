@@ -18,7 +18,7 @@ public class StoreOrderDao {
         return storeOrderRepository.save(storeOrder);
     }
 
-    public Optional<StoreOrder> findById(long id) {
+    public Optional<StoreOrder> findById(Integer id) {
         return storeOrderRepository.findById(id);
     }
 

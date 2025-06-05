@@ -7,6 +7,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OutBoundItemDto {
-    private String ItemCode;
-    private int ReceivedQuantity;
+    private String itemCode;
+    private int receivedQuantity;
 }

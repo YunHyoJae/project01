@@ -6,7 +6,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderDetailDto {
-    private String ItemCode;
-    private int OrderedQuantity;
+public class StoreOrderDetailDto {
+    private String itemCode;
+    private int orderedQuantity;
 }
