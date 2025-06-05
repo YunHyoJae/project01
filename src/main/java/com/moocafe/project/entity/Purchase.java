@@ -33,4 +33,5 @@ public class Purchase {
 
     @OneToMany(mappedBy = "purchaseNumber", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PurchaseItem> items;
+
 }

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>발주서</title>
+</head>
+<body>
+
+<h2>발주서 <button type="button">품목검색</button></h2>
+
+<form action="purchase/purchaseOrder" method="post">
+    <table>
+        <thead>
+        <tr>
+            <th>품목명</th>
+            <th>품목코드</th>
+            <th>거래처</th>
+            <th>신청수량</th>
+            <th>입고예정일</th>
+            <th>신청일</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- 행 예시 5개 -->
+        <tr>
+            <td><input type="text" name="itemName[]"></td>
+            <td><input type="text" name="itemCode[]"></td>
+            <td><input type="text" name="supplier[]"></td>
+            <td><input type="number" name="orderQty[]"></td>
+            <td><input type="date" name="expectedDate[]"></td>
+            <td><input type="date" name="orderDate[]"></td>
+        </tr>
+        <tr>
+            <td><input type="text" name="itemName[]"></td>
+            <td><input type="text" name="itemCode[]"></td>
+            <td><input type="text" name="supplier[]"></td>
+            <td><input type="number" name="orderQty[]"></td>
+            <td><input type="date" name="expectedDate[]"></td>
+            <td><input type="date" name="orderDate[]"></td>
+        </tr>
+        <tr>
+            <td><input type="text" name="itemName[]"></td>
+            <td><input type="text" name="itemCode[]"></td>
+            <td><input type="text" name="supplier[]"></td>
+            <td><input type="number" name="orderQty[]"></td>
+            <td><input type="date" name="expectedDate[]"></td>
+            <td><input type="date" name="orderDate[]"></td>
+        </tr>
+        <tr>
+            <td><input type="text" name="itemName[]"></td>
+            <td><input type="text" name="itemCode[]"></td>
+            <td><input type="text" name="supplier[]"></td>
+            <td><input type="number" name="orderQty[]"></td>
+            <td><input type="date" name="expectedDate[]"></td>
+            <td><input type="date" name="orderDate[]"></td>
+        </tr>
+        <tr>
+            <td><input type="text" name="itemName[]"></td>
+            <td><input type="text" name="itemCode[]"></td>
+            <td><input type="text" name="supplier[]"></td>
+            <td><input type="number" name="orderQty[]"></td>
+            <td><input type="date" name="expectedDate[]"></td>
+            <td><input type="date" name="orderDate[]"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="form-section">
+        <label>발주번호 :
+            <input type="text" name="purchaseNumber">
+        </label>
+    </div>
+
+    <button type="submit">저장</button>
+</form>
+
+</body>
+</html>
