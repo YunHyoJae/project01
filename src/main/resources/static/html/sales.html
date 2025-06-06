@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>판매현황</title>
+  <link rel="stylesheet" href="../css/storeOwner.css">
+  <script src="https://kit.fontawesome.com/3e2532440e.js" crossorigin="anonymous"></script>
+  <script src="../js/admin.js"></script>
+</head>
+<body>
+  <!-- 상단 관리자 헤더 -->
+  <div class="top-header">
+    <div class="left">admin</div>
+    <div class="right-area">
+      <div class="store-info">
+        <span class="store-name">월담 정발산점</span> 스토어 점주님
+        <span class="circle"></span>
+      </div>
+      <div class="user-actions">
+        <p class="point">로그아웃</p>
+        <p class="point">정보수정</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 상단 메뉴바 + 전체 레이아웃 -->
+  <div class="section">
+    <div class="menu-bar">
+      <img src="../images/a_franchfrom/moon.jpg" alt="문월로고" />
+      <a href="#">주문</a>
+      <a href="#">반품</a>
+      <a href="#">매출</a>
+      <a href="#">재고</a>
+      <a href="#">고객센터</a>
+    </div>
+
+    <div class="main-layout">
+      <!-- 왼쪽 사이드바 -->
+      <div class="sidebar">
+        <ul>
+          <li class="order">
+            <a href="#">주문</a>
+            <ul class="submenu">
+              <li><a href="#">주문신청</a></li>
+              <li><a href="#">주문현황</a></li>
+            </ul>
+          </li>
+          <li class="return">
+            <a href="#">반품</a>
+            <ul class="submenu">
+              <li><a href="#">반품신청</a></li>
+              <li><a href="#">반품현황</a></li>
+            </ul>
+          </li>
+          <li class="sales">
+            <a href="#">매출</a>
+            <ul class="submenu">
+              <li><a href="#">매출분석</a></li>
+            </ul>
+          </li>
+          <li class="stock">
+            <a href="#">재고</a>
+            <ul class="submenu">
+              <li><a href="#">매장재고</a></li>
+              <li><a href="#" class="on">판매현황</a></li>
+            </ul>
+          </li>
+          <li class="service">
+            <a href="#">고객센터</a>
+            <ul class="submenu">
+              <li><a href="#">고객게시판</a></li>
+              <li><a href="#">고객문의</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <!-- 본문 컨텐츠 -->
+      <div class="content sales_status">
+        <h2 class="title">판매 현황</h2>
+        <div class="date_box form_group">
+          <h3 class="tit">기준일자</h3>
+          <form action="" class="date_form">
+            <input type="date" class="search_date">
+            <span>~</span>
+            <input type="date" class="search_date">
+          </form>
+        </div>
+        <div class="search_box form_group">
+          <h3 class="tit">메뉴명</h3>
+          <form action="" class="menu_form">
+            <input type="text" class="search_name" placeholder="메뉴명 검색">
+            <button type="submit" class="default_btn check_btn">조회</button>
+          </form>
+        </div>
+        <div class="salesStatus-box box">
+          <table>
+            <thead>
+              <tr>
+                <th><input type="checkbox" onclick='selectAll(this)'/></th>
+                <th>메뉴코드</th>
+                <th>메뉴명</th>
+                <th>판매량</th>
+                <th>개당단가</th>
+                <th>판매액</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- 샘플 데이터 -->
+              <tr>
+                <td><input type="checkbox"/></td>
+                <td>M001</td>
+                <td>아메리카노</td>
+                <td>200</td>
+                <td>4000</td>
+                <td>10000000</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox"/></td>
+                <td>M002</td>
+                <td>카페라떼</td>
+                <td>100</td>
+                <td>5000</td>
+                <td>5222000</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox"/></td>
+                <td>M003</td>
+                <td>바닐라라떼</td>
+                <td>100</td>
+                <td>6000</td>
+                <td>2054055</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox"/></td>
+                <td>M004</td>
+                <td>아샷추</td>
+                <td>200</td>
+                <td>7000</td>
+                <td>2313453</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox"/></td>
+                <td>M005</td>
+                <td>돌체라떼</td>
+                <td>10</td>
+                <td>5000</td>
+                <td>2132132</td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <th>합계</th>
+                <td></td>
+                <td></td>
+                <td>123231</td>
+                <td>124214</td>
+                <td>12342</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="input_box form_group">
+          <h3 class="tit">판매입력</h3>
+          <form action="" class="data_input">
+            <input type="text" class="input_name" placeholder="메뉴명 입력">
+            <button type="submit" class="default_btn">입력</button>
+          </form>
+        </div>
+        <div class="pagination">
+          <span>&lt;</span>
+          <span>1</span>
+          <span>2</span>
+          <span>3</span>
+          <span>4</span>
+          <span>5</span>
+          <span>&gt;</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,321 @@
+@charset "UTF-8";
+
+/* 기본 설정 */
+* { margin: 0; padding: 0; }
+ul { list-style: none; }
+a { text-decoration: none; color: #000; }
+img { border: 0; vertical-align: top; }
+
+body {
+  margin: 50px;
+  font-family: 'Arial', sans-serif;
+  background-color: #f8f8f8;
+}
+
+/* 상단 관리자 영역 */
+.top-header {
+  background: #000;
+  color: #fff;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 20px 20px 0 0;
+  height: 50px;
+}
+
+.left {
+  padding: 5px 10px;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.right-area {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.store-info {
+  font-size: 16px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: #fff;
+}
+
+.store-name {
+  color: #f6bb7c;
+}
+
+.circle {
+  width: 30px;
+  height: 30px;
+  background: #fff;
+  border-radius: 50%;
+}
+
+.user-actions {
+  display: flex;
+  gap: 15px;
+}
+
+.point {
+  cursor: pointer;
+  margin: 0;
+  font-size: 14px;
+  color: #fff;
+}
+
+/* 상단 메뉴바 */
+.menu-bar {
+  height: 50px;
+  display: flex;
+  gap: 30px;
+  background: #fff;
+  padding: 10px 30px;
+  border: 1px solid #ddd;
+  align-items: center;
+  font-weight: 600;
+}
+
+.menu-bar img {
+  width: auto;
+  height: 30px;
+  background-color: #aebde8;
+}
+
+.menu-bar a {
+  margin-left: 40px;
+}
+
+/* 전체 감싸는 section */
+.section {
+  border: 0.5px solid rgb(201, 201, 201);
+  border-radius: 0 0 20px 20px;
+  overflow: hidden;
+}
+
+/* 전체 레이아웃 */
+.main-layout {
+  display: flex;
+  flex-wrap: wrap;
+  height: 700px;
+}
+
+/* 왼쪽 사이드바 */
+.sidebar {
+  width: 10%;
+  background: #fff;
+  border-right: 1px solid #ccc;
+  padding: 20px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar li {
+  padding: 5px 0;
+  margin-bottom: 15px;
+  border-bottom: 1px solid rgb(234, 234, 234);
+  width: 100%;
+}
+
+.sidebar a {
+  font-weight: bold;
+  display: block;
+}
+
+/* 서브메뉴 항상 보이도록 */
+.sidebar .submenu {
+  list-style: none;
+  padding-left: 15px;
+  margin-top: 15px;
+  display: block;
+}
+.sidebar .submenu li {
+  padding: 3px 0;
+  margin-bottom: 5px;
+  border: none;
+}
+.sidebar .submenu li a {
+  color: #888888;
+  font-weight: 400;
+}
+.sidebar .submenu li a.on {
+  color: #000;
+  font-weight: 500;
+}
+/* 서브메뉴 항목 숨기기 */
+.sidebar > ul > li {
+  display: none;
+}
+
+/* 본문 컨텐츠 */
+.content {
+  flex-grow: 1;
+  padding: 30px 40px;
+  background: #fff;
+  font-size: 16px;
+  color: #000000;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.content h2 {
+  font-weight: 700;
+  font-size: 24px;
+  margin-bottom: 30px;
+  color: #000000;
+  padding-bottom: 8px;
+}
+
+.content h3.tit {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* 기본 버튼 레이아웃 */
+.default_btn {
+  background: #0400f5;
+  border: none;
+  color: #fff;
+  padding: 10px 24px;
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  float: right;
+}
+.default_btn:hover {
+  background: #030186;
+}
+
+/* 테이블 영역 */
+.content table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.content thead {
+  background-color: #ededed;
+  color: #000;
+}
+
+.content table th,
+.content table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+/* 페이지네이션 */
+.pagination {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.pagination span {
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+/*  판매현황  */
+.sales_status .salesStatus-box {
+  margin-top: 30px;
+}
+.sales_status .form_group {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+}
+.sales_status form > input {
+  height: 40px;
+  padding-left: 10px;
+  box-sizing: border-box;
+}
+.sales_status h3.tit { width: 80px; }
+.sales_status .default_btn { height: 40px; margin-bottom: 0; margin-left: 20px; }
+.sales_status table tr td:nth-child(4),
+.sales_status table tr td:nth-child(5),
+.sales_status table tr td:nth-child(6) { text-align: right; }
+.sales_status table tbody tr:last-child { background-color: #f5f5f5; }
+.sales_status .date_form,
+.sales_status .menu_form { width: calc(100% - 80px); display: flex; align-items: center; }
+.sales_status .search_date,
+.sales_status .search_name { flex: 1; min-width: 0; }
+.sales_status .date_form > span { margin: 0 10px; flex-shrink: 0; }
+.sales_status .check_btn { flex-shrink: 0; white-space: nowrap; }
+.sales_status .input_box { display: flex; justify-content: end; }
+.sales_status .input_name { width: 300px; }
+
+/*  고객문의  */
+.help-box table th,
+.help-box table td {
+  border: 0;
+  text-align: left;
+}
+.help-box table th {
+  width: 60px;
+}
+.help-box .file_tr,
+.help-box .private_tr {
+  height: 80px;
+}
+.help-box .write_tit {
+  width: 100%;
+  height: 40px;
+}
+.help-box .write_txt {
+  width: 100%;
+}
+.help-box .private_td {
+  width: 20px;
+}
+.help-box .cancel-btn {
+  margin-left: 10px;
+}
+.help-box table p {
+  font-size: 14px;
+}
+.help-box .private_td > input {
+  width: 15px; height: 15px;
+}
+.help-box .write_btns {
+  margin-top: -20px;
+}
+
+/*  매장현황  */
+.storeStatus h2 { margin-bottom: 10px; }
+.storeStatus .input_box {
+  height: 40px;
+  display: flex;
+  justify-content: end;
+  margin-top: 50px;
+}
+.storeStatus .input_box > select {
+  width: 120px; height: 100%;
+  margin-right: 5px;
+}
+.storeStatus .input_box .selectStatus {
+  width: 150px;
+}
+.storeStatus .input_box > input {
+  width: 300px;
+  height: 100%;
+  box-sizing: border-box;
+  padding-left: 10px;
+}
+.storeStatus .search_btn {
+  height: 100%;
+  margin-left: 20px;
+}
+.storeStatus .new_btn {
+  margin-bottom: 15px;
+}
+.storeStatus .selectStatus { display: none; }
