@@ -1,16 +1,20 @@
 document.addEventListener("DOMContentLoaded", function () {
 
   // 서브메뉴 변경
-  const boxName = document.querySelector(".box");
+  const contentName = document.querySelector(".content");
 
   switch (true) {
-    case boxName.classList.contains("help-box"):
-      document.querySelector(".service").style.display = "block";
+    case contentName.classList.contains("help"):
+      document.querySelector(".inquiry").style.display = "block";
       break;
-    case boxName.classList.contains("salesStatus-box"):
+    case contentName.classList.contains("salesStatus"):
       document.querySelector(".stock").style.display = "block";
       break;
+    case contentName.classList.contains("franchiseInquiry"):
+      document.querySelector(".service").style.display = "block";
   }
+  // 검색어 폼 초기화
+  document.querySelectorAll('.searchTerm').forEach(select => changeForm(select));
 });
 
 // 체크박스 전체선택 기능
@@ -22,19 +26,28 @@ function selectAll(selectAll)  {
   })
 }
 
-// 매장현황 검색어 폼 변경
-function changeForm() {
-  const select = document.querySelector("#searchTerm");
-  const viewText = document.querySelector(".textForm");
-  const viewSelect = document.querySelector(".selectStatus");
-  let selectValue = (select.options[select.selectedIndex].value);
+// 검색어 폼 변경
+function changeForm(selectElement) {
+  const form = selectElement.closest("form");
+  const viewText = form.querySelector(".textBox");
+  const viewSelect = form.querySelector(".statusBox");
+  const viewDate = form.querySelector(".dateBox");
+  let selectValue = selectElement.value;
 
-  console.log(selectValue);
-  if(selectValue == "status") {
+  if(selectValue === "status") {
+    // 상태검색 셀렉트 선택 시 select 폼
     viewText.style.display = "none";
+    viewDate && (viewDate.style.display = "none");
     viewSelect.style.display = "block";
-  } else {
+  } else if(selectValue === "date"){
+    // 날짜 검색 셀렉트 선택 시 date 폼
     viewSelect.style.display = "none";
+    viewText.style.display = "none";
+    viewDate && (viewDate.style.display = "block");
+  } else {
+    // 나머지 선택 시 text 폼
+    viewSelect.style.display = "none";
+    viewDate && (viewDate.style.display = "none");
     viewText.style.display = "block";
   }
 }

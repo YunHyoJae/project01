@@ -164,6 +164,7 @@ body {
   color: #000000;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  position: relative;
 }
 
 .content h2 {
@@ -216,7 +217,9 @@ body {
 /* 페이지네이션 */
 .pagination {
   text-align: center;
-  margin-top: 20px;
+  position: absolute;
+  left: 50%;  bottom: 30px;
+  transform: translate(-50%);
 }
 
 .pagination span {
@@ -225,97 +228,87 @@ body {
 }
 
 /*  판매현황  */
-.sales_status .salesStatus-box {
+.salesStatus .salesStatus-box {
   margin-top: 30px;
 }
-.sales_status .form_group {
+.salesStatus .form_group {
   width: 100%;
   display: flex;
   align-items: center;
   margin-top: 20px;
 }
-.sales_status form > input {
+.salesStatus form > input {
   height: 40px;
   padding-left: 10px;
   box-sizing: border-box;
 }
-.sales_status h3.tit { width: 80px; }
-.sales_status .default_btn { height: 40px; margin-bottom: 0; margin-left: 20px; }
-.sales_status table tr td:nth-child(4),
-.sales_status table tr td:nth-child(5),
-.sales_status table tr td:nth-child(6) { text-align: right; }
-.sales_status table tbody tr:last-child { background-color: #f5f5f5; }
-.sales_status .date_form,
-.sales_status .menu_form { width: calc(100% - 80px); display: flex; align-items: center; }
-.sales_status .search_date,
-.sales_status .search_name { flex: 1; min-width: 0; }
-.sales_status .date_form > span { margin: 0 10px; flex-shrink: 0; }
-.sales_status .check_btn { flex-shrink: 0; white-space: nowrap; }
-.sales_status .input_box { display: flex; justify-content: end; }
-.sales_status .input_name { width: 300px; }
+.salesStatus h3.tit { width: 80px; }
+.salesStatus .default_btn { height: 40px; margin-bottom: 0; margin-left: 20px; }
+.salesStatus table tr td:nth-child(4),
+.salesStatus table tr td:nth-child(5),
+.salesStatus table tr td:nth-child(6) { text-align: right; }
+.salesStatus table tbody tr:last-child { background-color: #f5f5f5; }
+.salesStatus .date_form,
+.salesStatus .menu_form { width: calc(100% - 80px); display: flex; align-items: center; }
+.salesStatus .search_date,
+.salesStatus .search_name { flex: 1; min-width: 0; }
+.salesStatus .date_form > span { margin: 0 10px; flex-shrink: 0; }
+.salesStatus .check_btn { flex-shrink: 0; white-space: nowrap; }
+.salesStatus .input_box { display: flex; justify-content: end; }
+.salesStatus .input_name { width: 330px; }
 
 /*  고객문의  */
-.help-box table th,
-.help-box table td {
-  border: 0;
-  text-align: left;
-}
-.help-box table th {
-  width: 60px;
-}
-.help-box .file_tr,
-.help-box .private_tr {
-  height: 80px;
-}
-.help-box .write_tit {
-  width: 100%;
-  height: 40px;
-}
-.help-box .write_txt {
-  width: 100%;
-}
-.help-box .private_td {
-  width: 20px;
-}
-.help-box .cancel-btn {
-  margin-left: 10px;
-}
-.help-box table p {
-  font-size: 14px;
-}
-.help-box .private_td > input {
-  width: 15px; height: 15px;
-}
-.help-box .write_btns {
-  margin-top: -20px;
-}
+.help table th, .help table td { border: 0; text-align: left; }
+.help table th { width: 60px; }
+.help .file_tr, .help .private_tr { height: 80px; }
+.help .write_tit { width: 100%; height: 40px; }
+.help .write_txt { width: 100%; }
+.help .private_td { width: 20px; }
+.help .cancel-btn { margin-left: 10px; }
+.help table p { font-size: 14px; }
+.help .private_td > input { width: 15px; height: 15px; }
+.help .write_btns { margin-top: -20px; }
 
 /*  매장현황  */
 .storeStatus h2 { margin-bottom: 10px; }
-.storeStatus .input_box {
+.storeStatus .new_btn { margin-bottom: 15px; }
+
+/* 매장현황 & 프랜차이즈 문의 공통 css */
+.franchiseInquiry .search_form,
+.storeStatus .search_form {
   height: 40px;
   display: flex;
   justify-content: end;
   margin-top: 50px;
 }
-.storeStatus .input_box > select {
-  width: 120px; height: 100%;
+.franchiseInquiry .search_form .searchTerm,
+.storeStatus .search_form .searchTerm {
+  width: 100px; height: 100%;
   margin-right: 5px;
 }
-.storeStatus .input_box .selectStatus {
+.franchiseInquiry .search_form .statusBox,
+.storeStatus .search_form .statusBox {
   width: 150px;
+  display: none;
 }
-.storeStatus .input_box > input {
-  width: 300px;
+.franchiseInquiry .search_form .textBox,
+.storeStatus .search_form .textBox {
+  width: 330px;
   height: 100%;
   box-sizing: border-box;
   padding-left: 10px;
 }
+.franchiseInquiry .search_form .search_date {
+  width: 147px; height: 93%;
+}
+.franchiseInquiry .search_form .dateBox > span {
+  margin: 0px 5px;
+}
+.franchiseInquiry .search_form .dateBox {
+  display: none;
+}
+.franchiseInquiry .search_btn,
 .storeStatus .search_btn {
   height: 100%;
-  margin-left: 20px;
+  margin-left: 10px;
 }
-.storeStatus .new_btn {
-  margin-bottom: 15px;
-}
-.storeStatus .selectStatus { display: none; }
