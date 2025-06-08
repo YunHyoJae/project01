@@ -1,8 +1,11 @@
 package com.moocafe.project.dto;
 
+import com.moocafe.project.entity.InventoryItem;
 import com.moocafe.project.entity.PurchaseItem;
 import lombok.*;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 
@@ -17,9 +20,7 @@ public class PurchaseItemDto {
     private String itemCode;
     private String supplier;
     private int receivedQuantity;
-    private String expectedDate;
-    private String orderDate;
-    private String purchaseNumber;
-    private List<PurchaseItem> items;
-
+    private LocalDate dueDate;
+    private LocalDate expirationDate;
+    private String status;
 }

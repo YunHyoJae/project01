@@ -1,15 +1,48 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>발주서</title>
+    <script>
+        let index = 1;
+
+        function addRow() {
+            const tbody = document.getElementById("itemTableBody");
+            const newRow = document.createElement("tr");
+
+            newRow.innerHTML = `
+                <td><input type="text" name="items[${index}].itemName" /></td>
+                <td><input type="text" name="items[${index}].itemCode" /></td>
+                <td><input type="text" name="items[${index}].supplier" /></td>
+                <td><input type="number" name="items[${index}].receivedQuantity" /></td>
+                <td><input type="date" name="items[${index}].dueDate" /></td>
+                <td><input type="date" name="items[${index}].expirationDate" /></td>
+            `;
+            tbody.appendChild(newRow);
+            index++;
+        }
+
+        function openItemSearch() {
+            window.open('/itemSearch/itemSearchPopup', 'itemSearch', 'width=600,height=400');
+        }
+
+        function receiveSelectedItem(code, name, supplier) {
+            const lastRow = document.querySelector("#itemTableBody").lastElementChild;
+            lastRow.querySelector("input[name$='.itemCode']").value = code;
+            lastRow.querySelector("input[name$='.itemName']").value = name;
+            lastRow.querySelector("input[name$='.supplier']").value = supplier;
+        }
+    </script>
 </head>
 <body>
 
-<h2>발주서 <button type="button">품목검색</button></h2>
+<h2>발주서
+    <button type="button" onclick="addRow()">+ 품목추가</button>
+    <button type="button" onclick="openItemSearch()">🔍 품목검색</button>
+</h2>
 
-<form action="purchase/purchaseOrder" method="post">
-    <table>
+<form th:action="@{/purchase/purchaseOrder}" method="post" th:object="${purchaseDto}">
+    <table border="1">
         <thead>
         <tr>
             <th>품목명</th>
@@ -17,59 +50,28 @@
             <th>거래처</th>
             <th>신청수량</th>
             <th>입고예정일</th>
-            <th>신청일</th>
+            <th>유통기한</th>
         </tr>
         </thead>
-        <tbody>
-        <!-- 행 예시 5개 -->
+        <tbody id="itemTableBody">
+        <!-- 초기 한 줄 렌더링 -->
         <tr>
-            <td><input type="text" name="itemName[]"></td>
-            <td><input type="text" name="itemCode[]"></td>
-            <td><input type="text" name="supplier[]"></td>
-            <td><input type="number" name="orderQty[]"></td>
-            <td><input type="date" name="expectedDate[]"></td>
-            <td><input type="date" name="orderDate[]"></td>
-        </tr>
-        <tr>
-            <td><input type="text" name="itemName[]"></td>
-            <td><input type="text" name="itemCode[]"></td>
-            <td><input type="text" name="supplier[]"></td>
-            <td><input type="number" name="orderQty[]"></td>
-            <td><input type="date" name="expectedDate[]"></td>
-            <td><input type="date" name="orderDate[]"></td>
-        </tr>
-        <tr>
-            <td><input type="text" name="itemName[]"></td>
-            <td><input type="text" name="itemCode[]"></td>
-            <td><input type="text" name="supplier[]"></td>
-            <td><input type="number" name="orderQty[]"></td>
-            <td><input type="date" name="expectedDate[]"></td>
-            <td><input type="date" name="orderDate[]"></td>
-        </tr>
-        <tr>
-            <td><input type="text" name="itemName[]"></td>
-            <td><input type="text" name="itemCode[]"></td>
-            <td><input type="text" name="supplier[]"></td>
-            <td><input type="number" name="orderQty[]"></td>
-            <td><input type="date" name="expectedDate[]"></td>
-            <td><input type="date" name="orderDate[]"></td>
-        </tr>
-        <tr>
-            <td><input type="text" name="itemName[]"></td>
-            <td><input type="text" name="itemCode[]"></td>
-            <td><input type="text" name="supplier[]"></td>
-            <td><input type="number" name="orderQty[]"></td>
-            <td><input type="date" name="expectedDate[]"></td>
-            <td><input type="date" name="orderDate[]"></td>
+            <td><input type="text" th:field="*{items[0].itemName}" /></td>
+            <td><input type="text" th:field="*{items[0].itemCode}" /></td>
+            <td><input type="text" th:field="*{items[0].supplier}" /></td>
+            <td><input type="number" th:field="*{items[0].receivedQuantity}" /></td>
+            <td><input type="date" th:field="*{items[0].dueDate}" /></td>
+            <td><input type="date" th:field="*{items[0].expirationDate}" /></td>
         </tr>
         </tbody>
     </table>
 
     <div class="form-section">
-        <label>발주번호 :
-            <input type="text" name="purchaseNumber">
+        <label>발주번호:
+            <input type="text" th:field="*{purchaseNumber}" readonly />
         </label>
     </div>
+
 
     <button type="submit">저장</button>
 </form>
