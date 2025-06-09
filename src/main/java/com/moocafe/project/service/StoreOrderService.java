@@ -10,11 +10,14 @@ import com.moocafe.project.entity.Store;
 import com.moocafe.project.entity.StoreOrder;
 import com.moocafe.project.entity.StoreOrderDetail;
 import com.moocafe.project.entity.StoreOrderDetailId;
+import com.moocafe.project.repository.StoreOrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -24,14 +27,18 @@ public class StoreOrderService {
     private final StoreDao storeDao;
     private final StoreOrderDao storeOrderDao;
     private final StoreOrderDetailDao storeOrderDetailDao;
+    private final StoreOrderRepository storeOrderRepository;
 
     @Transactional
     public void createOrder(StoreOrderDto orderDto) {
         Store store = storeDao.findById(orderDto.getStoreId().intValue())
                 .orElseThrow(() -> new IllegalArgumentException("해당 매장을 찾을 수 없습니다"));
+
+        String orderNumber = generateOrderNumber(orderDto.getStoreId());
+
         StoreOrder savedOrder = storeOrderDao.save(
                 StoreOrder.builder()
-                        .OrderNumber(orderDto.getOrderNumber())
+                        .OrderNumber(orderNumber)
                         .storeId(orderDto.getStoreId())
                         .OrderDate(LocalDateTime.now())
                         .build()
@@ -48,6 +55,12 @@ public class StoreOrderService {
                     .build();
             storeOrderDetailDao.save(detail);
         }
+    }
+
+    public String generateOrderNumber(Integer storeId) {
+        String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        int countToday = storeOrderRepository.countByStoreIdAndDate(storeId, today);
+        return String.format("ORD-%d-%s-%03d", storeId, today, countToday + 1);
     }
 
     @Transactional(readOnly = true)

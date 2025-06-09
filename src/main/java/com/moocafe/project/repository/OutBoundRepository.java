@@ -18,7 +18,7 @@ public interface OutBoundRepository extends JpaRepository<OutBound, Integer> {
                     "FROM OutBound o " +
                     "JOIN Store s ON o.storeId = s.id " +
                     "JOIN OutBoundItem oi ON o.OutBoundId = oi.OutBoundId " +
-                    "JOIN InventoryRegistration i ON oi.ItemCode = i.ItemCode " +
+                    "JOIN InventoryItem i ON oi.ItemCode = i.ItemCode " +
                     "WHERE TO_CHAR(o.RequiredDate, 'YYYY-MM-DD') BETWEEN :startDate AND :endDate " +
                     "AND (:storeName IS NULL OR s.name LIKE '%' || :storeName || '%')",
             nativeQuery = true)

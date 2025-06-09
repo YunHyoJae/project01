@@ -16,9 +16,9 @@ public interface StoreOrderDetailRepository extends JpaRepository<StoreOrderDeta
             value = "SELECT o.OrderNumber, TO_CHAR(o.OrderDate, 'YYYY-MM-DD'), d.ItemCode, i.ItemName, d.OrderedQuantity, d.status " +
                     "FROM StoreOrder o " +
                     "JOIN StoreOrderDetail d ON o.id = d.orderId " +
-                    "JOIN InventoryRegistration i ON d.ItemCode = i.ItemCode " +
+                    "JOIN InventoryItem i ON d.ItemCode = i.ItemCode " +
                     "WHERE o.storeId = :storeId " +
-                    "AND o.OrderDate BETWEEN TO_DATE(:startDate, 'YYYY-MM-DD') AND TO_DATE(:endDate, 'YYYY-MM-DD')",
+                    "AND TRUNC(o.OrderDate) BETWEEN TO_DATE(:startDate, 'YYYY-MM-DD') AND TO_DATE(:endDate, 'YYYY-MM-DD')",
             nativeQuery = true
     )
     List<Object[]> findOrderListByStoreAndDate(
