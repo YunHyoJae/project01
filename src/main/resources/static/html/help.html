@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>고객센터 > 문의하기</title>
+  <link rel="stylesheet" href="../css/storeOwner.css" />
+  <script src="https://kit.fontawesome.com/3e2532440e.js" crossorigin="anonymous"></script>
+  <script src="../js/admin.js"></script>
+</head>
+<body>
+  <!-- 상단 관리자 헤더 -->
+  <div class="top-header">
+    <div class="left">admin</div>
+    <div class="right-area">
+      <div class="store-info">
+        <span class="store-name">월담 정발산점</span> 스토어 점주님
+        <span class="circle"></span>
+      </div>
+      <div class="user-actions">
+        <p class="point">로그아웃</p>
+        <p class="point">정보수정</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 상단 메뉴바 + 전체 레이아웃 -->
+  <div class="section">
+    <div class="menu-bar">
+      <img src="../images/a_franchfrom/moon.jpg" alt="문월로고" />
+      <a href="#">주문</a>
+      <a href="#">반품</a>
+      <a href="#">매출</a>
+      <a href="#">재고</a>
+      <a href="#">고객센터</a>
+    </div>
+
+    <div class="main-layout">
+      <!-- 왼쪽 사이드바 -->
+      <div class="sidebar">
+        <ul>
+          <li class="order">
+            <a href="#">주문</a>
+            <ul class="submenu">
+              <li><a href="#">주문신청</a></li>
+              <li><a href="#">주문현황</a></li>
+            </ul>
+          </li>
+          <li class="return">
+            <a href="#">반품</a>
+            <ul class="submenu">
+              <li><a href="#">반품신청</a></li>
+              <li><a href="#">반품현황</a></li>
+            </ul>
+          </li>
+          <li class="sales">
+            <a href="#">매출</a>
+            <ul class="submenu">
+              <li><a href="#">매출분석</a></li>
+            </ul>
+          </li>
+          <li class="stock">
+            <a href="#">재고</a>
+            <ul class="submenu">
+              <li><a href="#">매장재고</a></li>
+              <li><a href="#">판매현황</a></li>
+            </ul>
+          </li>
+          <li class="inquiry">
+            <a href="#">고객센터</a>
+            <ul class="submenu">
+              <li><a href="#">문의 게시판</a></li>
+              <li><a href="#" class="on">문의하기</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <!-- 본문 컨텐츠 -->
+      <div class="content help">
+        <h2>고객 문의</h2>
+        <div class="help-box box">
+          <table>
+            <form action="" name="">
+              <tr>
+                <th><h3 class="tit">제목</h3></th>
+                <td colspan="2"><input type="text" class="write_tit"></td>
+              </tr>
+              <tr>
+                <td><h3 class="tit">문의</h3></td>
+                <td colspan="2"><textarea name="" rows="20" class="write_txt"></textarea></td>
+              </tr>
+              <tr class="file_tr">
+                <th><h3 class="tit">첨부파일</h3></th>
+                <td colspan="2"><input type="file" name=""></td>
+              </tr>
+              <tr class="private_tr">
+                <th><h3 class="tit">비공개</h3></th>
+                <td class="private_td"><input type="checkbox" name=""/></td>
+                <td><p>(미체크 시 다른사람이 볼 수 있으므로 개인정보에 유의하세요.)</p></td>
+              </tr>
+            </form>
+          </table>
+          <form action="" class="write_btns">
+            <button type="submit" class="cancel-btn default_btn">취소</button>
+            <button type="submit" class="write-btn default_btn">작성</button>
+          </form>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
