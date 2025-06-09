@@ -1,0 +1,30 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<div class="container">
+  <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+    <div class="col-md-4 mb-2 mb-md-0">
+      <a href="/headOffice/index" class="d-inline-flex link-body-emphasis text-decoration-none">
+        <svg class="bi" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"></use></svg>
+      </a>
+    </div>
+
+    <ul class="nav col-4 col-md-auto mb-2 justify-content-center mb-md-0">
+      <li><a href="/headOffice/franchiseList" class="nav-link px-2 link-secondary">게시판관리</a></li>
+      <li><a href="/headOffice/inventoryRegister" class="nav-link px-2">입고</a></li>
+      <li><a href="/headOffice/inventoryRegister" class="nav-link px-2">출고</a></li>
+      <li><a href="/headOffice/inventoryRegister" class="nav-link px-2">재고</a></li>
+    </ul>
+    <th:block sec:authorize="isAuthenticated()">
+      <div class="col-md-4 text-end" style="--bs-gutter-x:0">
+        <div class="row">
+          <div class="col-4">[[${LoginDto.userName}]]</div>
+          <div class="col-4">[[${LoginDto.storeId}]]</div>
+          <div class="col-4">[[${LoginDto.storeName}]]</div>
+        </div>
+      </div>
+    </th:block>
+
+  </header>
+</div>
+</html>

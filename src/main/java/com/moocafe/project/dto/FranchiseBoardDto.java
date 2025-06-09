@@ -1,6 +1,9 @@
 package com.moocafe.project.dto;
 
+import com.moocafe.project.entity.FranchiseBoard;
 import lombok.*;
+
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
@@ -20,5 +23,22 @@ public class FranchiseBoardDto {
     private String content;
     private String regDate;
     private String state;
-    private FaqReplyDto faqReply;
+    private FranchiseReplyDto reply;
+
+    public static FranchiseBoardDto toDto(FranchiseBoard entity) {
+        return FranchiseBoardDto.builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .tel(entity.getTel())
+                .email(entity.getEmail())
+                .space(entity.getSpace())
+                .store(entity.getStore())
+                .time(entity.getTime())
+                .course(entity.getCourse())
+                .content(entity.getContent())
+                .regDate(entity.getRegDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+                .state(entity.getState())
+                .reply(FranchiseReplyDto.toDto(entity.getReply()))
+                .build();
+    }
 }

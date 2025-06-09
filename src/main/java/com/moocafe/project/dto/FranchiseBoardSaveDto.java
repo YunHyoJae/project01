@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,7 +23,7 @@ public class FranchiseBoardSaveDto {
     private String space;
     private int store;
     private String time;
-    private String course;
+    private List<String> course;
     @NotBlank(message = "상담내용을 입력해주세요.")
     private String content;
 
@@ -33,7 +35,7 @@ public class FranchiseBoardSaveDto {
                 .space(dto.getSpace())
                 .store(dto.getStore())
                 .time(dto.getTime())
-                .course(dto.getCourse())
+                .course(String.join(", ",dto.getCourse()))
                 .content(dto.getContent())
                 .state("상담신청")
                 .build();

@@ -28,7 +28,6 @@ public class CustomUserDetailsService implements UserDetailsService {
             Member member = user.get();
             List<MemberStore> memberStore = memberStoreDao.findByMemberId(member.getId());
             LoginDto loginDto = LoginDto.toDto(memberStore.getFirst());
-            System.out.println("==========="+loginDto);
             return new CustomUserDetails(member,loginDto);
         }
         throw new UsernameNotFoundException("아이디 패스워드 입력해주세요.");
