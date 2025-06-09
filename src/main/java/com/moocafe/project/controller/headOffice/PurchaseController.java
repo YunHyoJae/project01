@@ -1,4 +1,4 @@
-package com.moocafe.project.controller.purchase;
+package com.moocafe.project.controller.headOffice;
 
 import com.moocafe.project.dto.PurchaseDto;
 import com.moocafe.project.dto.PurchaseItemDto;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Controller
-@RequestMapping("/purchase")
+@RequestMapping("/headOffice")
 @RequiredArgsConstructor
 public class PurchaseController {
     private final PurchaseService purchaseService;
@@ -33,17 +33,16 @@ public class PurchaseController {
         PurchaseDto purchaseDto = new PurchaseDto();
         purchaseDto.setItems(emptyItems);
 
-        // 발주번호 자동 생성
         String purchaseNumber = generatePurchaseNumber();
         purchaseDto.setPurchaseNumber(purchaseNumber);
 
         model.addAttribute("purchaseDto", purchaseDto);
-        return "purchase/purchaseOrder";
+        return "headOffice/purchaseOrder";
     }
 
     private String generatePurchaseNumber() {
         String date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        String random = UUID.randomUUID().toString().substring(0, 4).toUpperCase();  // 예: AB12
+        String random = UUID.randomUUID().toString().substring(0, 4).toUpperCase();
         return "PO" + date + "-" + random;
     }
 
@@ -51,7 +50,7 @@ public class PurchaseController {
     @PostMapping("/purchaseOrder")
     public String purchaseOrder(@ModelAttribute PurchaseDto purchaseDto) {
         purchaseService.savePurchase(purchaseDto);
-        return "redirect:/purchase/purchaseOrder";
+        return "redirect:/headOffice/purchaseOrder";
     }
 
 }

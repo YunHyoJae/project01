@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>발주서</title>
+</head>
+<body>
+
+<h2>발주서
+    <button type="button" onclick="openItemSearch()">🔍 품목검색</button>
+</h2>
+
+<form th:action="@{/headOffice/purchaseOrder}" method="post" th:object="${purchaseDto}">
+    <table border="1">
+        <thead>
+        <tr>
+            <th>품목명</th>
+            <th>품목코드</th>
+            <th>거래처</th>
+            <th>신청수량</th>
+            <th>입고예정일</th>
+            <th>유통기한</th>
+            <th>삭제</th>
+        </tr>
+        </thead>
+        <tbody id="itemTableBody">
+        <!-- 초기 행 없음 -->
+        </tbody>
+    </table>
+
+    <div class="form-section">
+        <label>발주번호:
+            <input type="text" th:field="*{purchaseNumber}" readonly />
+        </label>
+    </div>
+    <button type="submit">저장</button>
+</form>
+
+<script th:inline="javascript">
+
+    function openItemSearch() {
+        window.open('/itemSearch/itemSearchPopup', 'itemSearch', 'width=600,height=800');
+    }
+
+    function addRow(code = '', name = '', supplier = '', quantity = '') {
+        const tbody = document.getElementById("itemTableBody");
+        const index = tbody.querySelectorAll("tr").length;
+
+        const newRow = document.createElement("tr");
+
+        newRow.innerHTML = `
+            <td><input type="text" name="items[${index}].itemName" value="${name}" /></td>
+            <td><input type="text" name="items[${index}].itemCode" value="${code}" /></td>
+            <td><input type="text" name="items[${index}].supplier" value="${supplier}" /></td>
+            <td><input type="number" name="items[${index}].receivedQuantity" value="${quantity}" /></td>
+            <td><input type="date" name="items[${index}].dueDate" /></td>
+            <td><input type="date" name="items[${index}].expirationDate" /></td>
+            <td><button type="button" onclick="deleteRow(this)">삭제</button></td>
+        `;
+
+        tbody.appendChild(newRow);
+    }
+
+    function deleteRow(button) {
+        const row = button.closest("tr");
+        row.remove();
+        updateRowIndexes();
+    }
+
+    function updateRowIndexes() {
+        const rows = document.querySelectorAll("#itemTableBody tr");
+        rows.forEach((row, i) => {
+            row.querySelectorAll("input").forEach(input => {
+                const name = input.name;
+                if (name) {
+                    input.name = name.replace(/items\[\d+]/, `items[${i}]`);
+                }
+            });
+        });
+    }
+
+    function receiveSelectedItem(code, name, supplier, quantity) {
+        addRow(code, name, supplier, quantity);
+    }
+
+</script>
+
+</body>
+</html>

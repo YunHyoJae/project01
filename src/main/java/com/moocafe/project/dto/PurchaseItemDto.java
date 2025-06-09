@@ -1,12 +1,9 @@
 package com.moocafe.project.dto;
 
-import com.moocafe.project.entity.InventoryItem;
-import com.moocafe.project.entity.PurchaseItem;
+
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
 
 
 @Getter

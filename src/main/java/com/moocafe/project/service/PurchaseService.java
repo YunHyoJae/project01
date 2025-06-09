@@ -43,9 +43,20 @@ public class PurchaseService {
                             itemDto.getItemCode(), null, null, null, null, null, null, null
                     );
 
-                    // LocalDate → Date 변환
-                    Date dueDate = Date.from(itemDto.getDueDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
-                    Date expirationDate = Date.from(itemDto.getExpirationDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
+                    Date dueDate = null;
+                    Date expirationDate = null;
+
+                    if (itemDto.getDueDate() != null) {
+                        dueDate = Date.from(itemDto.getDueDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
+                    }
+
+                    if (itemDto.getExpirationDate() != null) {
+                        expirationDate = Date.from(itemDto.getExpirationDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
+                    }
+
+                    if (dueDate == null || expirationDate == null) {
+                        return;
+                    }
 
                     PurchaseItem item = PurchaseItem.builder()
                             .itemCode(inventoryItem)
