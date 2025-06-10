@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{/storeOwner/meta::myHead('내가 한 질문')}"></head>
+<head th:replace="~{/storeOwner/meta::myHead('고객센터')}"></head>
 <body>
 <header th:replace="~{/storeOwner/tnb}"></header>
 <div class="section">
@@ -8,11 +8,11 @@
 
 
   <div class="main-layout">
-    <div th:replace="~{/storeOwner/etcLnb}"></div>
+    <div th:replace="~{/storeOwner/etcLnb::active('etc','detail')}"></div>
 
     <!-- 본문 컨텐츠 -->
     <div class="content storeStatus">
-      <h2>매장 현황</h2>
+      <h2>고객센터</h2>
       <button type="submit" class="default_btn new_btn">신규입점 등록</button>
       <div class="storeStatus-box box">
         <table>

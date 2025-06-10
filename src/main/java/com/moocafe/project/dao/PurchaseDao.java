@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class PurchaseDao {
-    private PurchaseRepository purchaseRepository;
+    private final PurchaseRepository purchaseRepository;
 
     public Purchase savePurchase (Purchase purchase) {
         return purchaseRepository.save(purchase);

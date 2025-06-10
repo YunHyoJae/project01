@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{/storeOwner/meta::myHead('고객센터')}"></head>
+<body>
+<header th:replace="~{/storeOwner/tnb}"></header>
+<div class="section">
+  <div th:replace="~{/storeOwner/header}"></div>
+
+
+  <div class="main-layout">
+    <div th:replace="~{/storeOwner/etcLnb::active('etc','list')}"></div>
+
+    <!-- 본문 컨텐츠 -->
+    <div class="content storeStatus">
+      <h2>고객센터</h2>
+      <a href="/storeOwner/faqEdit" class="default_btn new_btn">문의하기</a>
+      <div class="storeStatus-box box">
+        <table>
+          <thead>
+          <tr>
+            <th>번호</th>
+            <th>유형</th>
+            <th>제목</th>
+            <th>작성자</th>
+            <th>날짜</th>
+            <th>상태</th>
+          </tr>
+          </thead>
+          <tbody>
+          <th:block th:each="item:${list}">
+            <tr th:onclick="'handleClick(\''+${item.id}+'\')'">
+              <td>[[${itemStat.count}]]</td><td>[[${item.category01}]]</td><td>[[${item.title}]]</td><td>[[${item.memberName}]]</td><td>[[${item.regDate}]]</td><td th:text="${#lists.isEmpty(item.faqReplyList) ? '답변완료' : '문의'}"></td>
+            </tr>
+          </th:block>
+          </tbody>
+        </table>
+      </div>
+      <form action="/storeOwner/faqList" method="get" class="search_form" id="searchForm">
+        <input type="hidden" name="keyword" id="keywordBox">
+        <select name="category" class="searchTerm" onchange="changeForm2(this)">
+          <option value="member">작성자</option>
+          <option value="title">제목</option>
+          <option value="category">유형</option>
+        </select>
+        <input type="text" class="textBox" placeholder="검색어를 입력하시오." id="query"/>
+        <select class="statusBox" id="statusBox">
+          <option value="홈페이지">홈페이지</option>
+          <option value="매출">매출문의</option>
+          <option value="재고">재고문의</option>
+          <option value="주문">주문문의</option>
+          <option value="반품">반품문의</option>
+        </select>
+        <button type="button" onclick="submitForm()" class="default_btn search_btn">검색</button>
+      </form>
+      <!-- 페이징 -->
+      <div th:replace="/storeOwner/pagination :: pagination(${pageDto})"></div>
+    </div>
+  </div>
+</div>
+<script defer>
+  function handleClick(id){
+    window.location.href=`/storeOwner/faqDetail/${id}`;
+  }
+  function changeForm2(selectElement) {
+    const form = selectElement.closest("form");
+    const viewText = form.querySelector(".textBox");
+    const viewSelect = form.querySelector(".statusBox");
+    let selectValue = selectElement.value;
+
+    if(selectValue === "category") {
+      viewText.style.display = "none";
+      viewSelect.style.display = "block";
+    }  else {
+      viewSelect.style.display = "none";
+      viewText.style.display = "block";
+    }
+  }
+
+  const searchFormTextBox = document.getElementById("query");
+  function submitForm() {
+    const form = document.getElementById("searchForm");
+    const category = form.querySelector("select[name='category']").value;
+    const keywordBox = document.getElementById("keywordBox");
+    if(category==="category"){
+      keywordBox.value=document.getElementById("statusBox").value;
+    }else{
+      keywordBox.value=searchFormTextBox.value;
+    }
+    form.submit();
+  }
+  searchFormTextBox.addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      submitForm();
+    }
+  });
+</script>
+</body>
+</html>

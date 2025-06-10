@@ -3,7 +3,8 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <!-- 왼쪽 사이드바 -->
-<div class="sidebar">
+<div class="sidebar" th:fragment="nonActive"></div>
+<div class="sidebar" th:fragment="active(title,sub)">
   <ul>
     <li class="order">
       <a href="#">주문</a>
@@ -32,11 +33,12 @@
         <li><a href="#">판매현황</a></li>
       </ul>
     </li>
-    <li class="inquiry">
-      <a href="#">고객센터</a>
+    <li class="etc" style="display:block" th:if="${#strings.equals(title,'etc')}">
+      <a href="/storeOwner/faqList">고객센터</a>
       <ul class="submenu">
-        <li><a href="#">문의 게시판</a></li>
-        <li><a href="#">문의하기</a></li>
+        <li><a href="/storeOwner/faqList" th:classappend="${#strings.equals(sub, 'list') ? 'on' : ''}">문의 게시판</a></li>
+        <li><a href="/storeOwner/faqEdit" th:classappend="${#strings.equals(sub, 'edit') ? 'on' : ''}">문의하기</a></li>
+        <li><a href="/storeOwner/faqList/owner" th:classappend="${#strings.equals(sub, 'myList') ? 'on' : ''}">내 문의글</a></li>
       </ul>
     </li>
   </ul>
