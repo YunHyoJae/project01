@@ -17,7 +17,7 @@ public class FranchiseBoardDto {
     private String tel;
     private String email;
     private String space;
-    private int store;
+    private String store;
     private String time;
     private String course;
     private String content;
@@ -38,7 +38,7 @@ public class FranchiseBoardDto {
                 .content(entity.getContent())
                 .regDate(entity.getRegDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
                 .state(entity.getState())
-                .reply(FranchiseReplyDto.toDto(entity.getReply()))
+                .reply(entity.getReply()!=null?FranchiseReplyDto.toDto(entity.getReply()):null)
                 .build();
     }
 }

@@ -21,11 +21,12 @@ public class FranchiseBoardSaveDto {
     @Email(message = "이메일형식에 맞게 입력해주세요.")
     private String email;
     private String space;
-    private int store;
+    private String store;
     private String time;
     private List<String> course;
     @NotBlank(message = "상담내용을 입력해주세요.")
     private String content;
+    private String state;
 
     public static FranchiseBoard toEntity(FranchiseBoardSaveDto dto) {
         return FranchiseBoard.builder()
@@ -37,7 +38,7 @@ public class FranchiseBoardSaveDto {
                 .time(dto.getTime())
                 .course(String.join(", ",dto.getCourse()))
                 .content(dto.getContent())
-                .state("상담신청")
+                .state(dto.getState()==null?"상담신청":dto.getState())
                 .build();
     }
 }

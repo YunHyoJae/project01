@@ -1,0 +1,46 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<!-- 왼쪽 사이드바 -->
+<div class="sidebar" th:fragment="nonActive"></div>
+<div class="sidebar" th:fragment="active(title,sub)">
+  <ul>
+    <li class="etc" style="display:block" th:if="${#strings.equals(title,'etc')}">
+      <a href="/headOffice/franchiseList">게시판관리</a>
+      <ul class="submenu">
+        <li><a href="/headOffice/franchiseList" th:classappend="${#strings.equals(sub, 'franchise') ? 'on' : ''}">프랜차이즈 상담</a></li>
+        <li><a href="/headOffice/faqList" th:classappend="${#strings.equals(sub, 'faq') ? 'on' : ''}">점주 질문</a></li>
+        <li><a href="/headOffice/memberList" th:classappend="${#strings.equals(sub, 'member') ? 'on' : ''}">매장 현황</a></li>
+      </ul>
+    </li>
+    <li class="return" style="display:block" th:if="${#strings.equals(title,'return')}">
+      <a href="#">반품</a>
+      <ul class="submenu">
+        <li><a href="#">반품신청</a></li>
+        <li><a href="#">반품현황</a></li>
+      </ul>
+    </li>
+    <li class="sales">
+      <a href="#">매출</a>
+      <ul class="submenu">
+        <li><a href="#">매출분석</a></li>
+      </ul>
+    </li>
+    <li class="stock">
+      <a href="#">재고</a>
+      <ul class="submenu">
+        <li><a href="#">매장재고</a></li>
+        <li><a href="#">판매현황</a></li>
+      </ul>
+    </li>
+    <li class="inquiry">
+      <a href="#">고객센터</a>
+      <ul class="submenu">
+        <li><a href="#">문의 게시판</a></li>
+        <li><a href="#">문의하기</a></li>
+      </ul>
+    </li>
+  </ul>
+</div>
+</html>

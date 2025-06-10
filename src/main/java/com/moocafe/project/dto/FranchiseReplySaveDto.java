@@ -18,7 +18,6 @@ public class FranchiseReplySaveDto {
     private FranchiseBoard board;
     private Member member;
     private String content;
-    private LocalDateTime regDate;
     private String state;
 
     public static FranchiseReply toEntity(FranchiseReplySaveDto dto) {
