@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>반품신청서</title>
+</head>
+<body>
+
+<h2>반품신청서 <button type="button" onclick="openOrderSearch()">주문조회</button></h2>
+
+<form th:action="@{/storeOwner/return}" method="post" th:object="${returnDto}">
+  <table>
+    <thead>
+    <tr>
+      <th>품목코드</th>
+      <th>품목명</th>
+      <th>반품수량</th>
+      <th>반품신청일</th>
+    </tr>
+    </thead>
+    <tbody id="returnTableBody">
+    <tr>
+      <td><input type="text" name="itemCode" /></td>
+      <td><input type="text" name="itemName"  /></td>
+      <td><input type="text"  name="returnQuantity"  /></td>
+      <td><input type="date"  name="requiredDate"  /></td>
+    </tr>
+
+    </tbody>
+  </table>
+
+  <div class="form-section">
+    <label>반품사유 :<br>
+      <textarea th:field="*{returnNote}"></textarea>
+    </label>
+  </div>
+
+  <div class="form-section">
+    <label>반품번호 :
+      <input type="text" th:field="*{returnNumber}" readonly/>
+    </label>
+  </div>
+
+  <button type="submit">저장</button>
+</form>
+
+<script>
+  function openOrderSearch() {
+    window.open('/order/searchPopup', 'orderSearch', 'width=600,height=800');
+  }
+</script>
+
+</body>
+</html>

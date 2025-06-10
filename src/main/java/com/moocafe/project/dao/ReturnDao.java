@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 public class ReturnDao {
     private final ReturnRepository returnRepository;
 
-    public Return saveReturn(Return returnEntity) {
-        return returnRepository.save(returnEntity);
+    public void saveReturn(Return returnEntity) {
+        returnRepository.save(returnEntity);
     }
 }

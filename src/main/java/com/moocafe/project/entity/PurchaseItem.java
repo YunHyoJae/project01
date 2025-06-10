@@ -17,9 +17,10 @@ public class PurchaseItem {
 
     @Id
     @GeneratedValue(strategy= GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "purchase_item_seq_gen", sequenceName = "purchase_item_seq", allocationSize = 1)
     private Integer id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "itemCode", referencedColumnName = "itemCode", nullable = false)
     private InventoryItem itemCode;
 
@@ -29,7 +30,7 @@ public class PurchaseItem {
     @Column(nullable = false)
     private Date dueDate;
 
-    @Column(nullable = false)
+    @Column
     private Date expirationDate;
 
     @Column(nullable = false)

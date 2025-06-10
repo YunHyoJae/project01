@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>품목 검색</title>
+</head>
+<body>
+<h2>품목 검색</h2>
+
+
+<form method="get" action="/itemSearch/itemSearchPopup">
+    <select name="type">
+        <option value="code" th:selected="${type == 'code'}">코드</option>
+        <option value="name" th:selected="${type == 'name'}">이름</option>
+    </select>
+    <input type="text" name="keyword" placeholder="검색어 입력" th:value="${keyword}">
+    <button type="submit">검색</button>
+</form>
+
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>품목코드</th>
+        <th>품목명</th>
+        <th>현재수량</th>
+        <th>가격</th>
+        <th>선택</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item : ${itemList}">
+        <td th:text="${item.itemCode}">ITEM001</td>
+        <td th:text="${item.itemName}">콜드브루 원액</td>
+        <td th:text="${item.itemQuantity}">100</td>
+        <td th:text="${item.itemPrice}">1000</td>
+        <td>
+            <button type="button"
+                    th:attr="data-code=${item.itemCode}, data-name=${item.itemName}, data-quantity=${item.itemQuantity}, data-price=${item.itemPrice}"
+                    onclick="selectItemFromData(this)">
+                선택
+            </button>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+<script>
+    function selectItemFromData(button) {
+        const code = button.dataset.code;
+        const name = button.dataset.name;
+        window.opener.receiveSelectedItem(code, name);
+        window.close();
+    }
+
+</script>
+</html>
