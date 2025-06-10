@@ -15,11 +15,11 @@ public class OutBoundItem {
     private Long itemId;
 
     @ManyToOne
-    @JoinColumn(name = "OutBoundId", nullable = false)
+    @JoinColumn(name = "outBoundId", nullable = false)
     private OutBound outBound;
 
     @Column(nullable = false, length = 50)
     private String itemCode;
 
-    private int receivedQuantity;
+    private Integer receivedQuantity;
 }

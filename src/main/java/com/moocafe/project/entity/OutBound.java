@@ -13,7 +13,7 @@ import java.util.Date;
 public class OutBound {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long outBoundId;
+    private Integer outBoundId;
 
     private Integer storeId;
 

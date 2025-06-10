@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -52,7 +53,19 @@ public class OutBoundService {
         }
     }
     public List<OutBoundListResponseDto> getOutBoundList() {
-        return outBoundRepository.findAllOutBoundDtos();
+        //return outBoundRepository.findAllOutBoundDtos();
+        List<Object[]> results=outBoundRepository.findAllOutBoundDtosNative();
+        System.out.println(results);
+        return results.stream().map(obj -> new OutBoundListResponseDto(
+                (Integer) obj[0],
+                (String) obj[1],
+                (String) obj[2],
+                (String) obj[3],
+                (Integer) obj[4],
+                (String) obj[5],
+                (String) obj[6],
+                (String) obj[7]
+        )).collect(Collectors.toList());
     }
 }
 

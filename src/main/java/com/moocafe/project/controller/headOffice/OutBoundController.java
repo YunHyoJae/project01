@@ -14,7 +14,7 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/headoffice")
+@RequestMapping("/headOffice")
 public class OutBoundController {
 
     private final OutBoundService outBoundService;

@@ -203,33 +203,33 @@ public class DummyDataInitializer {
         //=================================================================================
         OutBound outBound01 = OutBound.builder()
                 .storeId(1)
-                .Approved('Y')
-                .DueDate(sdf.parse("2025-06-10"))
+                .approved('Y')
+                .dueDate(sdf.parse("2025-06-10"))
                 .status("출고완료")
                 .build();
         obd.save(outBound01);
         //=================================================================================
         OutBoundItem outBoundItem01 = OutBoundItem.builder()
                 .outBound(outBound01)
-                .ItemCode("A001")
-                .ReceivedQuantity(30)
+                .itemCode("A001")
+                .receivedQuantity(30)
                 .build();
         OutBoundItem outBoundItem02 = OutBoundItem.builder()
                 .outBound(outBound01)
-                .ItemCode("A002")
-                .ReceivedQuantity(20)
+                .itemCode("A002")
+                .receivedQuantity(20)
                 .build();
         OutBoundItem outBoundItem03 = OutBoundItem.builder()
                 .outBound(outBound01)
-                .ItemCode("A003")
-                .ReceivedQuantity(50)
+                .itemCode("A003")
+                .receivedQuantity(50)
                 .build();
         obid.save(outBoundItem01);
         obid.save(outBoundItem02);
         obid.save(outBoundItem03);
         //=================================================================================
         StoreOrder storeOrder01 = StoreOrder.builder()
-                .OrderNumber("20240602-007")
+                .orderNumber("20240602-007")
                 .storeId(2)
                 .build();
         StoreOrder storeOrder= sod.save(storeOrder01);
@@ -239,23 +239,23 @@ public class DummyDataInitializer {
         //=================================================================================
         StoreOrderDetail storeOrderDetail01 = StoreOrderDetail.builder()
                 .orderId(storeOrderDetailId01.getOrderId())
-                .ItemCode(storeOrderDetailId01.getItemCode())
+                .itemCode(storeOrderDetailId01.getItemCode())
                 .status("출고중")
-                .OrderedQuantity(1000)
+                .orderedQuantity(1000)
                 .build();
         sodd.save(storeOrderDetail01);
         StoreOrderDetail storeOrderDetail02 = StoreOrderDetail.builder()
                 .orderId(storeOrderDetailId02.getOrderId())
-                .ItemCode(storeOrderDetailId02.getItemCode())
+                .itemCode(storeOrderDetailId02.getItemCode())
                 .status("출고중")
-                .OrderedQuantity(1000)
+                .orderedQuantity(1000)
                 .build();
         sodd.save(storeOrderDetail02);
         StoreOrderDetail storeOrderDetail03 = StoreOrderDetail.builder()
                 .orderId(storeOrderDetailId03.getOrderId())
-                .ItemCode(storeOrderDetailId03.getItemCode())
+                .itemCode(storeOrderDetailId03.getItemCode())
                 .status("출고중")
-                .OrderedQuantity(1000)
+                .orderedQuantity(1000)
                 .build();
         sodd.save(storeOrderDetail03);
         //=================================================================================
