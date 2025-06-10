@@ -7,7 +7,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class OutBoundDto {
+public class StoreOrderDto {
+    private String orderNumber;
     private Integer storeId;
-    private List<OutBoundItemDto> items;
+    private List<StoreOrderDetailDto> items;
 }

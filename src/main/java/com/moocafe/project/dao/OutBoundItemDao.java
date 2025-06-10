@@ -18,7 +18,7 @@ public class OutBoundItemDao {
         return  outBoundItemRepository.save(item);
     }
 
-    public Optional<OutBoundItem> findById(Long id) {
+    public Optional<OutBoundItem> findById(Integer id) {
         return outBoundItemRepository.findById(id);
     }
 

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>품목 선택</title>
+</head>
+<body>
+<h3>품목 선택</h3>
+<table border="1">
+  <thead>
+  <tr>
+    <th>코드</th>
+    <th>이름</th>
+    <th>단가</th>
+    <th>선택</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="item : ${items}">
+    <td th:text="${item.itemCode}"></td>
+    <td th:text="${item.itemName}"></td>
+    <td th:text="${item.itemPrice}"></td>
+    <td>
+      <button type="button"
+              class="select-item-btn"
+              th:attr="data-code=${item.itemCode},
+                 data-name=${item.itemName},
+                 data-price=${item.itemPrice}">
+        선택
+      </button>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  const index = urlParams.get('index');
+
+  window.onload = () => {
+    document.querySelectorAll('.select-item-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const code = btn.getAttribute('data-code');
+        const name = btn.getAttribute('data-name');
+        const price = btn.getAttribute('data-price');
+        window.opener.selectItem(index, code, name, price);
+        window.close();
+      });
+    });
+  };
+</script>
+</body>
+</html>

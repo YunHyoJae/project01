@@ -7,12 +7,12 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OutBoundListResponseDto {
-    private Long OutBoundId;
-    private String StoreName;
-    private String ItemCode;
-    private String ItemName;
-    private int ReceivedQuantity;
-    private String RequiredDate;
-    private String DueDate;
+    private Integer outBoundId;
+    private String name; //store name
+    private String itemCode;
+    private String itemName;
+    private int receivedQuantity;
+    private String requiredDate;
+    private String dueDate;
     private String status;
 }

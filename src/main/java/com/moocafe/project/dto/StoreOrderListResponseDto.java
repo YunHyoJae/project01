@@ -6,8 +6,11 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ItemSearchDto {
+public class StoreOrderListResponseDto {
+    private String orderNumber;
+    private String orderDate;
     private String itemCode;
     private String itemName;
-    private int itemPrice;
+    private int orderedQuantity;
+    private String status;
 }

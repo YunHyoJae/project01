@@ -7,6 +7,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OutBoundStatusDto {
-    private Long OutBoundId;
-    private String status;
+    private Integer outBoundId;
+    private String status; //상태
 }

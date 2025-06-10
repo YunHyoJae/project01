@@ -1,5 +1,6 @@
 package com.moocafe.project.dao;
 
+import com.moocafe.project.dto.StoreOrderListResponseDto;
 import com.moocafe.project.entity.StoreOrderDetail;
 import com.moocafe.project.entity.StoreOrderDetailId;
 import com.moocafe.project.repository.StoreOrderDetailRepository;
@@ -29,5 +30,9 @@ public class StoreOrderDetailDao {
 
     public void delete(StoreOrderDetail detail) {
         storeOrderDetailRepository.delete(detail);
+    }
+
+    public List<Object[]> findOrderListByStoreAndDate(Integer storeId, String startDate, String endDate) {
+        return storeOrderDetailRepository.findOrderListByStoreAndDate(storeId, startDate, endDate);
     }
 }
