@@ -8,9 +8,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class ReturnItemDao {
-    private final ReturnItemRepository repo;
+    private final ReturnItemRepository returnItemRepository;
 
-    public ReturnItem save(ReturnItem returnItem) {
-        return repo.save(returnItem);
+    public void saveReturnItem(ReturnItem returnItem) {
+         returnItemRepository.save(returnItem);
     }
+
 }

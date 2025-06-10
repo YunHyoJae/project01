@@ -1,6 +1,7 @@
 package com.moocafe.project.dao;
 
 import com.moocafe.project.entity.Return;
+import com.moocafe.project.repository.ReturnItemRepository;
 import com.moocafe.project.repository.ReturnRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -9,8 +10,10 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class ReturnDao {
     private final ReturnRepository returnRepository;
+    private final ReturnItemRepository returnItemRepository;
 
-    public void saveReturn(Return returnEntity) {
-        returnRepository.save(returnEntity);
+    public Return saveReturn(Return returnEntity) {
+        return returnRepository.save(returnEntity);
     }
+
 }
