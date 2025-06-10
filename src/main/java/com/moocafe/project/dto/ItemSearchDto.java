@@ -9,4 +9,5 @@ import lombok.*;
 public class ItemSearchDto {
     private String itemCode;
     private String itemName;
+    private int itemPrice;
 }

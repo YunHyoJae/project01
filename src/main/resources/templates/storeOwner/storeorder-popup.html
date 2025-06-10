@@ -22,32 +22,32 @@
     <td th:text="${item.itemPrice}"></td>
     <td>
       <button type="button"
-              th:onclick="'selectItem(' +
-                    '\'' + ${item.itemCode} + '\',' +
-                    '\'' + ${item.itemName} + '\',' +
-                    ${item.itemPrice} + ')'"
-      >선택</button>
+              class="select-item-btn"
+              th:attr="data-code=${item.itemCode},
+                 data-name=${item.itemName},
+                 data-price=${item.itemPrice}">
+        선택
+      </button>
     </td>
   </tr>
   </tbody>
 </table>
 
 <script>
-  function selectItem(code, name, price) {
-    const rows = window.opener.document.querySelectorAll("tr.item-row");
-    for (const row of rows) {
-      const codeInput = row.querySelector("input[name='itemCode']");
-      if (codeInput && !codeInput.value) {
-        codeInput.value = code;
-        row.querySelector("input[name='itemName']").value = name;
-        row.querySelector("input[name='itemPrice']").value = price;
-        window.opener.updateRowTotal(row); // 총액 계산 함수 호출
+  const urlParams = new URLSearchParams(window.location.search);
+  const index = urlParams.get('index');
+
+  window.onload = () => {
+    document.querySelectorAll('.select-item-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const code = btn.getAttribute('data-code');
+        const name = btn.getAttribute('data-name');
+        const price = btn.getAttribute('data-price');
+        window.opener.selectItem(index, code, name, price);
         window.close();
-        return;
-      }
-    }
-    alert("모든 행이 이미 채워져 있습니다.");
-  }
+      });
+    });
+  };
 </script>
 </body>
 </html>

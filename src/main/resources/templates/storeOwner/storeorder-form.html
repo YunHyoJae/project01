@@ -7,15 +7,7 @@
         const priceMap = {};
 
         async function openItemPopup(index) {
-            const response = await fetch('/store/itemlist');
-            const items = await response.json();
-
-            const popup = window.open('', 'popup', 'width=400,height=300');
-            popup.document.write('<h3>품목 선택</h3><ul>');
-            items.forEach(item => {
-                popup.document.write(`<li><a href="#" onclick="window.opener.selectItem('${index}', '${item.itemCode}', '${item.itemName}', '${item.price}'); window.close();">${item.itemCode} - ${item.itemName}</a></li>`);
-            });
-            popup.document.write('</ul>');
+            window.open(`/store/storeorder/storeorder-popup?index=${index}`, 'popup', 'width=500,height=400');
         }
 
         function selectItem(index, code, name, price) {
