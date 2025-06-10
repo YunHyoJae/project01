@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>매장 재고현황</title>
+  <style>
+    .low-stock {
+      background-color: red;
+      color: white;
+      font-weight: bold;
+    }
+    table {
+      border-collapse: collapse;
+    }
+    td, th {
+      padding: 8px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<h2 th:text="'[' + ${store.name} + '] 매장 재고현황'"></h2>
+
+<table>
+  <thead>
+  <tr>
+    <th>품목코드</th>
+    <th>품목명</th>
+    <th th:text="${store.name}"></th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="row : ${pivotList}">
+    <td th:text="${row.itemCode}"></td>
+    <td th:text="${row.itemName}"></td>
+    <td th:text="${row.getStockByStoreId(store.id)}"
+        th:class="${row.getStockCssClass(store.id)}">
+    </td>
+  </tr>
+  </tbody>
+</table>
+</body>
+</html>

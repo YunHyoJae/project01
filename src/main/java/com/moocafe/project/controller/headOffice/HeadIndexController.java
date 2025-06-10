@@ -1,7 +1,6 @@
 package com.moocafe.project.controller.headOffice;
 
 import com.moocafe.project.dto.CustomUserDetails;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

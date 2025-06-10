@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Map;
 
@@ -23,20 +24,23 @@ public class InventoryItemController {
         this.inventoryItemRepository = inventoryItemRepository;
     }
 
-    @GetMapping("/inventory/register")
+    @GetMapping("/headOffice/inventoryRegister")
     public String showForm(Model model) {
-        model.addAttribute("inventoryItem", new InventoryItemDto()); // 또는 entity 객체
-        return "inventory/registerForm";  // templates/inventory/registerForm.html
+        if (!model.containsAttribute("inventoryItem")) {
+            model.addAttribute("inventoryItem", new InventoryItemDto());
+        }
+        return "headOffice/inventoryRegister";
     }
 
-    @RequestMapping(value = "/inventory/register", method = RequestMethod.POST)
-    public String registerItem(@ModelAttribute InventoryItemDto item, Model model) {
+    @PostMapping("/headOffice/inventoryRegister")
+    public String registerItem(@ModelAttribute InventoryItemDto item, RedirectAttributes redirectAttributes) {
+        System.out.println("등록 요청됨: " + item.getItemCode() + ", 유통기한: " + item.getExpirationDate());
         boolean result = inventoryItemService.registerItem(item);
-        model.addAttribute("message", result ? "등록 성공" : "등록 실패");
-        return "inventory/registerForm";
+        redirectAttributes.addFlashAttribute("message", result ? "등록 성공" : "등록 실패");
+        return "redirect:/headOffice/inventoryRegister";
     }
 
-    @GetMapping("/check-code")
+    @GetMapping("/headOffice/check-code")
     @ResponseBody
     public Map<String, Boolean> checkItemCode(@RequestParam String itemCode) {
         boolean exists = inventoryItemRepository.existsByItemCode(itemCode);

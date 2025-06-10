@@ -45,4 +45,8 @@ public class CustomUserDetails implements UserDetails {
         return loginDto;
     }
 
+    public Member getLoggedMember() {
+        return loggedMember;
+    }
+
 }
