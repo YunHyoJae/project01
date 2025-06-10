@@ -3,7 +3,6 @@ package com.moocafe.project.service;
 import com.moocafe.project.dao.FranchiseDao;
 import com.moocafe.project.dto.FranchiseBoardDto;
 import com.moocafe.project.dto.FranchiseBoardSaveDto;
-import com.moocafe.project.repository.FranchiseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

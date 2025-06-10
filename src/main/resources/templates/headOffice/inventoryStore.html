@@ -1,3 +1,4 @@
+<!-- headOffice/inventoryStore.html 수정 -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -21,29 +22,55 @@
 </head>
 <body>
 <h2>매장별 재고현황</h2>
+
+<form th:action="@{/headOffice/inventoryStore}" method="get" oninput="updateSearchTarget()">
+  <label>
+    <select id="searchType" name="searchType" onchange="updateSearchTarget()">
+      <option value="itemName" th:selected="${searchType == 'itemName'}">품목명</option>
+      <option value="storeName" th:selected="${searchType == 'storeName'}">매장명</option>
+    </select>
+  </label>
+
+  <input type="text" id="searchInput" name="itemName" th:value="${itemName}" placeholder="검색어 입력">
+
+  <button type="submit">검색</button>
+</form>
+
+<script>
+  function updateSearchTarget() {
+    const type = document.getElementById("searchType").value;
+    const input = document.getElementById("searchInput");
+    if (type === 'itemName') {
+      input.name = 'itemName';
+    } else {
+      input.name = 'storeName';
+    }
+  }
+  document.addEventListener("DOMContentLoaded", updateSearchTarget);
+</script>
+
+
+<!-- 🔽 테이블 -->
 <table>
   <thead>
   <tr>
     <th>품목코드</th>
     <th>품목명</th>
-    <th>본사창고</th>
-    <th>강남매장</th>
-    <th>강동매장</th>
-    <th>강서매장</th>
+    <!-- 각 매장명을 반복적으로 열로 출력 -->
+    <th th:each="store : ${storeList}">
+      <span th:text="${store.name}">매장명</span>
+    </th>
   </tr>
   </thead>
   <tbody>
   <tr th:each="row : ${pivotList}">
     <td th:text="${row.itemCode}"></td>
     <td th:text="${row.itemName}"></td>
-    <td th:text="${row.getStockByStoreId(101)}"
-        th:class="${row.getStockCssClass(101)}"></td>
-    <td th:text="${row.getStockByStoreId(102)}"
-        th:class="${row.getStockCssClass(102)}"></td>
-    <td th:text="${row.getStockByStoreId(103)}"
-        th:class="${row.getStockCssClass(103)}"></td>
-    <td th:text="${row.getStockByStoreId(104)}"
-        th:class="${row.getStockCssClass(104)}"></td>
+    <!-- 각 매장에 대한 재고 수량 출력 -->
+    <td th:each="store : ${storeList}"
+        th:text="${row.getStockByStoreId(store.id)}"
+        th:class="${row.getStockCssClass(store.id)}">
+    </td>
   </tr>
   </tbody>
 </table>

@@ -10,7 +10,7 @@ public class InventorySummaryDto {
     private String itemCode;
     private String itemName;
     private Integer storeId;
-    private Integer totalCount;
+    private java.math.BigDecimal totalCount;
 
     @SqlResultSetMapping(
             name = "InventorySummaryMapping",

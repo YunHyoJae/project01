@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>메뉴 등록</title>
+
+
+  <script th:inline="javascript">
+    const itemList = /*[[${itemList}]]*/ [];
+  </script>
+
+  <script>
+    function addItemRow() {
+      const container = document.getElementById("itemContainer");
+      const newRow = document.createElement("div");
+      const index = container.children.length;
+
+      let options = '<option value="">-- 선택 --</option>';
+      for (const item of itemList) {
+        options += `<option value="${item.itemCode}">${item.itemCode} - ${item.itemName}</option>`;
+      }
+
+      newRow.innerHTML = `
+      <div style="margin-bottom: 10px;">
+        <label>품목:</label>
+        <select name="menuItems[${index}].itemCode" required>
+          ${options}
+        </select>
+        <label>사용수량:</label>
+        <input type="number" name="menuItems[${index}].quantityUsed" required />
+        <button type="button" onclick="this.parentElement.remove()">삭제</button>
+      </div>
+    `;
+      container.appendChild(newRow);
+    }
+  </script>
+
+  <script>
+    function checkMenuId() {
+      const menuIdInput = document.querySelector('input[name="menuId"]');
+      const menuId = menuIdInput.value.trim();
+      if (!menuId) {
+        alert("메뉴 ID를 입력하세요.");
+        return;
+      }
+
+      fetch(`/headOffice/checkMenuId?menuId=${encodeURIComponent(menuId)}`)
+              .then(response => response.text())
+              .then(result => {
+                if (result === "available") {
+                  alert("사용 가능한 메뉴 ID입니다.");
+                  isMenuIdChecked = true;
+                } else {
+                  alert("이미 사용 중인 메뉴 ID입니다.");
+                  menuIdInput.focus();
+                }
+              })
+              .catch(error => {
+                console.error("중복 확인 오류:", error);
+                alert("오류가 발생했습니다.");
+              });
+    }
+
+    function validateForm() {
+      if (!isMenuIdChecked) {
+        alert("메뉴 ID 중복 체크를 해주세요.");
+        return false;
+      }
+      return true;
+    }
+  </script>
+</head>
+<body>
+<h2>메뉴 등록</h2>
+
+<form th:action="@{/headOffice/menuRegister}" th:object="${menuWrapper}" method="post" onsubmit="return validateForm()">
+  <div>
+    <label>메뉴 ID:</label>
+    <input type="text" name="menuId" th:field="*{menuId}" required />
+    <button type="button" onclick="checkMenuId()">중복 체크</button>
+  </div>
+  <div>
+    <label>메뉴 이름:</label>
+    <input type="text" th:field="*{menuName}" required />
+  </div>
+  <div>
+    <label>메뉴 가격:</label>
+    <input type="number" th:field="*{menuPrice}" required />
+  </div>
+
+  <hr/>
+  <h3>사용 품목 추가</h3>
+  <div id="itemContainer">
+    <!-- 동적 품목 행 -->
+  </div>
+  <button type="button" onclick="addItemRow()">+ 품목 추가</button>
+
+  <br/><br/>
+  <button type="submit">등록</button>
+</form>
+</body>
+</html>

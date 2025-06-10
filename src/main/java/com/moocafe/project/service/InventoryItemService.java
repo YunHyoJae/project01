@@ -2,25 +2,23 @@ package com.moocafe.project.service;
 
 import com.moocafe.project.dao.InventoryItemDao;
 import com.moocafe.project.dto.InventoryItemDto;
-import com.moocafe.project.entity.InventoryItem;
 import com.moocafe.project.repository.InventoryItemRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class InventoryItemService {
-    @Autowired
-    private InventoryItemDao inventoryItemDao;
-    private InventoryItemRepository inventoryItemRepository;
 
-    public boolean registerItem(InventoryItemDto item) {
-        return inventoryItemDao.insertItem(item) > 0;
+    private final InventoryItemRepository inventoryItemRepository;
+    private final InventoryItemDao inventoryItemDao;
+
+    public InventoryItemService(InventoryItemDao inventoryItemDao,
+                                InventoryItemRepository inventoryItemRepository) {
+        this.inventoryItemDao = inventoryItemDao;
+        this.inventoryItemRepository = inventoryItemRepository;
     }
 
-    public void register(InventoryItem item) {
-        if (inventoryItemRepository.existsByItemCode(item.getItemCode())) {
-            throw new IllegalArgumentException("중복된 품목코드입니다.");
-        }
-        inventoryItemRepository.save(item);
+    public boolean registerItem(InventoryItemDto item) {
+        System.out.println("▶ insert 시도: " + item.getItemCode());
+        return inventoryItemDao.insertItem(item) > 0;
     }
 }

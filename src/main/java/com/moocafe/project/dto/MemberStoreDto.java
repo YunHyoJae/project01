@@ -2,13 +2,8 @@ package com.moocafe.project.dto;
 
 import com.moocafe.project.constent.Role;
 import com.moocafe.project.entity.Member;
-import com.moocafe.project.entity.MemberStore;
 import com.moocafe.project.entity.Store;
-import jakarta.persistence.Column;
 import lombok.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter

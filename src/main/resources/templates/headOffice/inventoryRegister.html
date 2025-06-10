@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>기초 품목 등록</title>
+  <script>
+    function checkDuplicateCode() {
+      const code = document.getElementById('itemCode').value;
+      if (!code) return;
+
+      fetch(`/headOffice/check-code?itemCode=${code}`)
+              .then(response => response.json())
+              .then(data => {
+                const result = document.getElementById('duplicateResult');
+                const submitBtn = document.getElementById('submitBtn');
+                if (data.exists) {
+                  result.innerText = "이미 사용 중인 코드입니다.";
+                  result.style.color = "red";
+                  submitBtn.disabled = true;
+                } else {
+                  result.innerText = "사용 가능한 코드입니다.";
+                  result.style.color = "green";
+                  submitBtn.disabled = false;
+                }
+              })
+              .catch(() => alert('서버 오류가 발생했습니다.'));
+    }
+  </script>
+</head>
+<body>
+<div class="container">
+  <h2>기초 품목 등록</h2>
+  <form th:action="@{/headOffice/inventoryRegister}" method="post" th:object="${inventoryItem}">
+    <div>
+      <label>품목코드</label>
+      <input type="text" th:field="*{itemCode}" id="itemCode" required>
+      <button type="button" onclick="checkDuplicateCode()">중복확인</button>
+      <div id="duplicateResult"></div>
+    </div>
+
+    <div>
+      <label>품목명</label>
+      <input type="text" th:field="*{itemName}" required>
+    </div>
+
+    <div>
+      <label>품목그룹</label>
+      <label><input type="radio" th:field="*{itemGroup}" value="본사관리"> 본사관리</label>
+      <label><input type="radio" th:field="*{itemGroup}" value="매장관리"> 매장관리</label>
+      <label><input type="radio" th:field="*{itemGroup}" value="관리"> 관리</label>
+    </div>
+
+    <div>
+      <label>단위</label>
+      <input type="text" th:field="*{itemStandard}">
+    </div>
+
+    <div>
+      <label>단가</label>
+      <input type="number" th:field="*{itemPrice}">
+    </div>
+
+    <div>
+      <label>품목구분</label>
+      <label><input type="radio" th:field="*{itemClass}" value="원재료"> 원재료</label>
+      <label><input type="radio" th:field="*{itemClass}" value="부재료"> 부재료</label>
+      <label><input type="radio" th:field="*{itemClass}" value="자재"> 자재</label>
+    </div>
+
+    <div>
+      <label>유통기한</label>
+      <input type="date" th:field="*{expirationDate}">
+    </div>
+
+    <div>
+      <button type="submit" id="submitBtn" disabled>등록</button>
+    </div>
+  </form>
+</div>
+</body>
+</html>

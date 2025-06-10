@@ -1,33 +1,87 @@
 package com.moocafe.project.service;
 
+import com.moocafe.project.dto.InventorySummaryPivotRowDto;
+import com.moocafe.project.entity.InventoryItem;
 import com.moocafe.project.entity.InventoryStore;
-import com.moocafe.project.repository.InventoryStoreRepository;
+import com.moocafe.project.entity.Store;
+import com.moocafe.project.repository.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+
 
 @Service
+@RequiredArgsConstructor
 public class InventoryStoreService {
 
-    private final InventoryStoreRepository repository;
+    private final InventoryStoreRepository inventoryStoreRepository;
 
-    public InventoryStoreService(InventoryStoreRepository repository) {
-        this.repository = repository;
-    }
+    private final InventoryItemRepository inventoryItemRepository;
+    private final StoreRepository storeRepository;
+    private final MenuRepository menuRepository;
+    private final SalesRepository salesRepo;
 
     public List<InventoryStore> getInventoryByStore(Integer storeId) {
-        return repository.findByStoreId(storeId);
+        return inventoryStoreRepository.findByStoreId(storeId);
     }
 
     public void insertInventory(String itemCode, Integer storeId, Integer count) {
         InventoryStore store = new InventoryStore(itemCode, storeId, count, new Date());
-        repository.save(store);
+        inventoryStoreRepository.save(store);
     }
 
     public void updateCount(Long id, Integer newCount) {
-        InventoryStore store = repository.findById(id).orElseThrow();
+        InventoryStore store = inventoryStoreRepository.findById(id).orElseThrow();
         store.updateCount(newCount, new Date());
-        repository.save(store);
+        inventoryStoreRepository.save(store);
     }
+
+    public List<InventorySummaryPivotRowDto> generateInventoryPivot() {
+        List<Store> stores = storeRepository.findAll();
+        List<InventoryStore> inventories = inventoryStoreRepository.findAll();
+        List<InventoryItem> items = inventoryItemRepository.findAll();
+
+        // 결과 담을 map (itemCode 기준)
+        Map<String, InventorySummaryPivotRowDto> pivotMap = new LinkedHashMap<>();
+
+        for (InventoryItem item : items) {
+            String itemCode = item.getItemCode();
+            String itemName = item.getItemName();
+
+            InventorySummaryPivotRowDto row = new InventorySummaryPivotRowDto();
+            row.setItemCode(itemCode);
+            row.setItemName(itemName);
+
+            // 매장별 현재 재고 수량
+            for (Store store : stores) {
+                int count = inventories.stream()
+                        .filter(inv -> inv.getItemCode().equals(itemCode) && inv.getStoreId().equals(store.getId()))
+                        .mapToInt(InventoryStore::getCount)
+                        .sum();
+                row.getStoreStockMap().put(store.getId(), count);
+
+                // 예상 사용량: 최근 3개월간 판매량
+                int usage = menuRepository.findByItemCode(itemCode).stream()
+                        .mapToInt(menu -> salesRepo.sumQuantityByStoreIdAndMenuIdAndPeriod(
+                                store.getId(), menu.getMenuId(),
+                                getMonthAgoDate(3), new Date()
+                        )).sum();
+
+                row.putExpectedUsage(store.getId(), usage);
+            }
+
+            pivotMap.put(itemCode, row);
+        }
+
+        return new ArrayList<>(pivotMap.values());
+    }
+
+    private Date getMonthAgoDate(int monthsAgo) {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MONTH, -monthsAgo);
+        return cal.getTime();
+    }
+
+
 }
