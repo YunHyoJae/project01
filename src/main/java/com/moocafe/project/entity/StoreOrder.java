@@ -21,11 +21,11 @@ public class StoreOrder {
     private Long id;
 
     @Column(nullable = false, unique = true, length = 100)
-    private String OrderNumber;
+    private String orderNumber;
 
     private Integer storeId;
 
     @CreatedDate
     @Column(updatable = false)
-    private LocalDateTime OrderDate;
+    private LocalDateTime orderDate;
 }

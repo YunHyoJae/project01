@@ -15,7 +15,7 @@ import java.util.Optional;
 
         @Query(
                 value = "SELECT COUNT(*) FROM StoreOrder " +
-                        "WHERE storeId = :storeId AND TO_CHAR(OrderDate, 'YYYYMMDD') = :today",
+                        "WHERE storeId = :storeId AND TO_CHAR(orderDate, 'YYYYMMDD') = :today",
                 nativeQuery = true
         )
         int countByStoreIdAndDate(@Param("storeId") Integer storeId, @Param("today") String today);

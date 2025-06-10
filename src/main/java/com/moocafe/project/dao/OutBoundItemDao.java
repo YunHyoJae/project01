@@ -29,4 +29,8 @@ public class OutBoundItemDao {
     public void delete(OutBoundItem item) {
         outBoundItemRepository.delete(item);
     }
+
+    public List<OutBoundItem> findByOutBoundId(Integer outBoundId) {
+        return outBoundItemRepository.findByOutBoundId(Long.valueOf(outBoundId));
+    }
 }

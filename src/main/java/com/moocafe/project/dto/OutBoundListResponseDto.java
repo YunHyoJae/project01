@@ -4,11 +4,12 @@ import lombok.*;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class OutBoundListResponseDto {
     private Integer outBoundId;
-    private String name; //store name
+    private String storeName;
     private String itemCode;
     private String itemName;
     private int receivedQuantity;

@@ -10,5 +10,5 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class StoreOrderDetailId implements Serializable {
     private Long orderId;
-    private String ItemCode;
+    private String itemCode;
 }

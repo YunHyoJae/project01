@@ -10,6 +10,6 @@ import java.util.List;
 
 @Repository
 public interface OutBoundItemRepository extends JpaRepository<OutBoundItem, Integer> {
-    @Query(value = "SELECT * FROM OutBoundItem WHERE OutBoundId = :outBoundId", nativeQuery = true)
+    @Query(value = "SELECT * FROM OutBoundItem WHERE outBoundId = :outBoundId", nativeQuery = true)
     List<OutBoundItem> findByOutBoundId(@Param("outBoundId") Long outBoundId);
 }

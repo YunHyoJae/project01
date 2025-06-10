@@ -16,13 +16,13 @@ public class StoreOrderDetail {
 
     @Id
     @Column(length = 50)
-    private String ItemCode;
+    private String itemCode;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "orderId", insertable = false, updatable = false)
     private StoreOrder storeOrder;
 
-    private  int OrderedQuantity;
+    private  int orderedQuantity;
 
     @Column(length = 50)
     private String status = "주문완료"; // 주문완료/준비중/배송중

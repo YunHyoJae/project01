@@ -13,20 +13,20 @@ import java.util.Date;
 public class OutBound {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long OutBoundId;
+    private Long outBoundId;
 
     private Integer storeId;
 
     @Temporal(TemporalType.DATE)
-    private Date RequiredDate = new Date();
+    private Date requiredDate = new Date();
 
-    private char Approved = 'N';
-
-    @Temporal(TemporalType.DATE)
-    private Date ApprovedDate;
+    private char approved = 'N';
 
     @Temporal(TemporalType.DATE)
-    private Date DueDate;
+    private Date approvedDate;
+
+    @Temporal(TemporalType.DATE)
+    private Date dueDate;
 
     @Column(length = 50)
     private String status; // 준비중/출고완료

@@ -7,7 +7,7 @@
         const priceMap = {};
 
         async function openItemPopup(index) {
-            window.open(`/store/storeorder/storeorder-popup?index=${index}`, 'popup', 'width=500,height=400');
+            window.open(`/storeOwner/storeorder/storeorder-popup?index=${index}`, 'popup', 'width=500,height=400');
         }
 
         function selectItem(index, code, name, price) {
@@ -70,7 +70,7 @@
                 items: items
             };
 
-            const response = await fetch('/store/storeorder', {
+            const response = await fetch('/storeOwner/storeorder', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)

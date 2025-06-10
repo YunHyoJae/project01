@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>출고 관리</title>
+</head>
+<body>
+<h2>본사 관리자 - 출고 관리</h2>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th><input type="checkbox" onclick="toggleAll(this)"/></th>
+        <th>매장명</th>
+        <th>요청일</th>
+        <th>품목코드</th>
+        <th>품목명/수량</th>
+        <th>출고일</th>
+        <th>출고상태</th>
+    </tr>
+    </thead>
+    <tbody id="outbound-table">
+    <!-- 예시 데이터 -->
+    <tr th:each="row : ${outbounds}">
+        <td><input type="checkbox" class="outbound-checkbox" th:value="${row.outBoundId}" /></td>
+        <td th:text="${row.storeName}"></td>
+        <td th:text="${row.requiredDate}"></td>
+        <td th:text="${row.itemCode}"></td>
+        <td th:text="${row.itemName + ' / ' + row.receivedQuantity}"></td>
+        <td th:text="${row.dueDate}"></td>
+        <td th:text="${row.status}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<button onclick="sendUpdate('승인')">승인</button>
+<button onclick="sendUpdate('출고완료')">출고완료</button>
+
+<script>
+    function toggleAll(source) {
+        document.querySelectorAll('.outbound-checkbox').forEach(cb => cb.checked = source.checked);
+    }
+
+    function sendUpdate(status) {
+        const checked = [...document.querySelectorAll('.outbound-checkbox:checked')]
+            .map(cb => parseInt(cb.value));
+
+        if (checked.length === 0) {
+            alert("선택된 출고건이 없습니다.");
+            return;
+        }
+
+        fetch('/headoffice/outbound/update-status', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ outBoundIds: checked, status: status })
+        })
+            .then(response => response.text())
+            .then(msg => {
+                alert(msg);
+                location.reload();
+            })
+            .catch(err => {
+                alert("요청 실패");
+                console.error(err);
+            });
+    }
+</script>
+</body>
+</html>

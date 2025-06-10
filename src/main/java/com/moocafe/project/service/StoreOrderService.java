@@ -38,9 +38,9 @@ public class StoreOrderService {
 
         StoreOrder savedOrder = storeOrderDao.save(
                 StoreOrder.builder()
-                        .OrderNumber(orderNumber)
+                        .orderNumber(orderNumber)
                         .storeId(orderDto.getStoreId())
-                        .OrderDate(LocalDateTime.now())
+                        .orderDate(LocalDateTime.now())
                         .build()
         );
 
@@ -48,8 +48,8 @@ public class StoreOrderService {
             StoreOrderDetailId id = new StoreOrderDetailId(savedOrder.getId(), item.getItemCode());
             StoreOrderDetail detail = StoreOrderDetail.builder()
                     .orderId(id.getOrderId())
-                    .ItemCode(id.getItemCode())
-                    .OrderedQuantity(item.getOrderedQuantity())
+                    .itemCode(id.getItemCode())
+                    .orderedQuantity(item.getOrderedQuantity())
                     .status("주문완료")
                     .storeOrder(savedOrder)
                     .build();

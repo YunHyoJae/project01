@@ -17,7 +17,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import java.util.List;
 
 @Controller
-@RequestMapping("/store")
+@RequestMapping("/storeOwner")
 @RequiredArgsConstructor
 public class StoreOrderController {
 

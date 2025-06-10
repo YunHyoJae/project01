@@ -12,14 +12,14 @@ import lombok.*;
 public class OutBoundItem {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long ItemId;
+    private Long itemId;
 
     @ManyToOne
     @JoinColumn(name = "OutBoundId", nullable = false)
     private OutBound outBound;
 
     @Column(nullable = false, length = 50)
-    private String ItemCode;
+    private String itemCode;
 
-    private int ReceivedQuantity;
+    private int receivedQuantity;
 }

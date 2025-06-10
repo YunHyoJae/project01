@@ -9,5 +9,5 @@ import lombok.*;
 public class OutBoundSearchDto {
     private String startDate;
     private String endDate;
-    private String name; //store name
+    private String storeName;
 }
