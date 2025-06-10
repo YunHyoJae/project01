@@ -39,7 +39,8 @@ public class SecurityConfig {
                                         "/favicon.ico").permitAll()
                                 .requestMatchers("/headOffice/**").hasAnyRole("ADMIN", "MANAGER")
                                 .requestMatchers("/storeOwner/**").hasAnyRole("USER")
-                                .anyRequest().authenticated()
+                                .anyRequest().denyAll() //화면 만드는 동안 폴더생성 제한두기위해.
+                //.anyRequest().authenticated()
                 )
                 .formLogin((form) ->
                         form.loginPage("/login")
