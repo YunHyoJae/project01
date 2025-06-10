@@ -1,22 +1,111 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{meta::myHead('프랜차이즈')}"></head>
+<head th:replace="~{/headOffice/meta::myHead('프랜차이즈')}"></head>
 <body>
-<header th:replace="~{header}"></header>
+<header th:replace="~{/headOffice/tnb}"></header>
+<div class="section">
+    <div th:replace="~{/headOffice/header}"></div>
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-2"></div>
-        <div class="col-md-8">
-            <h2 class="text-center my-5">프랜차이즈 리스트</h2>
-            <ul>
-                <li></li>
-            </ul>
+
+    <div class="main-layout">
+        <div th:replace="~{/headOffice/etcLnb::active('etc','franchise')}"></div>
+
+        <!-- 본문 컨텐츠 -->
+        <div class="content franchiseInquiry">
+            <h2>프랜차이즈 문의</h2>
+            <div class="franchiseInquiry-box">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>번호</th>
+                        <th>고객명</th>
+                        <th>연락처</th>
+                        <th>이메일</th>
+                        <th>위치</th>
+                        <th>날짜</th>
+                        <th>상태</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <th:block th:each="item:${list}">
+                    <tr th:onclick="'handleClick(\''+${item.id}+'\')'">
+                        <td>[[${itemStat.count}]]</td><td>[[${item.name}]]</td><td>[[${item.tel}]]</td><td>[[${item.email}]]</td><td>[[${item.space}]]</td><td>[[${item.regDate}]]</td><td>[[${item.state}]]</td>
+                    </tr>
+                    </th:block>
+                </table>
+            </div>
+            <form action="/headOffice/franchiseList" method="get" class="search_form" id="searchForm">
+                <input type="hidden" name="keyword" id="keywordBox">
+                <select name="category" class="searchTerm" onchange="changeForm2(this)">
+                    <option value="name">고객명</option>
+                    <option value="tel">연락처</option>
+                    <option value="state">상태</option>
+                </select>
+                <input type="text" class="textBox" placeholder="검색어를 입력하시오." id="query"/>
+                <div class="dateBox" id="dateBox">
+                    <input type="date" class="search_date">
+                    <span>~</span>
+                    <input type="date" class="search_date">
+                </div>
+                <select class="statusBox" id="statusBox">
+                    <option value="상담신청">상담신청</option>
+                    <option value="상담중">상담중</option>
+                    <option value="상담완료">상담완료</option>
+                </select>
+                <button type="button" onclick="submitForm()" class="default_btn search_btn">검색</button>
+            </form>
+            <!-- 페이징 -->
+            <div th:replace="/headOffice/pagination :: pagination(${pageDto})"></div>
         </div>
-        <div class="col-md-2"></div>
     </div>
 </div>
+<script defer>
+    function handleClick(id){
+        window.location.href=`/headOffice/franchiseDetail/${id}`;
+    }
+    function changeForm2(selectElement) {
+        const form = selectElement.closest("form");
+        const viewText = form.querySelector(".textBox");
+        const viewSelect = form.querySelector(".statusBox");
+        const viewDate = form.querySelector(".dateBox");
+        let selectValue = selectElement.value;
 
-<footer th:replace="~{footer}"></footer>
+        if(selectValue === "state") {
+            // 상태검색 셀렉트 선택 시 select 폼
+            viewText.style.display = "none";
+            viewDate && (viewDate.style.display = "none");
+            viewSelect.style.display = "block";
+        } else if(selectValue === "date"){
+            // 날짜 검색 셀렉트 선택 시 date 폼
+            viewSelect.style.display = "none";
+            viewText.style.display = "none";
+            viewDate && (viewDate.style.display = "block");
+        } else {
+            // 나머지 선택 시 text 폼
+            viewSelect.style.display = "none";
+            viewDate && (viewDate.style.display = "none");
+            viewText.style.display = "block";
+        }
+    }
+
+    const searchFormTextBox = document.getElementById("query");
+    function submitForm() {
+        const form = document.getElementById("searchForm");
+        const category = form.querySelector("select[name='category']").value;
+        const keywordBox = document.getElementById("keywordBox");
+        if(category==="state"){
+            keywordBox.value=document.getElementById("statusBox").value;
+        }else{
+            keywordBox.value=searchFormTextBox.value;
+        }
+        form.submit();
+    }
+    searchFormTextBox.addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            submitForm();
+        }
+    });
+</script>
 </body>
 </html>

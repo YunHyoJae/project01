@@ -13,6 +13,16 @@ import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 @EnableMethodSecurity
 public class SecurityConfig {
     @Bean
+    public HttpSessionRequestCache requestCache() {
+        HttpSessionRequestCache cache = new HttpSessionRequestCache();
+        cache.setRequestMatcher(request -> {
+            boolean shouldExclude = request.getRequestURI().startsWith("/.well-known/");
+            //System.out.println("Request URI: " + request.getRequestURI() + ", Should exclude: " + shouldExclude);
+            return !shouldExclude;
+        });
+        return cache;
+    }
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, CustomAuthenticationSuccessHandler successHandler) throws Exception {
         httpSecurity.authorizeHttpRequests((auth) ->
                         auth.requestMatchers(
@@ -40,7 +50,7 @@ public class SecurityConfig {
                                 //.defaultSuccessUrl("/index",true)
                                 .failureUrl("/login?error")
                                 .permitAll()
-                ).requestCache(cache -> cache.requestCache(new HttpSessionRequestCache()))
+                ).requestCache(cache -> cache.requestCache(requestCache()))
                 .logout((logout) ->
                         logout.logoutUrl("/logout")
                                 .logoutSuccessUrl("/index")

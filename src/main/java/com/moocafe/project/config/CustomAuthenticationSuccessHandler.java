@@ -8,6 +8,7 @@ import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Component;
 
@@ -17,10 +18,14 @@ import java.util.Collection;
 @Component
 public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+    private final RequestCache requestCache;
+    public CustomAuthenticationSuccessHandler(RequestCache requestCache) {
+        this.requestCache = requestCache;
+    }
 
     @Override
     protected void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-        String targetUrl = getSavedRequestRedirectUrl(request);
+        String targetUrl = getSavedRequestRedirectUrl(request, response);
         if (targetUrl == null) {
             targetUrl = determineTargetUrl(authentication);
         }
@@ -31,8 +36,9 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         redirectStrategy.sendRedirect(request, response, targetUrl);
     }
 
-    private String getSavedRequestRedirectUrl(HttpServletRequest request) {
-        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, null);
+    private String getSavedRequestRedirectUrl(HttpServletRequest request, HttpServletResponse response) {
+        SavedRequest savedRequest = requestCache.getRequest(request, response);
+        System.out.println("=============="+savedRequest);
         return (savedRequest != null) ? savedRequest.getRedirectUrl() : null;
     }
 

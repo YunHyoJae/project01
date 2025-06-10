@@ -1,5 +1,6 @@
 package com.moocafe.project.entity;
 
+import com.moocafe.project.dto.FranchiseReplySaveDto;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access= AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class FranchiseReply {
+public class FranchiseReply extends BaseEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.SEQUENCE)
     private Integer id;
@@ -22,8 +23,14 @@ public class FranchiseReply {
     @ManyToOne(fetch=FetchType.LAZY)
     private Member member;
     private String content;
-    @CreatedDate
-    @Column(updatable = false)
-    private LocalDateTime regDate = LocalDateTime.now();
     private String state;
+
+    public FranchiseReply saveAsSaveDto(FranchiseReplySaveDto dto, String state) {
+        return FranchiseReply.builder().id(this.id)
+                .board(this.board)
+                .member(dto.getMember())
+                .content(dto.getContent())
+                .state(state)
+                .build();
+    }
 }

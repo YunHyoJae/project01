@@ -18,6 +18,7 @@ public class FranchiseReplyDto {
     private String memberName;
     private String content;
     private String regDate;
+    private String modifyDate;
     private String state;
 
     public static FranchiseReplyDto toDto(FranchiseReply entity) {
@@ -28,6 +29,7 @@ public class FranchiseReplyDto {
                 .memberName(entity.getMember().getUserName())
                 .content(entity.getContent())
                 .regDate(entity.getRegDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+                .modifyDate(entity.getModifyDate()!=null?entity.getModifyDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")):null)
                 .state(entity.getState())
                 .build();
     }

@@ -1,5 +1,6 @@
 package com.moocafe.project.entity;
 
+import com.moocafe.project.dao.FranchiseReplyDao;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -24,7 +25,7 @@ public class FranchiseBoard extends BaseEntity {
     private String tel;
     private String email;
     private String space;
-    private int store;
+    private String store;
     private String time;
     private String course;
     private String content;
@@ -34,4 +35,12 @@ public class FranchiseBoard extends BaseEntity {
     @OneToOne(mappedBy = "board", cascade = CascadeType.ALL)
     private FranchiseReply reply;
     private String state;
+
+    public FranchiseBoard maskAsState(String state) {
+        return FranchiseBoard.builder().id(this.id).name(this.name)
+                .tel(this.tel).email(this.email).store(this.store).space(this.space)
+                .time(this.time).course(this.course).content(this.content)
+                .state(state)
+                .build();
+    }
 }

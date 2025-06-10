@@ -1,0 +1,20 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<header class="">
+  <div class="top-header">
+    <div class="left"><a href="/storeOwner/index" style="color:#fff;">admin</a></div>
+    <div class="right-area">
+      <div class="store-info">
+        <span class="store-name">[[${LoginDto.storeName}]]</span> 스토어 점주님
+        <span class="circle"></span>
+      </div>
+      <div class="user-actions">
+        <a href="/logout" class="point">로그아웃</a>
+        <a href="/storeOwner/myPageEdit" class="point">정보수정</a>
+      </div>
+    </div>
+  </div>
+
+</header>
+</html>
