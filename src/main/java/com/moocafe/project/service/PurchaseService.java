@@ -3,7 +3,6 @@ package com.moocafe.project.service;
 import com.moocafe.project.dao.PurchaseDao;
 import com.moocafe.project.dao.PurchaseItemDao;
 import com.moocafe.project.dto.PurchaseDto;
-import com.moocafe.project.dto.PurchaseItemDto;
 import com.moocafe.project.entity.InventoryItem;
 import com.moocafe.project.entity.Purchase;
 import com.moocafe.project.entity.PurchaseItem;
@@ -25,7 +24,6 @@ public class PurchaseService {
     @Transactional
     public void savePurchase(PurchaseDto purchaseDto) {
 
-        // 1. Purchase 저장
         Purchase purchase = Purchase.builder()
                 .purchaseNumber(purchaseDto.getPurchaseNumber())
                 .orderedDate(LocalDateTime.now())
@@ -34,7 +32,6 @@ public class PurchaseService {
 
         purchaseDao.savePurchase(purchase);
 
-        // 2. 각 PurchaseItem 저장
         purchaseDto.getItems().stream()
                 .filter(itemDto -> itemDto.getItemCode() != null && !itemDto.getItemCode().isBlank())
                 .forEach(itemDto -> {
@@ -68,7 +65,7 @@ public class PurchaseService {
                             .purchaseNumber(purchase)
                             .build();
 
-                    purchaseItemDao.savePurchaseItem(item);  // 단일 저장
+                    purchaseItemDao.savePurchaseItem(item);
                 });
     }
 }

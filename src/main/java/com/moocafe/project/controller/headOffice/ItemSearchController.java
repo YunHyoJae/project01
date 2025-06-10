@@ -1,9 +1,8 @@
-package com.moocafe.project.controller.itemSearch;
+package com.moocafe.project.controller.headOffice;
 
 import com.moocafe.project.entity.InventoryItem;
 import com.moocafe.project.service.ItemSearchService;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.cache.spi.support.AbstractReadWriteAccess;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

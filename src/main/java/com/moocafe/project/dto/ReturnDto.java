@@ -1,9 +1,11 @@
 package com.moocafe.project.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -15,9 +17,13 @@ import java.util.List;
 public class ReturnDto {
     private int id;
     private String returnNumber;
-    private String orderNumber;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime requiredDate;
+
     private String returnNote;
     private String typeReturn;
-    private List<ReturnItemDto> items;
+
+    @Builder.Default
+    private List<ReturnItemDto> items = new ArrayList<>();;
 }

@@ -1,5 +1,6 @@
 package com.moocafe.project.dto;
 
+import com.moocafe.project.entity.InventoryItem;
 import lombok.*;
 
 @Getter
