@@ -15,15 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class ReturnDto {
-    private int id;
     private String returnNumber;
-
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime requiredDate;
-
     private String returnNote;
-    private String typeReturn;
-
-    @Builder.Default
-    private List<ReturnItemDto> items = new ArrayList<>();;
+    private List<ReturnItemDto> returnItems;
 }

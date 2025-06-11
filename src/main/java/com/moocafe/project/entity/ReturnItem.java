@@ -12,15 +12,17 @@ public class ReturnItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "return_item_seq_gen", sequenceName = "return_item_seq", allocationSize = 1)
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "returnNumber", referencedColumnName = "returnNumber", nullable = false)
     private Return returnEntity;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "itemCode", referencedColumnName = "itemCode", nullable = false)
     private InventoryStore itemCode;
+
 
     @Column(nullable = false)
     private int returnQuantity;

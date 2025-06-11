@@ -3,6 +3,8 @@ package com.moocafe.project.dto;
 import com.moocafe.project.entity.InventoryItem;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -10,9 +12,8 @@ import lombok.*;
 @ToString
 @Builder
 public class ReturnItemDto {
-    private int id;
-    private String returnNumber;
     private String itemCode;
+    private String itemName;
     private int returnQuantity;
-    private String status;
+    private String requiredDate;
 }
