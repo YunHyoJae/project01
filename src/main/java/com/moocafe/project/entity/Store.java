@@ -1,5 +1,6 @@
 package com.moocafe.project.entity;
 
+import com.moocafe.project.dto.MemberStoreDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,5 +34,15 @@ public class Store extends BaseEntity {
             members = new ArrayList<>();
         }
         return members;
+    }
+    public void updateStore(MemberStoreDto msd){
+        this.name=msd.getName();
+        this.storeNumber=msd.getStoreNumber();
+        this.space=msd.getSpace();
+        this.tel=msd.getTel();
+        this.zipcode=msd.getZipcode();
+        this.address01=msd.getAddress01();
+        this.address02=msd.getAddress02();
+        this.state=msd.getState();
     }
 }

@@ -8,12 +8,12 @@ import com.moocafe.project.dto.FranchiseReplySaveDto;
 import com.moocafe.project.entity.FranchiseBoard;
 import com.moocafe.project.entity.FranchiseReply;
 import com.moocafe.project.entity.Member;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,16 +35,23 @@ public class FranchiseService {
         return entity.map(FranchiseBoardDto::toDto).orElse(null);
     }
     @Transactional
-    public FranchiseBoardDto update(int id, Member member, String state){
+    public FranchiseBoardDto update(int id, Member member, String state) {
         Optional<FranchiseBoard> entity = dao.findById(id);
-        entity.ifPresent(board -> {
-            if(!state.equals(board.getState())&&!board.getState().equals("상담완료")){
-                dao.save(board.maskAsState(state));
-                FranchiseReply reply=FranchiseReply.builder().board(board).member(member).state("확인중").build();
-                replyDao.save(reply);
-            }
-        });
-        return entity.map(FranchiseBoardDto::toDto).orElse(null);
+        if (entity.isPresent()) {
+            FranchiseBoard board = entity.get();
+            if (!state.equals(board.getState()) && !board.getState().equals("상담완료")) {
+                try {
+                    FranchiseReply reply = FranchiseReply.builder().board(board).member(member).state("확인중").build();
+                    replyDao.save(reply);
+                    board.makeAsState(state,reply);
+                    dao.save(board);
+                } catch (Exception e) {
+                    System.out.println("오류 발생: " + e.getMessage());
+                }
+            };
+            return FranchiseBoardDto.toDto(board);
+        }
+        return null;
     }
     @Transactional
     public int update2(FranchiseReplySaveDto dto, String state){

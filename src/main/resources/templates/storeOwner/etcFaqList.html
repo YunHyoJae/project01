@@ -8,11 +8,11 @@
 
 
   <div class="main-layout">
-    <div th:replace="~{/storeOwner/etcLnb::active('etc','list')}"></div>
+    <div th:replace="~{/storeOwner/etcLnb::active('etc',${ownerState})}"></div>
 
     <!-- 본문 컨텐츠 -->
     <div class="content storeStatus">
-      <h2>고객센터</h2>
+      <h2>고객센터 <span th:text="${ownerState=='owner' ?'내 문의글':'문의 게시판'}"></span></h2>
       <a href="/storeOwner/faqEdit" class="default_btn new_btn">문의하기</a>
       <div class="storeStatus-box box">
         <table>
@@ -29,13 +29,14 @@
           <tbody>
           <th:block th:each="item:${list}">
             <tr th:onclick="'handleClick(\''+${item.id}+'\')'">
-              <td>[[${itemStat.count}]]</td><td>[[${item.category01}]]</td><td>[[${item.title}]]</td><td>[[${item.memberName}]]</td><td>[[${item.regDate}]]</td><td th:text="${#lists.isEmpty(item.faqReplyList) ? '답변완료' : '문의'}"></td>
+              <td>[[${itemStat.count}]]</td><td>[[${item.category01}]]</td><td>[[${item.title}]]</td><td>[[${item.memberName}]]</td><td>[[${item.regDate}]]</td><td th:text="${#lists.isEmpty(item.faqReplyList) ? '문의' : '답변완료'}"></td>
             </tr>
           </th:block>
           </tbody>
         </table>
       </div>
-      <form action="/storeOwner/faqList" method="get" class="search_form" id="searchForm">
+      <form th:action="${ownerState == 'owner' ? '/storeOwner/faqList/owner' : '/storeOwner/faqList'}"
+            method="get" class="search_form" id="searchForm">
         <input type="hidden" name="keyword" id="keywordBox">
         <select name="category" class="searchTerm" onchange="changeForm2(this)">
           <option value="member">작성자</option>
@@ -58,25 +59,28 @@
   </div>
 </div>
 <script defer>
-  function handleClick(id){
-    window.location.href=`/storeOwner/faqDetail/${id}`;
+  function handleClick(id) {
+    let url = window.location.href;
+    if (url.includes('/owner')) {
+      window.location.href = `/storeOwner/faqDetail/owner/${id}`;
+    } else {
+      window.location.href = `/storeOwner/faqDetail/${id}`;
+    }
   }
+  const searchFormTextBox = document.getElementById("query");
   function changeForm2(selectElement) {
     const form = selectElement.closest("form");
-    const viewText = form.querySelector(".textBox");
     const viewSelect = form.querySelector(".statusBox");
     let selectValue = selectElement.value;
 
     if(selectValue === "category") {
-      viewText.style.display = "none";
+      searchFormTextBox.style.display = "none";
       viewSelect.style.display = "block";
     }  else {
       viewSelect.style.display = "none";
-      viewText.style.display = "block";
+      searchFormTextBox.style.display = "block";
     }
   }
-
-  const searchFormTextBox = document.getElementById("query");
   function submitForm() {
     const form = document.getElementById("searchForm");
     const category = form.querySelector("select[name='category']").value;

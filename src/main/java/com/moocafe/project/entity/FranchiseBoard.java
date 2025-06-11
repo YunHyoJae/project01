@@ -29,9 +29,6 @@ public class FranchiseBoard extends BaseEntity {
     private String time;
     private String course;
     private String content;
-    @CreatedDate
-    @Column(updatable = false)
-    private LocalDateTime regDate = LocalDateTime.now();
     @OneToOne(mappedBy = "board", cascade = CascadeType.ALL)
     private FranchiseReply reply;
     private String state;
@@ -42,5 +39,9 @@ public class FranchiseBoard extends BaseEntity {
                 .time(this.time).course(this.course).content(this.content)
                 .state(state)
                 .build();
+    }
+    public void makeAsState(String state, FranchiseReply reply) {
+        this.reply = reply;
+        this.state = state;
     }
 }

@@ -49,6 +49,16 @@ public class HeadEtcController {
 
         return "headOffice/faqList";
     }
+    @GetMapping("/faqDetail/{id}")
+    public String faqDetail(@PathVariable("id") int id, Model model) {
+
+        return "headOffice/faqList";
+    }
+    @GetMapping("/memberList")
+    public String memberList(Model model) {
+
+        return "headOffice/memberInsert";
+    }
     @GetMapping("/memberInsert")
     public String memberInsert(Model model) {
 

@@ -34,23 +34,24 @@
                     </th:block>
                 </table>
             </div>
-            <form action="/headOffice/franchiseList" method="get" class="search_form" id="searchForm">
+            <form action="/headOffice/franchiseList" method="get" class="search_form" id="searchForm" >
                 <input type="hidden" name="keyword" id="keywordBox">
                 <select name="category" class="searchTerm" onchange="changeForm2(this)">
-                    <option value="name">고객명</option>
-                    <option value="tel">연락처</option>
-                    <option value="state">상태</option>
+                    <option value="name" th:selected="${pageDto.category == 'name'}">고객명</option>
+                    <option value="tel" th:selected="${pageDto.category == 'tel'}">연락처</option>
+                    <option value="state" th:selected="${pageDto.category == 'state'}">상태</option>
                 </select>
-                <input type="text" class="textBox" placeholder="검색어를 입력하시오." id="query"/>
+                <input type="text" class="textBox" placeholder="검색어를 입력하시오."
+                       th:value="${pageDto.category != 'state' ? pageDto.keyword : ''}" id="query"/>
                 <div class="dateBox" id="dateBox">
                     <input type="date" class="search_date">
                     <span>~</span>
                     <input type="date" class="search_date">
                 </div>
                 <select class="statusBox" id="statusBox">
-                    <option value="상담신청">상담신청</option>
-                    <option value="상담중">상담중</option>
-                    <option value="상담완료">상담완료</option>
+                    <option value="상담신청" th:selected="${pageDto.category == 'state' and pageDto.keyword == '상담신청'}">상담신청</option>
+                    <option value="상담중" th:selected="${pageDto.category == 'state' and pageDto.keyword == '상담중'}">상담중</option>
+                    <option value="상담완료" th:selected="${pageDto.category == 'state' and pageDto.keyword == '상담완료'}">상담완료</option>
                 </select>
                 <button type="button" onclick="submitForm()" class="default_btn search_btn">검색</button>
             </form>

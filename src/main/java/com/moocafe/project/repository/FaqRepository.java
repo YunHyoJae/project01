@@ -12,7 +12,7 @@ public interface FaqRepository extends JpaRepository<Faq, Integer> {
 
     Page<Faq> findByTitleContaining(String title, Pageable pageable);
 
-    Page<Faq> findByMemberContaining(Member member, Pageable pageable);
+    Page<Faq> findByMember(Member member, Pageable pageable);
 
     Page<Faq> findByCategory01(String category01, Pageable pageable);
 

@@ -38,7 +38,6 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     private String getSavedRequestRedirectUrl(HttpServletRequest request, HttpServletResponse response) {
         SavedRequest savedRequest = requestCache.getRequest(request, response);
-        System.out.println("=============="+savedRequest);
         return (savedRequest != null) ? savedRequest.getRedirectUrl() : null;
     }
 

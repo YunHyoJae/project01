@@ -11,104 +11,43 @@
     <div th:replace="~{/storeOwner/etcLnb::active('etc','edit')}"></div>
 
     <!-- 본문 컨텐츠 -->
-    <div class="content storeStatus">
-      <h2>고객센터</h2>
-      <button type="submit" class="default_btn new_btn">신규입점 등록</button>
-      <div class="storeStatus-box box">
+    <div class="content help">
+      <h2>고객 문의</h2>
+      <div class="help-box box">
+        <form action="/storeOwner/faqEdit" method="post" th:object="${dto}">
         <table>
-          <thead>
-          <tr>
-            <th>번호</th>
-            <th>고객명</th>
-            <th>연락처</th>
-            <th>입점일</th>
-            <th>매장명</th>
-            <th>매장위치</th>
-            <th>상태</th>
-          </tr>
-          </thead>
-          <tbody>
-          <!-- 샘플 데이터 -->
-          <tr>
-            <td>1</td>
-            <td>홍길동</td>
-            <td>010-1234-5678</td>
-            <td>2025/05/29</td>
-            <td>월담 정발산점</td>
-            <td>경기도 일산동구</td>
-            <td>운영중</td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>홍길동</td>
-            <td>010-1234-5678</td>
-            <td>2025/05/29</td>
-            <td>월담 정발산점</td>
-            <td>경기도 일산동구</td>
-            <td>운영중</td>
-          </tr>
-          <tr>
-            <td>3</td>
-            <td>홍길동</td>
-            <td>010-1234-5678</td>
-            <td>2025/05/29</td>
-            <td>월담 정발산점</td>
-            <td>경기도 일산동구</td>
-            <td>운영중</td>
-          </tr>
-          <tr>
-            <td>4</td>
-            <td>홍길동</td>
-            <td>010-1234-5678</td>
-            <td>2025/05/29</td>
-            <td>월담 정발산점</td>
-            <td>경기도 일산동구</td>
-            <td>운영중</td>
-          </tr>
-          <tr>
-            <td>5</td>
-            <td>홍길동</td>
-            <td>010-1234-5678</td>
-            <td>2025/05/29</td>
-            <td>월담 정발산점</td>
-            <td>경기도 일산동구</td>
-            <td>운영중</td>
-          </tr>
-          <tr>
-            <td>6</td>
-            <td>홍길동</td>
-            <td>010-1234-5678</td>
-            <td>2025/05/29</td>
-            <td>월담 정발산점</td>
-            <td>경기도 일산동구</td>
-            <td>운영중</td>
-          </tr>
-          </tbody>
+            <tr>
+              <th><h3 class="tit">제목</h3></th>
+              <td>
+                <select class="statusBox" name="category01">
+                  <option value="홈페이지">홈페이지</option>
+                  <option value="매출">매출문의</option>
+                  <option value="재고">재고문의</option>
+                  <option value="주문">주문문의</option>
+                  <option value="반품">반품문의</option>
+                </select>
+              </td>
+              <td><input type="text" name="title" th:field="*{title}" class="write_tit">
+                <p class="error" th:errors="*{title}"></p>
+              </td>
+            </tr>
+            <tr>
+              <td><h3 class="tit">문의</h3></td>
+              <td colspan="2"><textarea name="content" th:field="*{content}" rows="20" class="write_txt"></textarea>
+                <p class="error" th:errors="*{content}"></p>
+              </td>
+            </tr>
+            <tr class="private_tr">
+              <th><h3 class="tit">비공개</h3></th>
+              <td class="private_td"><input type="checkbox" name="state"/></td>
+              <td><p>(미체크 시 다른사람이 볼 수 있으므로 개인정보에 유의하세요.)</p></td>
+            </tr>
         </table>
-      </div>
-      <form action="" class="search_form">
-        <select name="" form="" class="searchTerm" onchange="changeForm(this)">
-          <option value="customer">고객명</option>
-          <option value="callNum">연락처</option>
-          <option value="store">매장명</option>
-          <option value="status">상태</option>
-        </select>
-        <input type="text" class="textBox" placeholder="검색어를 입력하시오.">
-        <select name="" form="" class="statusBox">
-          <option>운영중</option>
-          <option>휴점</option>
-          <option>폐업</option>
-        </select>
-        <button type="submit" class="default_btn search_btn">검색</button>
-      </form>
-      <div class="pagination">
-        <span>&lt;</span>
-        <span>1</span>
-        <span>2</span>
-        <span>3</span>
-        <span>4</span>
-        <span>5</span>
-        <span>&gt;</span>
+        <div class="write_btns">
+          <button type="button" class="cancel-btn default_btn" onclick="window.history.back()">취소</button>
+          <button type="submit" class="write-btn default_btn">작성</button>
+        </div>
+        </form>
       </div>
     </div>
   </div>
