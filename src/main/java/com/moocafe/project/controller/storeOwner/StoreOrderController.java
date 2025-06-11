@@ -4,6 +4,7 @@ import com.moocafe.project.dto.CustomUserDetails;
 import com.moocafe.project.dto.ItemSearchDto;
 import com.moocafe.project.dto.StoreOrderDto;
 import com.moocafe.project.dto.StoreOrderListResponseDto;
+import com.moocafe.project.entity.InventoryItem;
 import com.moocafe.project.repository.InventoryItemRepository;
 import com.moocafe.project.service.StoreOrderService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/storeOwner")
@@ -24,13 +26,13 @@ public class StoreOrderController {
     private final StoreOrderService storeOrderService;
     private final InventoryItemRepository inventoryItemRepository;
 
-    @GetMapping("/storeorder/form")
+    @GetMapping("/storeOrderForm")
     public String showOrderForm(Model model) {
         model.addAttribute("orderDto", new StoreOrderDto());
-        return "storeOwner/storeorder-form";
+        return "storeOwner/storeOrderForm";
     }
 
-    @GetMapping("/storeorder/list-view")
+    @GetMapping("/storeOrderList")
     public String showOrderListPage(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") String startDate,
@@ -45,10 +47,10 @@ public class StoreOrderController {
         model.addAttribute("startDate", startDate);
         model.addAttribute("endDate", endDate);
 
-        return "storeOwner/storeorder-list";
+        return "storeOwner/storeOrderList";
     }
 
-    @GetMapping("/storeorder/storeorder-popup")
+    @GetMapping("/storeOrderPopup")
     public String showItemPopup(Model model) {
         List<ItemSearchDto> items = inventoryItemRepository.findAll()
                         .stream()
@@ -58,11 +60,11 @@ public class StoreOrderController {
                                 i.getItemPrice()))
                         .toList();
         model.addAttribute("items", items);
-        return "storeOwner/storeorder-popup";
+        return "storeOwner/storeOrderPopup";
     }
 
 
-    @PostMapping("/storeorder")
+    @PostMapping("/storeOrder")
     @ResponseBody
     public ResponseEntity<String> createOrder(
             @AuthenticationPrincipal CustomUserDetails userDetails,
@@ -78,15 +80,26 @@ public class StoreOrderController {
         return ResponseEntity.ok("주문성공");
     }
 
-    @GetMapping("/storeorder/list")
+    @GetMapping("/storeOrderItemInfo")
     @ResponseBody
-    public ResponseEntity<List<StoreOrderListResponseDto>> getOrderList(
-            @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") String startDate,
-            @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") String endDate
-    ) {
-        Integer storeId = userDetails.toDto().getStoreId();
-        List<StoreOrderListResponseDto> orderList = storeOrderService.getOrderList(storeId, startDate, endDate);
-        return ResponseEntity.ok(orderList);
+    public ResponseEntity<ItemSearchDto> getItemInfo(@RequestParam String itemCode) {
+        Optional<InventoryItem> itemOpt = inventoryItemRepository.findByItemCode(itemCode);
+        if (itemOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        InventoryItem item = itemOpt.get();
+        ItemSearchDto dto = new ItemSearchDto(item.getItemCode(), item.getItemName(), item.getItemPrice());
+        return ResponseEntity.ok(dto);
     }
+//    @GetMapping("/storeorderList")
+//    @ResponseBody
+//    public ResponseEntity<List<StoreOrderListResponseDto>> getOrderList(
+//            @AuthenticationPrincipal CustomUserDetails userDetails,
+//            @RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") String startDate,
+//            @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") String endDate
+//    ) {
+//        Integer storeId = userDetails.toDto().getStoreId();
+//        List<StoreOrderListResponseDto> orderList = storeOrderService.getOrderList(storeId, startDate, endDate);
+//        return ResponseEntity.ok(orderList);
+//    }
 }

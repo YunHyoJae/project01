@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>주문 목록</title>
+  <script>
+    function addToReturnList(button) {
+      const row = button.closest('tr');
+      const orderNumber = row.children[0].innerText;
+      const orderDate = row.children[1].innerText;
+      const itemCode = row.children[2].innerText;
+      const itemName = row.children[3].innerText;
+      const quantity = row.children[4].innerText;
+      const status = row.children[5].innerText;
+      const section = document.getElementById("returnSection");
+      if (section.style.display === "none") {
+        section.style.display = "block";
+      }
+
+      const table = document.getElementById("returnTableBody");
+
+      const newRow = table.insertRow();
+      newRow.innerHTML = `
+        <td>${orderNumber}</td>
+        <td>${itemCode}</td>
+        <td>${itemName}</td>
+        <td><input type="number" name="returnQuantity" value="${quantity}" min="1" max="${quantity}" /></td>
+        <td><button type="button" onclick="removeRow(this)">삭제</button></td>
+      `;
+    }
+
+    function removeRow(btn) {
+      const row = btn.closest('tr');
+      row.remove();
+    }
+  </script>
+</head>
+<body>
+<h2>주문목록</h2>
+
+<form method="get" th:action="@{/storeOwner/storeOrderList}">
+  요청 일자:
+  <input type="date" name="startDate" th:value="${startDate}">
+  <input type="date" name="endDate" th:value="${endDate}">
+  <button type="submit">검색</button>
+</form>
+
+<table border="1">
+  <thead>
+  <tr>
+    <th>주문번호</th>
+    <th>요청일</th>
+    <th>품목코드</th>
+    <th>품목명</th>
+    <th>수량</th>
+    <th>주문상태</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="order : ${orderList}"  th:if="${order.status} == '주문완료'">
+    <td th:text="${order.orderNumber}"></td>
+    <td th:text="${order.orderDate}"></td>
+    <td th:text="${order.itemCode}"></td>
+    <td th:text="${order.itemName}"></td>
+    <td th:text="${order.orderedQuantity}"></td>
+    <td th:text="${order.status}"></td>
+    <td><button type="button" onclick="addToReturnList(this)">반품</button></td>
+  </tr>
+  </tbody>
+</table>
+
+<div id="returnSection" style="display: none;">
+  <h3>반품리스트</h3>
+  <form method="post" th:action="@{/storeOwner/return}" id="returnForm">
+    <table border="1">
+      <thead>
+      <tr>
+        <th>주문번호</th>
+        <th>품목코드</th>
+        <th>품목명</th>
+        <th>반품수량</th>
+        <th>삭제</th>
+      </tr>
+      </thead>
+      <tbody id="returnTableBody">
+      </tbody>
+    </table>
+    <br>
+    <button type="submit">반품신청</button>
+  </form>
+</div>
+</body>
+</html>
+
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--  <title>주문 목록</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--<h2>주문목록</h2>-->
+
+<!--<form method="get" th:action="@{/storeOwner/storeorderList}">-->
+<!--  요청 일자:-->
+<!--  <input type="date" name="startDate" th:value="${startDate}">-->
+<!--  <input type="date" name="endDate" th:value="${endDate}">-->
+<!--  <button type="submit">검색</button>-->
+<!--</form>-->
+
+<!--<table border="1">-->
+<!--  <thead>-->
+<!--  <tr>-->
+<!--    <th>주문번호</th>-->
+<!--    <th>요청일</th>-->
+<!--    <th>품목코드</th>-->
+<!--    <th>품목명</th>-->
+<!--    <th>수량</th>-->
+<!--    <th>주문상태</th>-->
+<!--  </tr>-->
+<!--  </thead>-->
+<!--  <tbody>-->
+<!--  <tr th:each="order : ${orderList}">-->
+<!--    <td th:text="${order.orderNumber}"></td>-->
+<!--    <td th:text="${order.orderDate}"></td>-->
+<!--    <td th:text="${order.itemCode}"></td>-->
+<!--    <td th:text="${order.itemName}"></td>-->
+<!--    <td th:text="${order.orderedQuantity}"></td>-->
+<!--    <td th:text="${order.status}"></td>-->
+<!--  </tr>-->
+<!--  </tbody>-->
+<!--</table>-->
+<!--</body>-->
+<!--</html>-->

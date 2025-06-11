@@ -6,10 +6,9 @@ import com.moocafe.project.dao.StoreOrderDetailDao;
 import com.moocafe.project.dto.StoreOrderDetailDto;
 import com.moocafe.project.dto.StoreOrderDto;
 import com.moocafe.project.dto.StoreOrderListResponseDto;
-import com.moocafe.project.entity.Store;
-import com.moocafe.project.entity.StoreOrder;
-import com.moocafe.project.entity.StoreOrderDetail;
-import com.moocafe.project.entity.StoreOrderDetailId;
+import com.moocafe.project.entity.*;
+import com.moocafe.project.repository.OutBoundItemRepository;
+import com.moocafe.project.repository.OutBoundRepository;
 import com.moocafe.project.repository.StoreOrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -28,6 +28,8 @@ public class StoreOrderService {
     private final StoreOrderDao storeOrderDao;
     private final StoreOrderDetailDao storeOrderDetailDao;
     private final StoreOrderRepository storeOrderRepository;
+    private final OutBoundRepository outBoundRepository;
+    private final OutBoundItemRepository outBoundItemRepository;
 
     @Transactional
     public void createOrder(StoreOrderDto orderDto) {
@@ -44,6 +46,7 @@ public class StoreOrderService {
                         .build()
         );
 
+
         for (StoreOrderDetailDto item : orderDto.getItems()) {
             StoreOrderDetailId id = new StoreOrderDetailId(savedOrder.getId(), item.getItemCode());
             StoreOrderDetail detail = StoreOrderDetail.builder()
@@ -54,6 +57,21 @@ public class StoreOrderService {
                     .storeOrder(savedOrder)
                     .build();
             storeOrderDetailDao.save(detail);
+
+            OutBound outBound = OutBound.builder()
+                    .storeId(orderDto.getStoreId())
+                    .requiredDate(new Date())
+                    .dueDate(null)
+                    .status("출고요청")
+                    .build();
+            outBoundRepository.save(outBound);
+
+            OutBoundItem outboundItem = OutBoundItem.builder()
+                    .outBound(outBound)
+                    .itemCode(item.getItemCode())
+                    .receivedQuantity(item.getOrderedQuantity())
+                    .build();
+            outBoundItemRepository.save(outboundItem);
         }
     }
 

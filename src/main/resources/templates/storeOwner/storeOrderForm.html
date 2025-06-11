@@ -7,7 +7,7 @@
         const priceMap = {};
 
         async function openItemPopup(index) {
-            window.open(`/storeOwner/storeorder/storeorder-popup?index=${index}`, 'popup', 'width=500,height=400');
+            window.open(`/storeOwner/storeOrderPopup?index=${index}`, 'popup', 'width=500,height=400');
         }
 
         function selectItem(index, code, name, price) {
@@ -24,14 +24,15 @@
 
             row.innerHTML = `
         <td>
-          <input type="text" id="itemCode-${index}" name="itemCode" readonly>
+          <input type="text" id="itemCode-${index}" name="itemCode"
+                 onblur="onItemCodeInput(${index})" readonly>
           <button type="button" onclick="openItemPopup(${index})">검색</button>
         </td>
         <td><span id="itemName-${index}">-</span></td>
         <td><span id="price-${index}">0</span></td>
         <td><input type="number" name="orderedQuantity" min="1" value="1" oninput="updateTotal(${index})"></td>
         <td><span id="subtotal-${index}">0</span></td>
-      `;
+        `;
         }
 
         function updateTotal(index) {
@@ -70,7 +71,7 @@
                 items: items
             };
 
-            const response = await fetch('/storeOwner/storeorder', {
+            const response = await fetch('/storeOwner/storeOrder', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -83,9 +84,55 @@
             }
         }
 
+        function getQueryParams(name) {
+            const params = new URLSearchParams(window.location.search);
+            const values = [];
+            for (const [key, value] of params.entries()) {
+                if (key === name) values.push(value);
+            }
+            return values;
+        }
+
         window.onload = () => {
-            for (let i = 0; i < 3; i++) addRow();
+            const itemCodes = getQueryParams("itemCode");
+            const neededQtys = getQueryParams("needed");
+            const rowCount = Math.max(itemCodes.length, neededQtys.length, 3);
+            for (let i = 0; i < rowCount; i++) addRow();
+
+            for (let i = 0; i < itemCodes.length; i++) {
+                if (itemCodes[i]) {
+                    document.getElementById(`itemCode-${i}`).value = itemCodes[i];
+                    onItemCodeInput(i);
+                }
+                if (neededQtys[i]) document.getElementsByName("orderedQuantity")[i].value = neededQtys[i];
+            }
         };
+
+        async function fetchItemInfo(itemCode) {
+            if (!itemCode) return null;
+            try {
+                const res = await fetch('/storeOwner/storeOrderItemInfo?itemCode=' + encodeURIComponent(itemCode));
+                if (!res.ok) return null;
+                return await res.json();
+            } catch (e) {
+                return null;
+            }
+        }
+
+        async function onItemCodeInput(index) {
+            const code = document.getElementById(`itemCode-${index}`).value.trim();
+            if (!code) return;
+            const data = await fetchItemInfo(code);
+            if (data) {
+                document.getElementById(`itemName-${index}`).innerText = data.itemName || '-';
+                document.getElementById(`price-${index}`).innerText = data.itemPrice || 0;
+                updateTotal(index);
+            } else {
+                document.getElementById(`itemName-${index}`).innerText = '-';
+                document.getElementById(`price-${index}`).innerText = 0;
+                updateTotal(index);
+            }
+        }
     </script>
 </head>
 <body>
