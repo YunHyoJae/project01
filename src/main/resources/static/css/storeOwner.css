@@ -371,13 +371,8 @@ body {
 }
 
 /*    주문신청    */
-.orderForm table input {
-  height: 20px;
-}
-.orderForm .search_td {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.orderForm table input[type="text"] {
+  height: 10px;
 }
 .orderForm .addRow_btn,
 .orderForm .del_rowBtn {

@@ -57,6 +57,7 @@ function selectAll(selectAll)  {
   })
 }
 
+/* 로고 클릭 시 서브메뉴 숨김 */
 function hideAllSubmenus() {
   const submenuGroups = document.querySelectorAll('.sidebar > ul > li');
 
