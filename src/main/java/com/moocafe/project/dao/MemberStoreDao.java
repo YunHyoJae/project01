@@ -18,5 +18,4 @@ public class MemberStoreDao {
     public Optional<MemberStore> findById(int id) {return memberStoreRepository.findById(id);}
     public List<MemberStore> findByMemberId(int id) {return memberStoreRepository.findByMemberId(id);}
     public List<MemberStore> findByStoreId(int id){return memberStoreRepository.findByStoreId(id);}
-    public Optional<MemberStore> findByMemberIdAndStoreId(int memberId, int storeId){return memberStoreRepository.findByMemberIdAndStoreId(memberId, storeId);}
 }
