@@ -57,6 +57,14 @@ function selectAll(selectAll)  {
   })
 }
 
+function hideAllSubmenus() {
+  const submenuGroups = document.querySelectorAll('.sidebar > ul > li');
+
+  submenuGroups.forEach(group => {
+    group.style.display = 'none';
+  });
+}
+
 /* 서브메뉴 초기화 함수 */
 function initializeSubmenu() {
   const submenuGroups = document.querySelectorAll('.submenu');
@@ -70,6 +78,7 @@ function initializeSubmenu() {
       submenuItemsInGroup[0].classList.add('active');
     }
 
+
     submenuItemsInGroup.forEach(item => {
       item.addEventListener('click', function(event) {
         event.preventDefault();
@@ -77,6 +86,7 @@ function initializeSubmenu() {
         this.classList.add('active');
       });
     });
+
   });
 }
 
@@ -320,17 +330,17 @@ function menuDelRow(button) {
 
 // 프로필 정보 수정 <!-- 카카오 주소 API -->
 function execDaumPostcode(type) {
-      new daum.Postcode({
-        oncomplete: function (data) {
-          if (type === 'user') {
-            document.getElementById('user-postcode').value = data.zonecode;
-            document.getElementById('user-address').value = data.address;
-            document.getElementById('user-detail-address').focus();
-          } else if (type === 'store') {
-            document.getElementById('store-postcode').value = data.zonecode;
-            document.getElementById('store-address').value = data.address;
-            document.getElementById('store-detail-address').focus();
-          }
-        }
-      }).open();
+  new daum.Postcode({
+    oncomplete: function (data) {
+      if (type === 'user') {
+        document.getElementById('user-postcode').value = data.zonecode;
+        document.getElementById('user-address').value = data.address;
+        document.getElementById('user-detail-address').focus();
+      } else if (type === 'store') {
+        document.getElementById('store-postcode').value = data.zonecode;
+        document.getElementById('store-address').value = data.address;
+        document.getElementById('store-detail-address').focus();
+      }
     }
+  }).open();
+}

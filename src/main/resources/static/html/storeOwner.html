@@ -28,7 +28,7 @@
   <!-- 상단 메뉴바 + 전체 레이아웃 -->
   <div class="section">
     <div class="menu-bar">
-      <img src="../images/moon.jpg" alt="문월로고" onclick="loadPage('manager_page.html')"/>
+      <img src="../images/moon.jpg" alt="문월로고" onclick="loadPage('manager_page.html'); hideAllSubmenus();"/>
       <a href="#" id="menu_order" onclick="changeMenu('order'); loadPage('order_list.html');">주문</a>
       <a href="#" id="menu_return" onclick="changeMenu('return'); loadPage('return_inquiry.html');">반품</a>
       <a href="#" id="menu_sales" onclick="changeMenu('sales'); loadPage('sales_status.html');">매출현황</a>
