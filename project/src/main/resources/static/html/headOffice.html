@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>본사 관리자 페이지</title>
+  <link rel="stylesheet" href="../css/headOffice.css" />
+  <script src="https://kit.fontawesome.com/3e2532440e.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <!-- 상단 관리자 헤더 -->
+  <div class="top-header">
+    <div class="left">admin</div>
+    <div class="right-area">
+      <div class="store-info">
+        <span class="store-name">월담</span> 본사 매니저님
+        <span class="circle"></span>
+      </div>
+      <div class="user-actions">
+        <a href="#" class="point">로그아웃</a>
+        <a href="#" class="point">정보수정</a>
+      </div>
+    </div>
+  </div>
+  <!-- 상단 메뉴바 + 전체 레이아웃 -->
+  <div class="section">
+    <div class="menu-bar">
+      <img src="../images/a_franchfrom/moon.jpg" alt="문월로고" />
+      <a href="#" id="menu_receiving" onclick="changeMenu('receiving'); loadPage('franchise_list.html');">입고</a>
+      <a href="#" id="menu_shipping" onclick="changeMenu('shipping'); loadPage('franchise_list.html');">출고</a>
+      <a href="#" id="menu_inventory" onclick="changeMenu('inventory'); loadPage('franchise_list.html'); ">재고</a>
+      <a href="#" id="menu_board" onclick="changeMenu('board'); loadPage('franchise_list.html');">게시판관리</a>
+    </div>
+
+    <div class="main-layout">
+      <!-- 왼쪽 사이드바 -->
+      <div class="sidebar">
+        <ul>
+          <li class="sub_receiving">
+            <a href="#">입고</a>
+            <ul class="submenu">
+              <li><a href="#">입고현황</a></li>
+              <li><a href="#" onclick="loadPage('receiving_form.html')" class="submenu-item">입고등록</a></li>
+              <li><a href="#">발주</a></li>
+            </ul>
+          </li>
+          <li class="sub_inventory">
+            <a href="#">재고</a>
+            <ul class="submenu">
+              <li><a href="#" onclick="loadPage('inventory_status.html')" class="submenu-item">매장별 재고현황</a></li>
+              <li><a href="#" onclick="loadPage('new_product.html')" class="submenu-item">기초품목등록</a></li>
+              <li><a href="#"></a>메뉴등록</li>
+            </ul>
+          </li>
+          <li class="sub_shipping">
+            <a href="#">출고</a>
+            <ul class="submenu">
+              <li><a href="#" onclick="loadPage('shipping_form.html')" class="submenu-item">출고관리</a></li>
+            </ul>
+          </li>
+          <li class="sub_board">
+            <a href="#">게시판 관리</a>
+            <ul class="submenu">
+              <li><a href="#" onclick="loadPage('franchise_list.html')" class="submenu-item">프렌차이즈 문의</a></li>
+              <li><a href="#" onclick="loadPage('help_list.html')" class="submenu-item">고객의소리</a></li>
+              <li><a href="#" onclick="loadPage('store_state.html')" class="submenu-item">매장현황</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <!-- 본문 컨텐츠 불러오기 -->
+      <div data-include="store_state.html" id="content-area" class="content"></div>
+    </div>
+  </div>
+  <script>
+    function loadPage(pageUrl, sub) {
+      fetch(pageUrl)
+        .then(response => {
+          if (!response.ok) throw new Error('페이지를 불러올 수 없습니다.');
+          return response.text();
+        })
+        .then(html => {
+          document.getElementById('content-area').innerHTML = html;
+        })
+        .catch(error => {
+          console.error(error);
+          document.getElementById('content-area').innerHTML = '<p>페이지 로딩 실패</p>';
+        });
+
+      sub.style.color = "#000";
+      sub.closet("submenu").querySelector("li a").style.color = "#000";
+    }
+
+    // 기본 페이지 로드 (초기 진입 시)
+    document.addEventListener("DOMContentLoaded", function () {
+      const defaultPage = document.querySelector('#content-area').getAttribute('data-include');
+      if (defaultPage) {
+        loadPage(defaultPage);
+      }
+    });
+  </script>
+  <script src="../js/admin.js"></script>
+  <script src="../js/include.js" defer></script>
+</body>
+</html>
