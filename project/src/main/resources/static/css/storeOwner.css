@@ -226,7 +226,10 @@ body {
   cursor: pointer;
 }
 
-/* ------------- 페이지 css ----------- */
+/*    고객 게시판     */
+.question .default_btn {
+  margin-bottom: 20px;
+}
 
 /*      판매현황      */
 .salesStatus .salesStatus-box {
@@ -258,7 +261,110 @@ body {
 .salesStatus .input_box { display: flex; justify-content: end; }
 .salesStatus .input_name { width: 330px; }
 
-/*     주문현황     */
+/*    고객문의   */
+.help table th, .help table td { border: 0; text-align: left; }
+.help table th { width: 60px; }
+.help .file_tr, .help .private_tr { height: 80px; }
+.help .write_tit { width: 100%; height: 40px; }
+.help .write_txt { width: 100%; }
+.help .private_td { width: 20px; }
+.help .cancel-btn { margin-left: 10px; }
+.help table p { font-size: 14px; }
+.help .private_td > input { width: 15px; height: 15px; }
+.help .write_btns { margin-top: -20px; }
+
+/*    매장현황    */
+.storeStatus h2 { margin-bottom: 10px; }
+.storeStatus .new_btn { margin-bottom: 15px; }
+
+/*    매장현황 & 프랜차이즈 문의 공통 css    */
+.franchiseInquiry .search_form,
+.storeStatus .search_form {
+  height: 40px;
+  display: flex;
+  justify-content: end;
+  margin-top: 50px;
+}
+.franchiseInquiry .search_form .searchTerm,
+.storeStatus .search_form .searchTerm {
+  width: 100px; height: 100%;
+  margin-right: 5px;
+}
+.franchiseInquiry .search_form .statusBox,
+.storeStatus .search_form .statusBox {
+  width: 150px;
+  display: none;
+}
+.franchiseInquiry .search_form .textBox,
+.storeStatus .search_form .textBox {
+  width: 330px;
+  height: 100%;
+  box-sizing: border-box;
+  padding-left: 10px;
+}
+.franchiseInquiry .search_form .search_date {
+  width: 147px; height: 93%;
+}
+.franchiseInquiry .search_form .dateBox > span {
+  margin: 0px 5px;
+}
+.franchiseInquiry .search_form .dateBox {
+  display: none;
+}
+.franchiseInquiry .search_btn,
+.storeStatus .search_btn {
+  height: 100%;
+  margin-left: 10px;
+}
+
+/*    주문신청서    */
+.orderForm table input {
+  height: 30px;
+}
+.orderForm .search_td {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.orderForm .search_td .default_btn {
+  padding: 10px;
+}
+.orderForm .addRow_btn {
+  float: right;
+  font-size: 18px;
+  color: #000;
+  margin-bottom: 20px;
+}
+.orderForm .apply_btn {
+  margin-top: 20px;
+}
+/* modal */
+.orderForm #modalBg {
+  position: fixed;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background-color: #000000b9;
+  display: none;
+}
+.orderForm #modalBg .modal {
+  width: 800px; height: 300px;
+  position: fixed; left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 40px;
+  overflow: hidden;
+}
+.orderForm .modal > form,
+.orderForm .modal > div { display: flex; align-items: center; }
+.orderForm .modal form select { width: 80px; height: 42px; }
+.orderForm .modal form input { width: 500px; height: 40px; margin: 0 10px;}
+.orderForm .modal form > div > button { width: 50px; height: 43px; border: 1px solid #666; }
+.orderForm .modal .name_box { display: none; }
+.orderForm .modal .close_btn { position: absolute; right: 50px; top: 50px; font-size: 20px; }
+
+
+/*     주문목록     */
 .orderlist .search-section-orderlist {
   font-size: 18px;
 }
@@ -289,136 +395,18 @@ body {
   margin-left: 25px;
 }
 
-/*    주문신청    */
-.orderForm table input {
-  height: 30px;
-}
-.orderForm .search_td {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.orderForm .search_td .default_btn {
-  padding: 10px;
-}
-.orderForm .addRow_btn {
-  float: right;
-  font-size: 18px;
-  color: #000;
-  margin-bottom: 20px;
-}
-/* 신청 버튼 */
-.orderForm .apply_btn { 
+/*    문의게시판     */
+.helpList .default_btn {
   margin-top: 20px;
 }
 
-/* modal */
-.orderForm #modalBg {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.5);
-  display: none;
-  z-index: 1000;
-}
-.orderForm #modalBg .modal {
-  width: 800px;
-  height: 370px;
-  position: fixed; left: 50%; top: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #fff;
-  border-radius: 10px;
-  padding: 40px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  overflow: hidden;
-}
-.orderForm .search-box {
-  background: #f5f5f5;
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
-.orderForm .search_row {
-  display: flex;
-  justify-content: flex-start;
-  gap: 20px;
-  margin-bottom: 10px;
-}
-
-.orderForm .search_row label {
-  width: 200px;
-  font-weight: bold;
-}
-.orderForm .search_row label:last-child {
-  margin-left: 15px;
-}
-.orderForm .search_row input {
-  width: 200px;
-  padding: 6px;
-}
-.orderForm .result-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 20px;
-}
-.orderForm .result-table th,
-.orderForm .result-table td {
-  border: 1px solid #ccc;
-  padding: 10px;
-  text-align: center;
-}
-.orderForm .result-table th {
-  background: #f0f0f0;
-}
-
-.orderForm .modal-footer {
-  text-align: right;
-}
-
-.orderForm .default_btn {
-  background: #061bff;
-  color: #fff;
-  padding: 8px 14px;
-  border: none;
-  cursor: pointer;
-  font-weight: 500;
-  border-radius: 8px;
-  display: inline-block;
-  text-align: center;
-}
-
-.orderForm .close-btn {
-  padding: 10px 20px;
-  background: #cacaca;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.orderForm .close-btn:hover {
-  background: #919191;
-}
-
-.orderForm .confirm-btn {
-  padding: 10px 20px;
-  background: #cacaca;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-right: 10px;
-}
-
 /*    반품신청     */
-.returnForm .return-request {
+.returnInquiry .return-request {
   font-size: 18px;
 }
 
-.returnForm .return-request button,
-.returnForm .return-request label {
+.returnInquiry .return-request button,
+.returnInquiry .return-request label {
   background: #061bff;
   color: #fff;
   padding: 8px 14px;
@@ -432,23 +420,23 @@ body {
   font-size: 13px;
 }
 
-.returnForm .return-apply-table {
+.returnInquiry .return-apply-table {
   margin-top: 30px;
 }
 
-.returnForm .return-apply-table .row-header {
+.returnInquiry .return-apply-table .row-header {
   display: flex;
 }
 
-.returnForm .return-apply-extra {
+.returnInquiry .return-apply-extra {
   margin-top: 20px;
 }
 
-.returnForm .return-reason {
+.returnInquiry .return-reason {
   margin-top: 30px;
 }
 
-.returnForm .return-reason {
+.returnInquiry .return-reason {
   display: block;
   margin-top: 10px;
   width: 650px;
@@ -459,7 +447,7 @@ body {
 }
 
 /* 모달창 전체 영역 */
-.returnForm .modal {
+.returnInquiry .modal {
   position: fixed;
   top: 0;
   left: 0;
@@ -471,12 +459,12 @@ body {
 }
 
 /* 체크되었을 때 보이도록 */
-.returnForm #modal-toggle:checked~.modal {
+.returnInquiry #modal-toggle:checked~.modal {
   display: block;
 }
 
 /* 모달 내용 박스 */
-.returnForm .modal-content {
+.returnInquiry .modal-content {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -488,48 +476,48 @@ body {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
-.returnForm .modal-title {
+.returnInquiry .modal-title {
   font-size: 22px;
   margin-bottom: 20px;
   font-weight: bold;
 }
 
-.returnForm .search-box {
+.returnInquiry .search-box {
   background: #f5f5f5;
   padding: 20px;
   border-radius: 8px;
   margin-bottom: 20px;
 }
 
-.returnForm .search-box input {
+.returnInquiry .search-box input {
   width: 30%;
   padding: 10px;
   margin-right: 10px;
   margin-bottom: 10px;
 }
 
-.returnForm .result-table {
+.returnInquiry .result-table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 20px;
 }
 
-.returnForm .result-table th,
-.returnForm .result-table td {
+.returnInquiry .result-table th,
+.returnInquiry .result-table td {
   border: 1px solid #ccc;
   padding: 10px;
   text-align: center;
 }
 
-.returnForm .result-table th {
+.returnInquiry .result-table th {
   background: #f0f0f0;
 }
 
-.returnForm .modal-footer {
+.returnInquiry .modal-footer {
   text-align: right;
 }
 
-.returnForm .close-btn {
+.returnInquiry .close-btn {
   padding: 10px 20px;
   background: #cacaca;
   color: #fff;
@@ -538,11 +526,11 @@ body {
   cursor: pointer;
 }
 
-.returnForm .close-btn:hover {
+.returnInquiry .close-btn:hover {
   background: #919191;
 }
 
-.returnForm .confirm-btn {
+.returnInquiry .confirm-btn {
   padding: 10px 20px;
   background: #cacaca;
   color: #fff;
@@ -552,11 +540,11 @@ body {
   margin-right: 10px;
 }
 
-.returnForm .confirm-btn:hover {
+.returnInquiry .confirm-btn:hover {
   background: #919191;
 }
 
-/*    반품 조회    */
+/*    반품신청    */
 .return_Inquiry_filter_buttons label {
   background: #fff;
   border: 1px solid #ccc;
@@ -602,124 +590,98 @@ body {
 }
 
 /* 숨기기 처리 */
-.hidden {
+.return_Inquiry_table .hidden {
   display: none !important;
 }
 
-/*    문의 게시판     */
-.helpList .default_btn {
+/*      출고관리     */
+.shippingForm .container {
+  padding: 20px;
+  font-family: sans-serif;
+}
+
+.shippingForm .filter-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.shippingForm .date-filter label,
+.shippingForm .store-filter label {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.shippingForm .date-filter input,
+.shippingForm .store-filter input {
+  width: 60px;
+  margin-right: 5px;
+}
+
+.shippingForm .shipment-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.shippingForm .shipment-table th,
+.shippingForm .shipment-table td {
+  border: 1px solid #ccc;
+  text-align: center;
+  padding: 10px;
+}
+
+.shippingForm thead tr {
+  background-color: #f0f0f0
+}
+
+.shippingForm input[type="date"] {
+  width: 160px;
+  padding: 4px 8px;
+  font-size: 14px;
+}
+
+.shippingForm input[type="text"] {
+  width: 300px;
+  padding: 4px 8px;
+  font-size: 14px;
+}
+.shippingForm .ask-btn {
   margin-top: 20px;
 }
-.helpList .helpList-box table tr td:nth-child(2){
-  cursor: pointer;
+
+/*     매장등록 팝업    */
+.storeForm .form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  max-width: 800px;
+  margin: 0 auto;
+  /* border: 1px solid red; */
 }
 
-/*   고객문의 상세   */
-
-/* 질문 박스 */
-.helpDetail .question-box {
-  background: #ffffff;
-  border: 1px solid #00000044;
-  padding: 20px 25px;
-  border-radius: 8px;
-  margin-bottom: 25px;
-  color: #000000;
-  line-height: 1.5;
-}
-
-.helpDetail .question-header {
-  display: flex;
-  justify-content: space-between;
+.storeForm.form-row {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 12px;
   align-items: center;
-  font-weight: 500;
-  font-size: 18px;
-  margin-bottom: 10px;
-  color: #000000;
+}
+.storeForm .form-row.three-columns {
+  grid-template-columns: 150px 1fr 100px; /* 레이블 + 입력 + 버튼 */
 }
 
-.helpDetail .question-title {
-  font-weight: 600;
+.storeForm .form-row input{
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
 }
-
-.helpDetail .question-date {
-  font-weight: 300;
-  font-size: 14px;
-  color: #0000005e;
+.storeForm .form-row button{
+  width: 90%;
 }
-
-.helpDetail .question-info {
-  font-weight: 300;
-  font-size: 14px;
-  color: #0000005e;
-  margin-bottom: 12px;
-  margin-top: -8px; /* 살짝 위로 올림 */
+.storeForm .line{
+  max-width: 800px;
+  width: 100%;
+  height: 1px;
+  background-color: #ededed;
+  margin: 10px 0;
 }
-
-.helpDetail .question-body {
-  font-size: 16px;
-}
-
-/* 답변 박스 */
-.helpDetail .answer-box {
-  background: #ffffff;
-  border: 1px solid #00000044;
-  padding: 20px 25px;
-  border-radius: 8px;
-  color: #000000;
-  line-height: 1.6;
-  margin-bottom: 30px;
-}
-
-.helpDetail .answer-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: 500;
-  font-size: 18px;
-  margin-bottom: 15px;
-  color: #000000;
-}
-
-.helpDetail .answer-date {
-  font-weight: 400;
-  font-size: 15px;
-  color: #0000005e;
-}
-
-.helpDetail .answer-body {
-  font-size: 16px;
-  color: #000000;
-}
-
-/* 목록 버튼 */
-.helpDetail .ask-btn {
-  background: #0400f5;
-  border: none;
-  color: #fff;
-  padding: 10px 24px;
-  border-radius: 12px;
-  font-weight: 500;
-  font-size: 14px;
-  cursor: pointer;
-  float: right;
-}
-
-.helpDetail .ask-btn:hover {
-  background: #030186;
-}
-
-.vault-locked{
-  margin-left: 10px;
-}
-
-/*    문의하기   */
-.help table th, .help table td { border: 0; text-align: left; }
-.help table th { width: 60px; }
-.help .file_tr, .help .private_tr { height: 80px; }
-.help .write_tit { width: 100%; height: 40px; }
-.help .write_txt { width: 100%; }
-.help .private_td { width: 20px; }
-.help .cancel-btn { margin-left: 10px; }
-.help table p { font-size: 14px; }
-.help .private_td > input { width: 15px; height: 15px; }
-.help .write_btns { margin-top: -20px; }
