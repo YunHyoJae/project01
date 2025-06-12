@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{/headOffice/meta::myHead('점주질문')}"></head>
+<body>
+<header th:replace="~{/headOffice/tnb}"></header>
+<div class="section">
+    <div th:replace="~{/headOffice/header}"></div>
+
+
+    <div class="main-layout">
+        <div th:replace="~{/headOffice/etcLnb::active('etc','faq')}"></div>
+
+        <!-- 본문 컨텐츠 -->
+        <div class="content">
+            <h2>고객센터 <span th:text="${ownerState=='owner' ?'내 문의글':'문의 게시판'}"></span></h2>
+            <div class="question-box">
+                <div class="question-header">
+                    <strong class="question-title">[[${content.title}]]</strong>
+                    <span class="question-date"><strong>문의 날짜 :</strong> [[${content.regDate}]]</span>
+                    <span class="question-date"><strong>유형 :</strong> [[${content.category01}]]</span>
+                </div>
+                <div class="question-info">
+                    <span><strong>작성자 :</strong> [[${content.memberName}]]</span>
+                </div>
+                <div class="question-body">
+                    [[${content.content}]]
+                </div>
+            </div>
+            <form action="/headOffice/faqDetail" method="post" th:if="${#lists.isEmpty(content.faqReplyList)}">
+                <input type="hidden" name="boardId" th:value="${content.id}">
+                <div class="counsel-form">
+                    <div class="counsel-body">
+                        <textarea id="counsel-input" placeholder="상담 내용을 입력해주세요." name="content"></textarea>
+                    </div>
+                </div>
+                <button class="ask-btn">상담완료</button>
+                <button class="ask-btn" type="button" onclick="window.history.back()">보류</button>
+            </form>
+            <th:block th:unless="${#lists.isEmpty(content.faqReplyList)}">
+                <div class="answer-box" th:each="answer : ${content.faqReplyList}">
+                    <div class="answer-header">
+                        <strong>답변 내용</strong>
+                        <span class="answer-date">답변 날짜 : [[${answer.regDate}]]</span>
+                    </div>
+                    <div class="answer-body">
+                        [[${answer.content}]]
+                    </div>
+                </div>
+                <button class="ask-btn" onclick="window.history.back()">목록으로</button>
+            </th:block>
+        </div>
+    </div>
+</div>
+</body>
+</html>

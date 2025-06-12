@@ -21,7 +21,7 @@ public class FaqBoardSaveDto {
     private String category02;
     @NotBlank(message = "상담내용을 입력해주세요.")
     private String content;
-    private String state;
+    private Boolean state;
 
     public static Faq toEntity(FaqBoardSaveDto dto) {
         return Faq.builder()
@@ -30,7 +30,7 @@ public class FaqBoardSaveDto {
                 .category01(dto.getCategory01())
                 .category02(dto.getCategory02())
                 .content(dto.getContent())
-                .state("접수")
+                .state(Boolean.TRUE.equals(dto.getState()) ? "비공개" : "공개")
                 .build();
     }
 }

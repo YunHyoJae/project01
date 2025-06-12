@@ -50,25 +50,25 @@ public class DummyDataInitializer {
                 .build();
         Member member2 = Member.builder().userId("user")
                 .role(Role.ROLE_USER)
-                .userName("user")
+                .userName("유저")
                 .email("user@member.com")
                 .userPw(bCryptPasswordEncoder.encode("1234"))
                 .build();
         Member member01 = Member.builder().userId("user01")
                 .role(Role.ROLE_USER)
-                .userName("user01")
+                .userName("유저01")
                 .email("user01@member.com")
                 .userPw(bCryptPasswordEncoder.encode("1234"))
                 .build();
         Member member02 = Member.builder().userId("user02")
                 .role(Role.ROLE_USER)
-                .userName("user02")
+                .userName("유저02")
                 .email("user02@member.com")
                 .userPw(bCryptPasswordEncoder.encode("1234"))
                 .build();
         Member member03 = Member.builder().userId("user03")
                 .role(Role.ROLE_USER)
-                .userName("user03")
+                .userName("유저03")
                 .email("user03@member.com")
                 .userPw(bCryptPasswordEncoder.encode("1234"))
                 .build();

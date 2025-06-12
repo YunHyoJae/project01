@@ -11,62 +11,102 @@
         <div th:replace="~{/headOffice/etcLnb::active('etc','member')}"></div>
 
         <!-- 본문 컨텐츠 -->
-        <div class="content storeStatus">
-            <h2>매장 현황</h2>
-            <button type="submit" class="default_btn new_btn">신규입점 등록</button>
-            <div class="storeStatus-box box">
+        <div class="content franchiseInquiry">
+            <h2>프랜차이즈 문의</h2>
+            <div class="franchiseInquiry-box">
                 <table>
                     <thead>
                     <tr>
                         <th>번호</th>
                         <th>고객명</th>
                         <th>연락처</th>
-                        <th>입점일</th>
-                        <th>매장명</th>
-                        <th>매장위치</th>
+                        <th>이메일</th>
+                        <th>위치</th>
+                        <th>날짜</th>
                         <th>상태</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <!-- 샘플 데이터 -->
-                    <tr>
-                        <td>1</td>
-                        <td>홍길동</td>
-                        <td>010-1234-5678</td>
-                        <td>2025/05/29</td>
-                        <td>월담 정발산점</td>
-                        <td>경기도 일산동구</td>
-                        <td>운영중</td>
-                    </tr>
-                    </tbody>
+                    <th:block th:each="item:${list}">
+                        <tr th:onclick="'handleClick(\''+${item.id}+'\')'">
+                            <td>[[${itemStat.count}]]</td><td>[[${item.name}]]</td><td>[[${item.tel}]]</td><td>[[${item.email}]]</td><td>[[${item.space}]]</td><td>[[${item.regDate}]]</td><td>[[${item.state}]]</td>
+                        </tr>
+                    </th:block>
                 </table>
             </div>
-            <form action="" class="search_form">
-                <select name="" form="" class="searchTerm" onchange="changeForm(this)">
-                    <option value="customer">고객명</option>
-                    <option value="callNum">연락처</option>
-                    <option value="store">매장명</option>
-                    <option value="status">상태</option>
+            <form action="/headOffice/franchiseList" method="get" class="search_form" id="searchForm" >
+                <input type="hidden" name="keyword" id="keywordBox">
+                <select name="category" class="searchTerm" onchange="changeForm2(this)">
+                    <option value="name" th:selected="${pageDto.category == 'name'}">고객명</option>
+                    <option value="tel" th:selected="${pageDto.category == 'tel'}">연락처</option>
+                    <option value="state" th:selected="${pageDto.category == 'state'}">상태</option>
                 </select>
-                <input type="text" class="textBox" placeholder="검색어를 입력하시오.">
-                <select name="" form="" class="statusBox">
-                    <option>운영중</option>
-                    <option>휴점</option>
-                    <option>폐업</option>
+                <input type="text" class="textBox" placeholder="검색어를 입력하시오."
+                       th:value="${pageDto.category != 'state' ? pageDto.keyword : ''}" id="query"/>
+                <div class="dateBox" id="dateBox">
+                    <input type="date" class="search_date">
+                    <span>~</span>
+                    <input type="date" class="search_date">
+                </div>
+                <select class="statusBox" id="statusBox">
+                    <option value="상담신청" th:selected="${pageDto.category == 'state' and pageDto.keyword == '상담신청'}">상담신청</option>
+                    <option value="상담중" th:selected="${pageDto.category == 'state' and pageDto.keyword == '상담중'}">상담중</option>
+                    <option value="상담완료" th:selected="${pageDto.category == 'state' and pageDto.keyword == '상담완료'}">상담완료</option>
                 </select>
-                <button type="submit" class="default_btn search_btn">검색</button>
+                <button type="button" onclick="submitForm()" class="default_btn search_btn">검색</button>
             </form>
-            <div class="pagination">
-                <span>&lt;</span>
-                <span>1</span>
-                <span>2</span>
-                <span>3</span>
-                <span>4</span>
-                <span>5</span>
-                <span>&gt;</span>
-            </div>
+            <!-- 페이징 -->
+            <div th:replace="/headOffice/pagination :: pagination(${pageDto})"></div>
         </div>
     </div>
 </div>
+<script defer>
+    function handleClick(id){
+        window.location.href=`/headOffice/franchiseDetail/${id}`;
+    }
+    function changeForm2(selectElement) {
+        const form = selectElement.closest("form");
+        const viewText = form.querySelector(".textBox");
+        const viewSelect = form.querySelector(".statusBox");
+        const viewDate = form.querySelector(".dateBox");
+        let selectValue = selectElement.value;
+
+        if(selectValue === "state") {
+            // 상태검색 셀렉트 선택 시 select 폼
+            viewText.style.display = "none";
+            viewDate && (viewDate.style.display = "none");
+            viewSelect.style.display = "block";
+        } else if(selectValue === "date"){
+            // 날짜 검색 셀렉트 선택 시 date 폼
+            viewSelect.style.display = "none";
+            viewText.style.display = "none";
+            viewDate && (viewDate.style.display = "block");
+        } else {
+            // 나머지 선택 시 text 폼
+            viewSelect.style.display = "none";
+            viewDate && (viewDate.style.display = "none");
+            viewText.style.display = "block";
+        }
+    }
+
+    const searchFormTextBox = document.getElementById("query");
+    function submitForm() {
+        const form = document.getElementById("searchForm");
+        const category = form.querySelector("select[name='category']").value;
+        const keywordBox = document.getElementById("keywordBox");
+        if(category==="state"){
+            keywordBox.value=document.getElementById("statusBox").value;
+        }else{
+            keywordBox.value=searchFormTextBox.value;
+        }
+        form.submit();
+    }
+    searchFormTextBox.addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            submitForm();
+        }
+    });
+</script>
 </body>
 </html>

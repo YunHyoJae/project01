@@ -28,6 +28,11 @@ public class FaqService {
     public int save(FaqBoardSaveDto dto){
         return dao.save(FaqBoardSaveDto.toEntity(dto));
     }
+    public int saveReply(FaqReplySaveDto dto){
+        Faq board = dao.findById(dto.getBoardId()).orElse(null);
+        dto.setBoard(board);
+        return replyDao.save(FaqReplySaveDto.toEntity(dto));
+    }
     public FaqBoardDto get(int id){
         Optional<Faq> entity = dao.findById(id);
         return entity.map(FaqBoardDto::toDto).orElse(null);

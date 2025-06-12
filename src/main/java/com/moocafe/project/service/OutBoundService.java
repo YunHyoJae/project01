@@ -29,19 +29,35 @@ public class OutBoundService {
         OutBound origin = outBoundDao.findById(outBoundId)
                 .orElseThrow(() -> new IllegalArgumentException("출고 정보를 찾을 수 없습니다."));
 
+        Date now = new Date();
+
+        Date requiredDate = origin.getRequiredDate();
+        Date approvedDate = origin.getApprovedDate();
+        Date dueDate = origin.getDueDate();
+
+        if ("준비중".equals(status)) {
+            requiredDate = null;
+            approvedDate = null;
+            dueDate = null;
+        } else if ("출고완료".equals(status)) {
+            if (requiredDate == null) requiredDate = now;
+            if (approvedDate == null) approvedDate = now;
+            dueDate = now;
+        }
+
         OutBound updated = new OutBound(
                 origin.getOutBoundId(),
                 origin.getStoreId(),
-                origin.getRequiredDate(),
-                origin.getApproved(),
-                origin.getApprovedDate(),
-                new Date(),
+                requiredDate,
+                'Y',
+                approvedDate,
+                dueDate,
                 status
         );
 
         outBoundDao.save(updated);
 
-        String newOrderStatus = status.equals("출고완료") ? "출고완료" : "준비중";
+        String newOrderStatus = status.equals("출고완료") ? "출고완료" : "출고중";
 
         List<OutBoundItem> items = outBoundItemDao.findByOutBoundId(outBoundId);
         for (OutBoundItem item : items) {
@@ -55,7 +71,6 @@ public class OutBoundService {
     public List<OutBoundListResponseDto> getOutBoundList() {
         //return outBoundRepository.findAllOutBoundDtos();
         List<Object[]> results=outBoundRepository.findAllOutBoundDtosNative();
-        System.out.println(results);
         return results.stream().map(obj -> new OutBoundListResponseDto(
                 (Integer) obj[0],
                 (String) obj[1],

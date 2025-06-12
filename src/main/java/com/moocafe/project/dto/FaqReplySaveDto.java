@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 @ToString
 public class FaqReplySaveDto {
     private Integer id;
+    private Integer boardId;
     @JsonIgnore
     private Faq board;
     private Member member;

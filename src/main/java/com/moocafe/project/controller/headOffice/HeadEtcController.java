@@ -1,11 +1,10 @@
 package com.moocafe.project.controller.headOffice;
 
-import com.moocafe.project.dto.CustomUserDetails;
-import com.moocafe.project.dto.FranchiseBoardDto;
-import com.moocafe.project.dto.FranchiseReplySaveDto;
-import com.moocafe.project.dto.PageDto;
+import com.moocafe.project.dto.*;
 import com.moocafe.project.entity.Member;
+import com.moocafe.project.service.FaqService;
 import com.moocafe.project.service.FranchiseService;
+import com.moocafe.project.service.MemberStoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class HeadEtcController {
     private final FranchiseService franchiseService;
+    private final FaqService faqService;
+    private final MemberStoreService memberStoreService;
     @GetMapping("/franchiseList")
     public String franchiseList(@RequestParam(defaultValue = "") String category, @RequestParam(defaultValue = "") String keyword, @PageableDefault(size = 10,sort="regDate", direction = Sort.Direction.DESC)Pageable pageable, Model model, Sort sort) {
         Page<FranchiseBoardDto> fb=franchiseService.page(category, keyword, pageable);
@@ -45,9 +46,33 @@ public class HeadEtcController {
         }
     }
     @GetMapping("/faqList")
-    public String faqList(Model model) {
-
+    public String faqList(@RequestParam(defaultValue = "") String category, @RequestParam(defaultValue = "") String keyword, @PageableDefault(size = 10,sort="regDate", direction = Sort.Direction.DESC) Pageable pageable,Model model) {
+        Page<FaqBoardDto> fb =faqService.page(category, keyword, pageable);
+        model.addAttribute("list",fb.getContent());
+        PageDto<FaqBoardDto> pageDto=new PageDto<>(fb,category,keyword,"/storeOwner/faqList");
+        model.addAttribute("pageDto",pageDto);
         return "headOffice/faqList";
+    }
+    @GetMapping("/faqDetail/{id}")
+    public String faqDetail(@PathVariable("id") Integer id, Model model) {
+        model.addAttribute("content",faqService.get(id));
+        return "headOffice/faqDetail";
+    }
+    @PostMapping("/faqDetail")
+    public String faqDetail(@ModelAttribute FaqReplySaveDto dto, @AuthenticationPrincipal CustomUserDetails user) {
+        dto.setMember(user.getLoggedMember());
+        int response = faqService.saveReply(dto);
+        if(response==1){
+            return "redirect:/headOffice/faqList";
+        }else{
+            return "headOffice/faqDetail";
+        }
+    }
+    @GetMapping("/memberList")
+    public String memberList(Model model) {
+
+        model.addAttribute("list",memberStoreService.getAll());
+        return "headOffice/memberList";
     }
     @GetMapping("/memberInsert")
     public String memberInsert(Model model) {

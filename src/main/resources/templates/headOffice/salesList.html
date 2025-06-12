@@ -14,9 +14,15 @@
 <form th:action="@{/headOffice/salesList}" method="get">
 
   <div>
-  <label>매장 ID:
-    <input type="number" name="storeId" th:value="${storeId}">
-  </label>
+    <label>매장:
+      <select name="storeId" required>
+        <option value="" disabled selected>매장을 선택하세요</option>
+        <option th:each="store : ${storeList}"
+                th:value="${store.id}"
+                th:text="${store.name + ' (' + store.id + ')'}">
+        </option>
+      </select>
+    </label>
   </div>
 
   <div>
@@ -60,6 +66,16 @@
     <td th:text="${#numbers.formatInteger(summary.totalAmount, 3, 'COMMA')}"></td>
   </tr>
   </tbody>
+  <tbody>
+  <tr>
+    <td>합계</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td th:text="${totalQuantity}"></td>
+    <td th:text="${#numbers.formatInteger(totalAmount, 0, 'COMMA')}"></td>
+  </tr>
+  </tbody>
 </table>
 
 <br/>
@@ -67,6 +83,10 @@
 <!-- 🧾 판매 입력 폼 -->
 <h3>판매 입력</h3>
 <form th:action="@{/headOffice/salesInput}" method="post">
+  <input type="hidden"
+         th:if="${_csrf != null}"
+         th:name="${_csrf.parameterName}"
+         th:value="${_csrf.token}"/>
   <div>
     <label>매장:
       <select name="storeId" required>

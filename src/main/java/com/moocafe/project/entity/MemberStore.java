@@ -17,9 +17,10 @@ public class MemberStore {
     @Id
     @GeneratedValue(strategy= GenerationType.SEQUENCE)
     private Integer id;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private Member member;
-    @ManyToOne
+
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private Store store;
 
     @CreatedDate

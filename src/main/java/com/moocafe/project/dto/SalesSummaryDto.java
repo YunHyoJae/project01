@@ -1,13 +1,16 @@
 package com.moocafe.project.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 
 @Getter
 @Setter
-
+@NoArgsConstructor
+@AllArgsConstructor
 public class SalesSummaryDto {
 
     private Integer storeId;
@@ -16,20 +19,4 @@ public class SalesSummaryDto {
     private String menuName;
     private BigDecimal totalQuantity;
     private BigDecimal totalAmount;
-
-    public SalesSummaryDto(
-            Integer storeId,
-            String storeName,
-            String menuId,
-            String menuName,
-            BigDecimal totalQuantity,
-            BigDecimal totalAmount
-    ) {
-        this.storeId = storeId;
-        this.storeName = storeName;
-        this.menuId = menuId;
-        this.menuName = menuName;
-        this.totalQuantity = totalQuantity;
-        this.totalAmount = totalAmount;
-    }
 }

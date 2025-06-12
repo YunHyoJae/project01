@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -28,8 +29,14 @@ public interface StoreOrderDetailRepository extends JpaRepository<StoreOrderDeta
             @Param("endDate") String endDate
     );
     @Modifying(clearAutomatically = true)
-    @Query("UPDATE StoreOrderDetail d SET d.status = :status " +
-            "WHERE d.itemCode = :itemCode AND d.storeOrder.storeId = :storeId")
+    @Transactional
+    @Query("""
+    UPDATE StoreOrderDetail d SET d.status = :status
+    WHERE d.orderId IN (
+        SELECT o.id FROM StoreOrder o WHERE o.storeId = :storeId
+    )
+    AND d.itemCode = :itemCode
+    """)
     void updateStatusByStoreAndItem(@Param("storeId") Integer storeId,
                                     @Param("itemCode") String itemCode,
                                     @Param("status") String status);

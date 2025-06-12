@@ -34,7 +34,7 @@ public class FaqDao {
     public Page<Faq> findByMember_NameContaining(String keyword, Pageable pageable) {
         return fr.findByMember_userNameContaining(keyword, pageable);
     }
-    public Page<Faq> findByMember(Member member, Pageable pageable) {return fr.findByMemberContaining(member, pageable);}
+    public Page<Faq> findByMember(Member member, Pageable pageable) {return fr.findByMember(member, pageable);}
     public Page<Faq> findByTitleAndMember(String keyword, Member member, Pageable pageable) {return fr.findByTitleContainingAndMember(keyword, member,pageable);}
     public Page<Faq> findByCategoryAndMember(String keyword, Member member, Pageable pageable) {return fr.findByCategory01ContainingAndMember(keyword, member,pageable);}
 }

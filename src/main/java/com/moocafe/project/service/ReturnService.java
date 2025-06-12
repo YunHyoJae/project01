@@ -40,7 +40,7 @@ public class ReturnService {
 
         returnDao.saveReturn(returnEntity);
 
-        for (ReturnItemDto dto : returnDto.getReturnItems()) {
+        for (ReturnItemDto dto : returnDto.getItems()) {
             List<InventoryStore> itemList = inventoryStoreRepository.findByItemCode(dto.getItemCode());
 
             if (itemList.isEmpty()) {

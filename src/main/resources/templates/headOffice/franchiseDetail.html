@@ -55,9 +55,7 @@
                 <div class="counsel-header">
                     <div class="counsel-status">[[${content.reply.memberName}]]</div>
                     <div class="counsel-status">[[${content.reply.state}]]</div>
-                    <div class="counsel-date">
-                        [[${content.reply.modifyDate != null ? content.reply.modifyDate : content.reply.regDate}]]
-                    </div>
+                    <div class="counsel-date" th:text="${content.reply.modifyDate != null ? content.reply.modifyDate : content.reply.regDate}"></div>
                 </div>
                 <th:block th:if="${content.reply.state == '상담완료'}">
                     <div class="counsel-body" th:text="${content.reply.content}"></div>

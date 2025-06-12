@@ -36,7 +36,7 @@ public class FranchiseBoardDto {
                 .time(entity.getTime())
                 .course(entity.getCourse())
                 .content(entity.getContent())
-                .regDate(entity.getRegDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+                .regDate(entity.getRegDate()!=null?entity.getRegDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")):null)
                 .state(entity.getState())
                 .reply(entity.getReply()!=null?FranchiseReplyDto.toDto(entity.getReply()):null)
                 .build();
