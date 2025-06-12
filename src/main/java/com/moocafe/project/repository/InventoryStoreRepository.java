@@ -69,7 +69,7 @@ public interface InventoryStoreRepository extends JpaRepository<InventoryStore, 
     FROM InventoryStore i
     WHERE i.storeId = :storeId AND i.itemCode = :itemCode
 """)
-    int findQuantityByStoreIdAndItemCode(
+    Integer findQuantityByStoreIdAndItemCode(
             @Param("storeId") Integer storeId,
             @Param("itemCode") String itemCode
     );

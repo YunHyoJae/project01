@@ -1,17 +1,225 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{/headOffice/meta::myHead('메인')}"></head>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{/headOffice/meta::myHead('본사 관리자 메인')}">
+  <meta charset="UTF-8">
+  <title>본사 관리자 메인</title>
+  <link rel="stylesheet" href="/css/headOfficeMain.css"/>
+
+</head>
 <body>
+<style>
+  .dashboardWrapper {
+    flex: 1 1 60%;
+    min-width: 750px;
+    max-width: 900px;
+  }
+  .salesSection {
+    background: #fff;
+    border-radius: 8px;
+    padding: 24px 10px 36px 10px; /* 아래쪽(padding-bottom)만 늘리기 */
+    margin-bottom: 32px;
+    box-shadow: 0 2px 8px #0001;
+  }
+  .salesHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .chartCaption {
+    font-size: 10px;
+    margin-top: 8px;
+    color: #888;
+  }
+  .gridSection {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .gridBox {
+    background: #fafbfc; !important;
+    border-radius: 8px;
+    padding: 18px 22px;
+    min-height: 120px;
+    box-shadow: 0 1px 4px #0001;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .boxHeader {
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .boxContent {
+    font-size: 14px;
+    color: #333;
+  }
+  .moreLink {
+    font-size: 13px;
+    color: #0099ff;
+    text-decoration: none;
+  }
+
+  .shortage-scroll {
+    max-height: 85px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  .shortage-scroll ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+</style>
 <header th:replace="~{/headOffice/tnb}"></header>
 <div class="section">
   <div th:replace="~{/headOffice/header}"></div>
-  <div class="main-layout">
-    <h1>본사메인</h1>
-    <p>로그인한 사용자 ID: <span th:text="${user.userId}"></span></p>
-    <p>로그인한 사용자 NAME: <span th:text="${user.userName}"></span></p>
-    <p>첫 번째 스토어 ID: <span th:text="${user.storeId}"></span></p>
-    <p>첫 번째 스토어 NAME: <span th:text="${user.storeName}"></span></p>
+  <div class="mainLayout">
+    <div class="dashboardWrapper">
+      <!-- 상단 전체 매출 그래프 -->
+      <section class="salesSection">
+        <div class="salesHeader">
+          <h2>전체 매출</h2>
+          <a href="/headOffice/salesList" class="moreLink">더보기</a>
+        </div>
+        <canvas id="salesChart" height="100"></canvas>
+        <div class="chartCaption">
+        </div>
+      </section>
+      <!-- 아래 2x2 그리드 -->
+      <div class="gridSection">
+        <section class="gridBox">
+          <div class="boxHeader">
+            <span>입고현황</span>
+            <a href="#" class="moreLink">더보기</a>
+          </div>
+          <div class="boxContent">
+            입고 현황 - 최신 3항목<br/>
+            테이블?? 리스트??
+          </div>
+        </section>
+        <section class="gridBox">
+          <div class="boxHeader">
+            <span>출고현황</span>
+            <a href="#" class="moreLink">더보기</a>
+          </div>
+          <div class="boxContent">
+            출고 현황 - 최신 3항목<br/>
+            테이블?? 리스트??
+          </div>
+        </section>
+        <section class="gridBox">
+          <div class="boxHeader">
+          <span>부족재고현황</span>
+            <a href="/headOffice/inventoryStore" class="moreLink">더보기</a>
+          </div>
+          <div class="boxContent shortage-scroll">
+            <ul>
+              <li th:each="s : ${shortageList}">
+                <span th:text="${s.itemName}"></span>
+                <span th:text="' [' + ${s.storeName} + ']'"></span>
+                <span th:text="' : '"></span>
+                <span th:text="${s.stock}"
+                      style="color:#fff; background:red; border-radius:4px; padding:2px 7px; font-weight:bold;"></span>
+              </li>
+            </ul>
+            <span th:if="${#lists.isEmpty(shortageList)}">부족 재고 없음</span>
+          </div>
+        </section>
+        <section class="gridBox">
+          <div class="boxHeader">
+            <span>상담 알림</span>
+            <a href="#" class="moreLink">더보기</a>
+          </div>
+          <div class="boxContent">
+            프랜차이즈 상담내용 알림
+          </div>
+        </section>
+      </div>
+    </div>
   </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  let summaryList = /*[[${summaryList}]]*/ [];
+  if (!summaryList) summaryList = [];
+
+  const storeNames = [...new Set(summaryList.map(r => r.storeName))];
+  const menuNames = [...new Set(summaryList.map(r => r.menuName))];
+
+  const colors = ['#e57373','#64b5f6','#81c784','#ffd54f','#ba68c8','#ffb74d','#4dd0e1','#ff8a65','#9575cd','#aed581','#f06292'];
+
+  const datasets = menuNames.map((menu, idx) => ({
+    label: menu,
+    data: storeNames.map(store => {
+      let found = summaryList.find(r => r.storeName === store && r.menuName === menu);
+      return found && found.totalAmount ? Number(found.totalAmount) : 0;
+    }),
+    backgroundColor: colors[idx % colors.length],
+    stack: '매출'
+  }));
+
+  // 커스텀 플러그인: 매장명 아래에 총매출액 표시
+  const totalLabelPlugin = {
+    id: 'totalLabelPlugin',
+    afterDatasetsDraw(chart, args, opts) {
+      const {ctx, chartArea, scales} = chart;
+      ctx.save();
+      const xAxis = scales.x;
+      const yAxis = scales.y;
+
+      chart.data.labels.forEach((store, i) => {
+        // 해당 매장 총매출액 계산
+        let sum = 0;
+        chart.data.datasets.forEach(ds => {
+          sum += ds.data[i] || 0;
+        });
+
+        // x축 tick의 가운데 좌표 구하기
+        const x = xAxis.getPixelForValue(i);
+        // 매장명 tick의 아래쪽(y축 기준)
+        const y = yAxis.getPixelForValue(yAxis.min) + 28; // 적당한 위치 조정
+
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#333';
+        ctx.fillText(sum.toLocaleString() + '원', x, y);
+      });
+
+      ctx.restore();
+    }
+  };
+
+  const ctx = document.getElementById('salesChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: storeNames,
+      datasets: datasets
+    },
+    options: {
+      plugins: {
+        legend: { display: true },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              let value = context.raw || 0;
+              return context.dataset.label + ': ' + value.toLocaleString() + '원';
+            }
+          }
+        }
+      },
+      responsive: true,
+      scales: {
+        x: { stacked: true },
+        y: { stacked: true, beginAtZero: true, ticks: { callback: v => v.toLocaleString() + '원' } }
+      }
+    },
+    plugins: [totalLabelPlugin]
+  });
+  /*]]>*/
+</script>
 </body>
 </html>

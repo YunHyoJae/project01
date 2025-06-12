@@ -1,6 +1,13 @@
 package com.moocafe.project.controller.storeOwner;
 
+<<<<<<< HEAD
 import com.moocafe.project.dto.*;
+=======
+import com.moocafe.project.dto.CustomUserDetails;
+import com.moocafe.project.dto.ItemSearchDto;
+import com.moocafe.project.dto.StoreOrderDto;
+import com.moocafe.project.dto.StoreOrderListResponseDto;
+>>>>>>> d8b764b81f632de0060da280529591b78a025fdd
 import com.moocafe.project.entity.InventoryItem;
 import com.moocafe.project.repository.InventoryItemRepository;
 import com.moocafe.project.repository.InventoryStoreRepository;
@@ -18,9 +25,12 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+<<<<<<< HEAD
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+=======
+>>>>>>> d8b764b81f632de0060da280529591b78a025fdd
 
 @Controller
 @RequestMapping("/storeOwner")
@@ -88,7 +98,10 @@ public class StoreOrderController {
                 .map(i -> new ItemSearchDto(
                         i.getItemCode(),
                         i.getItemName(),
+<<<<<<< HEAD
                         i.getItemQuantity(),
+=======
+>>>>>>> d8b764b81f632de0060da280529591b78a025fdd
                         i.getItemPrice()))
                 .toList();
         model.addAttribute("items", items);

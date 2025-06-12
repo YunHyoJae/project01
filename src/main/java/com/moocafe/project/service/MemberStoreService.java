@@ -23,6 +23,17 @@ public class MemberStoreService {
     private final StoreDao storeDao;
     private final MemberStoreDao memberStoreDao;
     @Transactional(readOnly = true)
+    public List<MemberStoreDto> getAll() {
+//        List<Store> stores = storeDao.findAll();
+//        stores.stream().forEach(store -> {
+//            if(store){}
+//        })
+//        List<Member> members = memberDao.findAll();
+//        List<MemberStore> memberStore = memberStoreDao.findByMemberId(user.getId());
+//        return MemberStoreDto.toDto(memberStore.getFirst());
+        return null;
+    }
+    @Transactional(readOnly = true)
     public MemberStoreDto getMemberStore(Member user) {
         List<MemberStore> memberStore = memberStoreDao.findByMemberId(user.getId());
         return MemberStoreDto.toDto(memberStore.getFirst());

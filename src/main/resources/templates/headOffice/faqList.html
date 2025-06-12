@@ -12,61 +12,86 @@
 
         <!-- 본문 컨텐츠 -->
         <div class="content storeStatus">
-            <h2>점주질문</h2>
-            <button type="submit" class="default_btn new_btn">신규입점 등록</button>
+            <h2>고객센터 <span>고객 문의글</span></h2>
             <div class="storeStatus-box box">
                 <table>
                     <thead>
                     <tr>
                         <th>번호</th>
-                        <th>고객명</th>
-                        <th>연락처</th>
-                        <th>입점일</th>
-                        <th>매장명</th>
-                        <th>매장위치</th>
+                        <th>유형</th>
+                        <th>제목</th>
+                        <th>작성자</th>
+                        <th>날짜</th>
                         <th>상태</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <!-- 샘플 데이터 -->
-                    <tr>
-                        <td>1</td>
-                        <td>홍길동</td>
-                        <td>010-1234-5678</td>
-                        <td>2025/05/29</td>
-                        <td>월담 정발산점</td>
-                        <td>경기도 일산동구</td>
-                        <td>운영중</td>
-                    </tr>
+                    <th:block th:each="item:${list}">
+                        <tr th:onclick="'handleClick(\''+${item.id}+'\')'">
+                            <td>[[${itemStat.count}]]</td><td>[[${item.category01}]]</td><td>[[${item.title}]]</td><td>[[${item.memberName}]]</td><td>[[${item.regDate}]]</td><td th:text="${#lists.isEmpty(item.faqReplyList) ? '문의' : '답변완료'}"></td>
+                        </tr>
+                    </th:block>
                     </tbody>
                 </table>
             </div>
-            <form action="" class="search_form">
-                <select name="" form="" class="searchTerm" onchange="changeForm(this)">
-                    <option value="customer">고객명</option>
-                    <option value="callNum">연락처</option>
-                    <option value="store">매장명</option>
-                    <option value="status">상태</option>
+            <form action="/headOffice/faqList"
+                  method="get" class="search_form" id="searchForm">
+                <input type="hidden" name="keyword" id="keywordBox">
+                <select name="category" class="searchTerm" onchange="changeForm2(this)">
+                    <option value="member" th:selected="${pageDto.category == 'member'}">작성자</option>
+                    <option value="title" th:selected="${pageDto.category == 'title'}">제목</option>
+                    <option value="category" th:selected="${pageDto.category == 'category'}">유형</option>
                 </select>
-                <input type="text" class="textBox" placeholder="검색어를 입력하시오.">
-                <select name="" form="" class="statusBox">
-                    <option>운영중</option>
-                    <option>휴점</option>
-                    <option>폐업</option>
+                <input type="text" th:value="${pageDto.category != 'category' ? pageDto.keyword : ''}" class="textBox" placeholder="검색어를 입력하시오." id="query"/>
+                <select class="statusBox" id="statusBox">
+                    <option value="홈페이지" th:selected="${pageDto.category == 'category' and pageDto.keyword == '홈페이지'}">홈페이지</option>
+                    <option value="매출" th:selected="${pageDto.category == 'category' and pageDto.keyword == '매출'}">매출문의</option>
+                    <option value="재고" th:selected="${pageDto.category == 'category' and pageDto.keyword == '재고'}">재고문의</option>
+                    <option value="주문" th:selected="${pageDto.category == 'category' and pageDto.keyword == '주문'}">주문문의</option>
+                    <option value="반품" th:selected="${pageDto.category == 'category' and pageDto.keyword == '반품'}">반품문의</option>
                 </select>
-                <button type="submit" class="default_btn search_btn">검색</button>
+                <button type="button" onclick="submitForm()" class="default_btn search_btn">검색</button>
             </form>
-            <div class="pagination">
-                <span>&lt;</span>
-                <span>1</span>
-                <span>2</span>
-                <span>3</span>
-                <span>4</span>
-                <span>5</span>
-                <span>&gt;</span>
-            </div>
+            <!-- 페이징 -->
+            <div th:replace="/headOffice/pagination :: pagination(${pageDto})"></div>
         </div>
     </div>
 </div>
+<script defer>
+    function handleClick(id) {
+        window.location.href = `/headOffice/faqDetail/${id}`;
+    }
+    const searchFormTextBox = document.getElementById("query");
+    function changeForm2(selectElement) {
+        const form = selectElement.closest("form");
+        const viewSelect = form.querySelector(".statusBox");
+        let selectValue = selectElement.value;
+
+        if(selectValue === "category") {
+            searchFormTextBox.style.display = "none";
+            viewSelect.style.display = "block";
+        }  else {
+            viewSelect.style.display = "none";
+            searchFormTextBox.style.display = "block";
+        }
+    }
+    function submitForm() {
+        const form = document.getElementById("searchForm");
+        const category = form.querySelector("select[name='category']").value;
+        const keywordBox = document.getElementById("keywordBox");
+        if(category==="category"){
+            keywordBox.value=document.getElementById("statusBox").value;
+        }else{
+            keywordBox.value=searchFormTextBox.value;
+        }
+        form.submit();
+    }
+    searchFormTextBox.addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            submitForm();
+        }
+    });
+</script>
 </body>
 </html>

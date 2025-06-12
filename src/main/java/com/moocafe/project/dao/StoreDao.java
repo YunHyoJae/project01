@@ -5,6 +5,7 @@ import com.moocafe.project.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -15,4 +16,5 @@ public class StoreDao {
         return storeRepository.save(store);
     }
     public Optional<Store> findById(int id) {return storeRepository.findById(id);}
+    public List<Store> findAll() {return storeRepository.findAll();}
 }

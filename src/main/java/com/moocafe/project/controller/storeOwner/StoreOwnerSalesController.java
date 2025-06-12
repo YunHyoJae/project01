@@ -15,8 +15,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 @RequiredArgsConstructor
@@ -48,7 +50,19 @@ public class StoreOwnerSalesController {
                 endDate = LocalDate.now();
             }
 
+            // SalesSummaryDto 리스트에서 합계 구하기
             List<SalesSummaryDto> summaryList = salesService.getSalesSummary(storeId, startDate, endDate);
+
+            // 총 수량 및 총 매출액 구하기
+            int totalQuantity = summaryList.stream()
+                    .map(SalesSummaryDto::getTotalQuantity)
+                    .mapToInt(qty -> qty != null ? qty.intValue() : 0)
+                    .sum();
+
+            BigDecimal totalAmount = summaryList.stream()
+                    .map(SalesSummaryDto::getTotalAmount)
+                    .filter(Objects::nonNull)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
 
             model.addAttribute("summaryList", summaryList);
             model.addAttribute("storeId", storeId);
@@ -56,6 +70,8 @@ public class StoreOwnerSalesController {
             model.addAttribute("menuList", menuService.getMenuListForStoreOwner());
             model.addAttribute("startDate", java.sql.Date.valueOf(startDate));
             model.addAttribute("endDate", java.sql.Date.valueOf(endDate));
+            model.addAttribute("totalQuantity", totalQuantity);
+            model.addAttribute("totalAmount", totalAmount);
         }
 
         return "storeOwner/salesList"; // 📄 점주용 템플릿 (복사 필요)

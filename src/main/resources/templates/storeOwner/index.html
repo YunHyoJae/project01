@@ -1,18 +1,217 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{/storeOwner/meta::myHead('메인')}"></head>
+<head th:replace="~{/storeOwner/meta::myHead('메인')}">
+
+</head>
 <body>
+<style>
+  .dashboardWrapper {
+    flex: 1 1 60%;
+    min-width: 750px;
+    max-width: 900px;
+  }
+  .salesSection {
+    background: #fff;
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 32px;
+    box-shadow: 0 2px 8px #0001;
+  }
+  .salesHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    font-size: 20px;
+  }
+  .chartCaption {
+    font-size: 13px;
+    margin-top: 8px;
+    color: #888;
+  }
+  .gridSection {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .gridBox {
+    background: #fafbfc; !important;
+    border-radius: 8px;
+    padding: 18px 22px;
+    min-height: 120px;
+    box-shadow: 0 1px 4px #0001;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .boxHeader {
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .boxContent {
+    font-size: 14px;
+    color: #333;
+  }
+  .moreLink {
+    font-size: 13px;
+    color: #0099ff;
+    text-decoration: none;
+  }
+  .shortage-scroll {
+    max-height: 85px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  .shortage-scroll ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .todo-list {
+    margin: 0 0 0 16px;
+    padding: 0;
+    font-size: 14px;
+  }
+  .todo-list li { margin-bottom: 5px; }
+</style>
+
 <header th:replace="~{/storeOwner/tnb}"></header>
 <div class="section">
   <div th:replace="~{/storeOwner/header}"></div>
-  <div class="main-layout">
-    <h1>점주메인</h1>
-
-    <p>로그인한 사용자 ID: <span th:text="${user.userId}"></span></p>
-    <p>로그인한 사용자 NAME: <span th:text="${user.userName}"></span></p>
-    <p>첫 번째 스토어 ID: <span th:text="${user.storeId}"></span></p>
-    <p>첫 번째 스토어 NAME: <span th:text="${user.storeName}"></span></p>
+  <div class="mainLayout">
+    <div class="dashboardWrapper">
+      <!-- 상단 월별 매출 그래프 -->
+      <section class="salesSection">
+        <div class="salesHeader">
+          <h2>최근 3개월 매출</h2>
+          <a href="/storeOwner/salesList" class="moreLink">더보기</a>
+        </div>
+        <canvas id="salesChart" height="80"></canvas>
+        <div class="chartCaption"></div>
+      </section>
+      <!-- 아래 2x2 그리드 -->
+      <div class="gridSection">
+        <section class="gridBox">
+          <div class="boxHeader">
+            <span>재고현황</span>
+            <a href="/storeOwner/inventoryStore" class="moreLink">더보기</a>
+          </div>
+          <div class="boxContent shortage-scroll">
+            <ul>
+              <li th:each="s : ${shortageList}">
+                <span th:text="${s.itemName}"></span>
+                <span th:text="'(' + ${s.storeName} + ')'"></span>
+                <span th:text="${s.stock}"
+                      style="color:#fff; background:red; border-radius:4px; padding:2px 7px; font-weight:bold;"></span>
+              </li>
+            </ul>
+            <span th:if="${#lists.isEmpty(shortageList)}" style="color:#888;">부족재고 없음</span>
+          </div>
+        </section>
+        <section class="gridBox">
+          <div class="boxHeader">
+            <span>주문내역</span>
+            <a href="/storeOwner/orderList" class="moreLink">더보기</a>
+          </div>
+          <div class="boxContent">
+            <span>최근 주문 3건</span>
+            <ul style="margin:8px 0 0 16px; padding:0; font-size:14px;">
+              <li th:each="o : ${orderList}"><span th:text="${o.menuName}"></span> <span th:text="${o.quantity}"></span>개</li>
+            </ul>
+            <span th:if="${#lists.isEmpty(orderList)}">주문 내역 없음</span>
+          </div>
+        </section>
+        <section class="gridBox">
+          <div class="boxHeader">
+            <span>반품현황</span>
+            <a href="/storeOwner/returnList" class="moreLink">더보기</a>
+          </div>
+          <div class="boxContent">
+            <span>최근 반품 3건</span>
+            <ul style="margin:8px 0 0 16px; padding:0; font-size:14px;">
+              <li th:each="r : ${returnList}"><span th:text="${r.menuName}"></span> <span th:text="${r.quantity}"></span>개</li>
+            </ul>
+            <span th:if="${#lists.isEmpty(returnList)}">반품 내역 없음</span>
+          </div>
+        </section>
+        <section class="gridBox">
+          <div class="boxHeader">
+            <span>오늘의 할 일</span>
+            <a href="/storeOwner/todoList" class="moreLink">더보기</a>
+          </div>
+          <div class="boxContent">
+            <ul class="todo-list">
+              <li th:each="t : ${todoList}" th:text="${t}">할 일 예시</li>
+            </ul>
+            <span th:if="${#lists.isEmpty(todoList)}">오늘의 할 일이 없습니다.</span>
+          </div>
+        </section>
+      </div>
+    </div>
   </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  let chartLabels = /*[[${chartLabels}]]*/ [];
+  let menuDatasets = /*[[${menuDatasets}]]*/ [];
+
+  // 최신이 앞에 오도록 모든 데이터 reverse
+  chartLabels = chartLabels.slice().reverse();
+  menuDatasets = menuDatasets.map(ds => ({
+    ...ds,
+    data: ds.data.slice().reverse()
+  }));
+
+  const ctx = document.getElementById('salesChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: chartLabels,
+      datasets: menuDatasets
+    },
+    options: {
+      plugins: {
+        legend: { display: true },
+        datalabels: {
+          display: function(context) {
+            // 오직 맨 위(마지막 데이터셋)에만 표시
+            return context.datasetIndex === context.chart.data.datasets.length - 1;
+          },
+          anchor: 'end',
+          align: 'end',
+          font: { weight: 'bold', size: 12 },
+          color: '#333',
+          formatter: function(value, context) {
+            // 각 x축(월)에서 모든 데이터셋의 합계 구하기
+            const idx = context.dataIndex;
+            let sum = 0;
+            context.chart.data.datasets.forEach(ds => {
+              sum += ds.data[idx] || 0;
+            });
+            return sum.toLocaleString() + '원';
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              let value = context.raw || 0;
+              return context.dataset.label + ": " + value.toLocaleString() + "원";
+            }
+          }
+        }
+      },
+      responsive: true,
+      scales: {
+        x: { stacked: true },
+        y: { stacked: true, beginAtZero: true, ticks: { callback: v => v.toLocaleString() + '원' } }
+      }
+    },
+    plugins: [ChartDataLabels]
+  });
+  /*]]>*/
+</script>
 </body>
 </html>

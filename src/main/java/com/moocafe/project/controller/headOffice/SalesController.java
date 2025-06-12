@@ -4,7 +4,6 @@ import com.moocafe.project.dto.SalesSummaryDto;
 import com.moocafe.project.entity.Menu;
 import com.moocafe.project.entity.MenuPrice;
 import com.moocafe.project.entity.Sales;
-import com.moocafe.project.entity.Store;
 import com.moocafe.project.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -14,9 +13,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.io.UnsupportedEncodingException;
+import java.util.Objects;
 
 @Controller
 public class SalesController {
@@ -60,8 +61,21 @@ public class SalesController {
             salesList = salesRepository.findAll();
         }
 
-        List<Store> storeList = storeRepository.findAll();
+        // SalesSummaryDto 리스트에서 합계 구하기
         List<SalesSummaryDto> summaryList = salesRepository.findSalesSummary(storeId, startDate, endDate);
+
+        // 총 수량 및 총 매출액 구하기
+        int totalQuantity = summaryList.stream()
+                .map(SalesSummaryDto::getTotalQuantity)
+                .mapToInt(qty -> qty != null ? qty.intValue() : 0)
+                .sum();
+
+        BigDecimal totalAmount = summaryList.stream()
+                .map(SalesSummaryDto::getTotalAmount)
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+
         model.addAttribute("summaryList", summaryList);
         model.addAttribute("salesList", salesList);
         model.addAttribute("storeId", storeId);
@@ -69,7 +83,9 @@ public class SalesController {
         model.addAttribute("startDate", startDate);
         model.addAttribute("endDate", endDate);
         model.addAttribute("menuList", menuRepository.findMenusWithPrice());
-//        model.addAttribute("menuList", menuList); // 뷰에서 사용 가능
+        model.addAttribute("totalQuantity", totalQuantity);
+        model.addAttribute("totalAmount", totalAmount);
+
         return "headOffice/salesList";
     }
 
@@ -91,7 +107,8 @@ public class SalesController {
 
             for (Menu item : menuItems) {
                 int totalUsed = item.getQuantityUsed() * quantity;
-                int currentStock = inventoryStoreRepository.findQuantityByStoreIdAndItemCode(storeId, item.getItemCode());
+                Integer currentStockObj = inventoryStoreRepository.findQuantityByStoreIdAndItemCode(storeId, item.getItemCode());
+                int currentStock = currentStockObj != null ? currentStockObj : 0;
 
                 if (currentStock < totalUsed) {
                     String msg = "[" + item.getItemCode() + "] 품목 재고가 부족합니다. (필요: " + totalUsed + " / 보유: " + currentStock + ")";
