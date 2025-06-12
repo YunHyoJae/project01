@@ -5,7 +5,57 @@ document.addEventListener("DOMContentLoaded", function () {
     loadPage(defaultPage);
   }
   initializeSubmenu(); // 서브메뉴 초기화 함수 호출
+  initReturnTableHandler({        // 반품리스트
+    wrapperSelector: '.return-wrapper',
+    buttonSelector: '.return-btn'
+  });
 });
+
+/*  공통 - 페이지 로드  */
+function loadPage(pageUrl) {
+  fetch(pageUrl)
+    .then(response => {
+      if (!response.ok) throw new Error('페이지를 불러올 수 없습니다.');
+      return response.text();
+    })
+    .then(html => {
+      document.getElementById('content-area').innerHTML = html;
+      
+      // 동적으로 로드된 후 초기화할 함수들
+      initializeReturnFilter();       // 반품 필터
+      initializeReceivingFilter();    // 입고 필터
+      initializeSubmenu();            // 서브메뉴
+      initReturnTableHandler({        // 반품리스트
+              wrapperSelector: '.return-wrapper',
+              buttonSelector: '.return-btn'
+            });
+          })
+    .catch(error => {
+      console.error(error);
+      document.getElementById('content-area').innerHTML = '<p>페이지 로딩 실패</p>';
+    });
+}
+
+/*  공통 - 메인 메뉴 변경  */
+function changeMenu(menu) {
+  const allMenus = ["order", "return", "sales", "service", "receiving", "shipping", "inventory",  "board"];
+
+  allMenus.forEach(item => {
+    const submenu = document.querySelector(".sub_" + item);
+    if (submenu) {
+      submenu.style.display = (item === menu) ? "block" : "none";
+    }
+  });
+}
+
+/* 공통 - 체크박스 전체선택 기능 */
+function selectAll(selectAll)  {
+  const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+  
+  checkboxes.forEach((checkbox) => {
+    checkbox.checked = selectAll.checked;
+  })
+}
 
 /* 서브메뉴 초기화 함수 */
 function initializeSubmenu() {
@@ -72,47 +122,61 @@ function initializeReceivingFilter() {
   });
 }
 
-/*  공통 - 페이지 로드  */
-function loadPage(pageUrl) {
-  fetch(pageUrl)
-    .then(response => {
-      if (!response.ok) throw new Error('페이지를 불러올 수 없습니다.');
-      return response.text();
-    })
-    .then(html => {
-      document.getElementById('content-area').innerHTML = html;
-      
-      // 동적으로 로드된 후 초기화할 함수들
-      initializeReturnFilter();       // 반품 필터
-      initializeReceivingFilter();    // 입고 필터
-      initializeSubmenu();            // 서브메뉴
+/* 반품 리스트 */
+function initReturnTableHandler({
+  wrapperSelector = '.return-wrapper',
+  buttonSelector = '.return-btn',
+}) {
+  const returnWrapper = document.querySelector(wrapperSelector);
+  if (!returnWrapper) return;
 
-    })
-    .catch(error => {
-      console.error(error);
-      document.getElementById('content-area').innerHTML = '<p>페이지 로딩 실패</p>';
+  const returnTableBody = returnWrapper.querySelector('tbody');
+  const returnButtons = document.querySelectorAll(buttonSelector);
+
+  returnButtons.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const row = btn.closest('tr');
+      if (!row) return;
+
+      const cells = row.querySelectorAll('td');
+      const orderNum = cells[0].textContent.trim();
+      const itemCode = cells[2].textContent.trim();
+      const itemName = cells[3].textContent.trim();
+
+      const alreadyExists = Array.from(returnTableBody.querySelectorAll('tr')).some(tr => {
+        return tr.children[1].textContent.trim() === itemCode;
+      });
+
+      if (!alreadyExists) {
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+          <td>${orderNum}</td>
+          <td>${itemCode}</td>
+          <td>${itemName}</td>
+          <td><input type="number" value="1" min="1" style="width: 60px;"></td>
+          <td><button class="delete-row-btn">삭제</button></td>
+        `;
+        returnTableBody.appendChild(newRow);
+      }
+
+      returnWrapper.style.display = 'block';
+      window.scrollTo({ top: returnWrapper.offsetTop, behavior: 'smooth' });
+      console.log('initReturnTableHandler 실행됨');
+      console.log('returnWrapper:', returnWrapper);
+      console.log('returnButtons:', returnButtons.length);
     });
-}
+  });
 
-/* 공통 - 메뉴 변경 */
-function changeMenu(menu) {
-  const allMenus = ["order", "return", "sales", "service", "receiving", "shipping", "inventory",  "board"];
+  returnWrapper.addEventListener('click', function (e) {
+    if (e.target.classList.contains('delete-row-btn')) {
+      const row = e.target.closest('tr');
+      if (row) row.remove();
 
-  allMenus.forEach(item => {
-    const submenu = document.querySelector(".sub_" + item);
-    if (submenu) {
-      submenu.style.display = (item === menu) ? "block" : "none";
+      if (returnTableBody.children.length === 0) {
+        returnWrapper.style.display = 'none';
+      }
     }
   });
-}
-
-/* 공통 - 체크박스 전체선택 기능 */
-function selectAll(selectAll)  {
-  const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-  
-  checkboxes.forEach((checkbox) => {
-    checkbox.checked = selectAll.checked;
-  })
 }
 
 /*  반품 조회  */
@@ -143,7 +207,7 @@ function initializeReturnFilter() { // 탭 변경 이벤트
   });
 }
 
-/* 주문신청서 */
+/*   주문신청서   */
 // 행 추가
 function addRow() {
   const tbody = document.querySelector('#orderFormTable tbody');
@@ -159,7 +223,7 @@ function addRow() {
     <td><input type="number"></td>
     <td><input type="number"></td>
     <td><input type="text"></td>
-    <td><button onclick="deleteRow(this)">❌</button></td>
+    <td><button onclick="deleteRow(this)" class="del_rowBtn">❌</button></td>
   `;
 
   // 행이 1개 이상 있을 경우 마지막 전 위치에 추가
@@ -228,12 +292,45 @@ if (startDateInput && endDateInput) {
   });
 }
 
-// 체크박스 전체 선택
-const checkAll = document.getElementById("checkAll");
-
-if (checkAll) {
-  checkAll.addEventListener("change", () => {
-    const rowChecks = document.querySelectorAll(".row-check");
-    rowChecks.forEach(cb => cb.checked = checkAll.checked);
-  });
+/*  메뉴 등록  */
+// 행 추가
+function menuAddRow() {
+  const itemContainer = document.querySelector('.item-container');
+  
+  // 새로운 줄을 생성
+  const newRow = document.createElement('div');
+  newRow.classList.add('form-row', 'item-row');
+  newRow.innerHTML = `
+    <label class="invisible-label">품목코드</label>
+    <input type="text" placeholder="품목코드" />
+    <span class="label">사용량</span>
+    <input type="text" placeholder="사용량" />
+    <button type="button" class="delete-btn" onclick="menuDelRow(this)">❌</button>
+  `;
+  
+  // 새로운 줄을 item-container에 추가
+  itemContainer.appendChild(newRow);
 }
+
+// 행 삭제
+function menuDelRow(button) {
+  const row = button.closest('.form-row');  // 삭제 버튼이 포함된 행을 찾음
+  row.remove();  // 해당 행 삭제
+}
+
+// 프로필 정보 수정 <!-- 카카오 주소 API -->
+function execDaumPostcode(type) {
+      new daum.Postcode({
+        oncomplete: function (data) {
+          if (type === 'user') {
+            document.getElementById('user-postcode').value = data.zonecode;
+            document.getElementById('user-address').value = data.address;
+            document.getElementById('user-detail-address').focus();
+          } else if (type === 'store') {
+            document.getElementById('store-postcode').value = data.zonecode;
+            document.getElementById('store-address').value = data.address;
+            document.getElementById('store-detail-address').focus();
+          }
+        }
+      }).open();
+    }
