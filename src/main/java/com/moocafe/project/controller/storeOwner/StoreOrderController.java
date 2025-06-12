@@ -4,6 +4,7 @@ import com.moocafe.project.dto.CustomUserDetails;
 import com.moocafe.project.dto.ItemSearchDto;
 import com.moocafe.project.dto.StoreOrderDto;
 import com.moocafe.project.dto.StoreOrderListResponseDto;
+import com.moocafe.project.entity.InventoryItem;
 import com.moocafe.project.repository.InventoryItemRepository;
 import com.moocafe.project.service.StoreOrderService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/storeOwner")
@@ -51,12 +53,12 @@ public class StoreOrderController {
     @GetMapping("/storeorder/storeorder-popup")
     public String showItemPopup(Model model) {
         List<ItemSearchDto> items = inventoryItemRepository.findAll()
-                        .stream()
-                        .map(i -> new ItemSearchDto(
-                                i.getItemCode(),
-                                i.getItemName(),
-                                i.getItemPrice()))
-                        .toList();
+                .stream()
+                .map(i -> new ItemSearchDto(
+                        i.getItemCode(),
+                        i.getItemName(),
+                        i.getItemPrice()))
+                .toList();
         model.addAttribute("items", items);
         return "storeOwner/storeorder-popup";
     }

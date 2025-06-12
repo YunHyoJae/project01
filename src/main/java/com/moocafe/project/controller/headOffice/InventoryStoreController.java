@@ -1,10 +1,7 @@
 package com.moocafe.project.controller.headOffice;
 
 import com.moocafe.project.constent.Role;
-import com.moocafe.project.dto.CustomUserDetails;
-import com.moocafe.project.dto.InventoryPivotDto;
-import com.moocafe.project.dto.InventorySummaryDto;
-import com.moocafe.project.dto.InventorySummaryPivotRowDto;
+import com.moocafe.project.dto.*;
 import com.moocafe.project.entity.*;
 import com.moocafe.project.repository.*;
 import com.moocafe.project.service.InventoryStoreService;
@@ -72,43 +69,6 @@ public class InventoryStoreController {
         return "headOffice/inventorySummary";
     }
 
-//    @GetMapping
-//    public String viewAllInventoryForAdmin(Model model) {
-//        List<InventorySummaryDto> rawList = inventorySummaryService.getInventorySummary();
-//        Map<String, InventorySummaryPivotRowDto> pivotMap = new LinkedHashMap<>();
-//
-//        // 🔽 예상 사용량 계산용 날짜 범위
-//        LocalDate threeMonthsAgo = LocalDate.now().minusMonths(3);
-//        Date startDate = java.sql.Date.valueOf(threeMonthsAgo);
-//        Date endDate = java.sql.Date.valueOf(LocalDate.now());
-//
-//        for (InventorySummaryDto dto : rawList) {
-//            String key = dto.getItemCode() + "::" + dto.getItemName();
-//            pivotMap.putIfAbsent(key, new InventorySummaryPivotRowDto());
-//            InventorySummaryPivotRowDto row = pivotMap.get(key);
-//
-//            row.setItemCode(dto.getItemCode());
-//            row.setItemName(dto.getItemName());
-//            row.getStoreStockMap().put(dto.getStoreId(), dto.getTotalCount().intValue());
-//
-//            // 🔽 추가: 예상 사용량 계산
-//            List<Menu> menus = menuRepository.findByItemCode(dto.getItemCode());
-//            int totalExpectedUsage = 0;
-//            for (Menu menu : menus) {
-//                int usedQty = menu.getQuantityUsed();
-//                int soldQty = salesRepository.sumQuantityByStoreIdAndMenuIdAndPeriod(
-//                        dto.getStoreId(), menu.getMenuId(), startDate, endDate
-//                );
-//                totalExpectedUsage += usedQty * soldQty;
-//            }
-//            row.putExpectedUsage(dto.getStoreId(), totalExpectedUsage);  // 🔑 저장
-//        }
-//
-//        model.addAttribute("storeList", storeRepository.findAll());
-//        model.addAttribute("pivotList", pivotMap.values());
-//        return "headOffice/inventoryStore";
-//    }
-
     @GetMapping("/byRole")
     public String viewInventoryByStore(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
         Member loginMember = userDetails.getLoggedMember();
@@ -157,33 +117,6 @@ public class InventoryStoreController {
         return "headOffice/inventoryStore";
     }
 
-    @GetMapping("/storeOwner/inventoryStore")
-    public String viewStoreOwnerInventory(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
-        Member loginMember = userDetails.getLoggedMember();
-        List<MemberStore> msList = memberStoreRepository.findByMemberId(loginMember.getId());
-
-        if (!msList.isEmpty()) {
-            Store store = msList.get(0).getStore();  // 점주가 여러 매장 소유 시 첫 번째 기준
-            Integer storeId = store.getId();
-
-            List<InventorySummaryDto> rawList = inventorySummaryService.getInventorySummaryByStoreId(storeId);
-            Map<String, InventorySummaryPivotRowDto> pivotMap = new LinkedHashMap<>();
-
-            for (InventorySummaryDto dto : rawList) {
-                String key = dto.getItemCode() + "::" + dto.getItemName();
-                pivotMap.putIfAbsent(key, new InventorySummaryPivotRowDto());
-                InventorySummaryPivotRowDto row = pivotMap.get(key);
-                row.setItemCode(dto.getItemCode());
-                row.setItemName(dto.getItemName());
-                row.getStoreStockMap().put(dto.getStoreId(), dto.getTotalCount().intValue());
-            }
-
-            model.addAttribute("pivotList", pivotMap.values());
-            model.addAttribute("store", store);  // store.name 등 템플릿에서 사용 가능
-        }
-
-        return "storeOwner/inventoryStore";  // 점주용 템플릿
-    }
 
     @GetMapping("/headOffice/inventoryPivot")
     public String viewInventoryPivot(Model model) {
@@ -296,7 +229,5 @@ public class InventoryStoreController {
 
         return "headOffice/inventoryStore";
     }
-
-
 
 }

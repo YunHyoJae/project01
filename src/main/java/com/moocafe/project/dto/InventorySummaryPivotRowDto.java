@@ -33,12 +33,23 @@ public class InventorySummaryPivotRowDto {
 
     // 재고 부족 시 스타일 적용
     public String getStockCssClass(int storeId) {
+
         int stock = getStockByStoreId(storeId);
         int expectedThreeMonth = getExpectedUsageByStoreId(storeId);
-
-        // 👉 3개월치 예상 사용량을 3으로 나누어 1개월 사용량 기준으로 비교
         int expectedMonthly = (int) Math.ceil(expectedThreeMonth / 3.0);
-
+        if (expectedMonthly == 0) {
+            return "";
+        }
         return stock < expectedMonthly ? "low-stock" : "";
     }
+
+
+    private Map<Integer, Integer> neededRounded = new HashMap<>();
+    public void putNeededRounded(Integer storeId, Integer value) {
+        neededRounded.put(storeId, value);
+    }
+    public Integer getNeededRoundedByStoreId(Integer storeId) {
+        return neededRounded.getOrDefault(storeId, 0);
+    }
+
 }
