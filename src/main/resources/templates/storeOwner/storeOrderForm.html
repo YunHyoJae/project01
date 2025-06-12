@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>주문 신청</title>
+    <script>
+        async function openItemPopup(index) {
+            window.open(`/storeOwner/storeOrderPopup?index=${index}`, 'popup', 'width=500,height=400');
+        }
+
+        function selectItemFromPopup(code, name, price, stock) {
+            const rows = document.querySelectorAll("#order-items tr");
+            const targetIndex = rows.length - 1;
+
+            document.getElementById(`itemCode-${targetIndex}`).value = code;
+            document.getElementById(`itemName-${targetIndex}`).innerText = name;
+            document.getElementById(`price-${targetIndex}`).innerText = price;
+            document.getElementById(`stock-${targetIndex}`).innerText = stock;
+
+            updateTotal(targetIndex);
+        }
+
+        function addRow() {
+            const table = document.getElementById("order-items");
+            const index = table.rows.length;
+            const row = table.insertRow();
+
+            row.innerHTML = `
+            <td><span class="orderNumberCell" id="orderNumber-${index}">${document.getElementById("orderNumber").textContent}</span></td>
+            <td>
+              <input type="text" id="itemCode-${index}" name="itemCode"
+                     onblur="onItemCodeInput(${index})" readonly>
+              <button type="button" onclick="openItemPopup(${index})">검색</button>
+            </td>
+            <td><span id="itemName-${index}">-</span></td>
+            <td><input type="number" name="orderedQuantity" min="1" value="1" oninput="updateTotal(${index})"></td>
+            <td><span id="stock-${index}">-</span></td>
+            <td><span id="price-${index}">0</span></td>
+            <td><span id="subtotal-${index}">0</span></td>
+            `;
+        }
+
+        function updateTotal(index) {
+            const price = parseInt(document.getElementById(`price-${index}`).innerText) || 0;
+            const qty = parseInt(document.getElementsByName("orderedQuantity")[index].value) || 0;
+            const subtotal = price * qty;
+            document.getElementById(`subtotal-${index}`).innerText = subtotal;
+
+            let total = 0;
+            const subtotals = document.querySelectorAll("[id^=subtotal-]");
+            subtotals.forEach(e => total += parseInt(e.innerText) || 0);
+            document.getElementById("totalAmount").innerText = total;
+        }
+
+        async function submitOrder() {
+            const itemCodes = document.getElementsByName("itemCode");
+            const quantities = document.getElementsByName("orderedQuantity");
+
+            const items = [];
+
+            for (let i = 0; i < itemCodes.length; i++) {
+                const code = itemCodes[i].value.trim();
+                const qty = parseInt(quantities[i].value.trim());
+
+                if (code && qty > 0) {
+                    items.push({ itemCode: code, orderedQuantity: qty });
+                }
+            }
+
+            if (items.length === 0) {
+                alert("품목을 선택하고 수량을 입력하세요.");
+                return;
+            }
+
+            const payload = {
+                items: items
+            };
+
+            const response = await fetch('/storeOwner/storeOrder', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (response.ok) {
+                alert("주문 완료!");
+            } else {
+                alert("주문 실패: " + response.statusText);
+            }
+        }
+
+        async function fetchItemInfo(itemCode) {
+            if (!itemCode) return null;
+            try {
+                const res = await fetch('/storeOwner/storeOrderItemInfo?itemCode=' + encodeURIComponent(itemCode));
+                if (!res.ok) return null;
+                return await res.json();
+            } catch (e) {
+                return null;
+            }
+        }
+
+        async function onItemCodeInput(index) {
+            const code = document.getElementById(`itemCode-${index}`).value.trim();
+            if (!code) return;
+            const data = await fetchItemInfo(code);
+            if (data) {
+                document.getElementById(`itemName-${index}`).innerText = data.itemName || '-';
+                document.getElementById(`price-${index}`).innerText = data.itemPrice || 0;
+                document.getElementById(`stock-${index}`).innerText = data.stockQuantity ?? "-";
+                updateTotal(index);
+            } else {
+                document.getElementById(`itemName-${index}`).innerText = '-';
+                document.getElementById(`price-${index}`).innerText = 0;
+                document.getElementById(`stock-${index}`).innerText = '-';
+                updateTotal(index);
+            }
+        }
+
+        window.onload = () => {
+            for (let i = 0; i < 3; i++) addRow();
+        }
+    </script>
+</head>
+<body>
+<h2>주문 신청</h2>
+<h3>주문번호: <span id="orderNumber" th:text="${orderNumber}">ORD-XXXX</span></h3>
+<table border="1">
+    <thead>
+    <tr>
+        <th>주문번호</th>
+        <th>품목코드</th>
+        <th>품목명</th>
+        <th>수량</th>
+        <th>재고</th>
+        <th>단가(₩)</th>
+        <th>합계(₩)</th>
+    </tr>
+    </thead>
+    <tbody id="order-items"></tbody>
+</table>
+<p><strong>총 금액:</strong> <span id="totalAmount">0</span>원</p>
+<button type="button" onclick="addRow()">행 추가</button>
+<button type="button" onclick="submitOrder()">주문</button>
+</body>
+</html>
+
+
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>주문 신청</title>-->
+<!--    <script>-->
+<!--        const priceMap = {};-->
+
+<!--        async function openItemPopup(index) {-->
+<!--            window.open(`/storeOwner/storeOrderPopup?index=${index}`, 'popup', 'width=500,height=400');-->
+<!--        }-->
+
+<!--        function selectItem(index, code, name, price) {-->
+<!--            document.getElementById(`itemCode-${index}`).value = code;-->
+<!--            document.getElementById(`itemName-${index}`).innerText = name;-->
+<!--            document.getElementById(`price-${index}`).innerText = price;-->
+<!--            document.getElementById(`stock-${index}`).innerText = data.stockQuantity ?? "-";-->
+<!--            updateTotal(index);-->
+<!--        }-->
+
+<!--        function addRow() {-->
+<!--            const table = document.getElementById("order-items");-->
+<!--            const index = table.rows.length;-->
+<!--            const row = table.insertRow();-->
+
+<!--            row.innerHTML = `-->
+<!--        <td>-->
+<!--          <input type="text" id="itemCode-${index}" name="itemCode"-->
+<!--                 onblur="onItemCodeInput(${index})" readonly>-->
+<!--          <button type="button" onclick="openItemPopup(${index})">검색</button>-->
+<!--        </td>-->
+<!--        <td><span id="itemName-${index}">-</span></td>-->
+<!--        <td><span id="price-${index}">0</span></td>-->
+<!--        <td><span id="stock-${index}">-</span></td>-->
+<!--        <td><input type="number" name="orderedQuantity" min="1" value="1" oninput="updateTotal(${index})"></td>-->
+<!--        <td><span id="subtotal-${index}">0</span></td>-->
+<!--        `;-->
+<!--        }-->
+
+<!--        function updateTotal(index) {-->
+<!--            const price = parseInt(document.getElementById(`price-${index}`).innerText) || 0;-->
+<!--            const qty = parseInt(document.getElementsByName("orderedQuantity")[index].value) || 0;-->
+<!--            const subtotal = price * qty;-->
+<!--            document.getElementById(`subtotal-${index}`).innerText = subtotal;-->
+
+<!--            let total = 0;-->
+<!--            const subtotals = document.querySelectorAll("[id^=subtotal-]");-->
+<!--            subtotals.forEach(e => total += parseInt(e.innerText) || 0);-->
+<!--            document.getElementById("totalAmount").innerText = total;-->
+<!--        }-->
+
+<!--        async function submitOrder() {-->
+<!--            const itemCodes = document.getElementsByName("itemCode");-->
+<!--            const quantities = document.getElementsByName("orderedQuantity");-->
+
+<!--            const items = [];-->
+
+<!--            for (let i = 0; i < itemCodes.length; i++) {-->
+<!--                const code = itemCodes[i].value.trim();-->
+<!--                const qty = parseInt(quantities[i].value.trim());-->
+
+<!--                if (code && qty > 0) {-->
+<!--                    items.push({ itemCode: code, orderedQuantity: qty });-->
+<!--                }-->
+<!--            }-->
+
+<!--            if (items.length === 0) {-->
+<!--                alert("품목을 선택하고 수량을 입력하세요.");-->
+<!--                return;-->
+<!--            }-->
+
+<!--            const payload = {-->
+<!--                items: items-->
+<!--            };-->
+
+<!--            const response = await fetch('/storeOwner/storeOrder', {-->
+<!--                method: 'POST',-->
+<!--                headers: { 'Content-Type': 'application/json' },-->
+<!--                body: JSON.stringify(payload)-->
+<!--            });-->
+
+<!--            if (response.ok) {-->
+<!--                alert("주문 완료!");-->
+<!--            } else {-->
+<!--                alert("주문 실패: " + response.statusText);-->
+<!--            }-->
+<!--        }-->
+
+<!--        function getQueryParams(name) {-->
+<!--            const params = new URLSearchParams(window.location.search);-->
+<!--            const values = [];-->
+<!--            for (const [key, value] of params.entries()) {-->
+<!--                if (key === name) values.push(value);-->
+<!--            }-->
+<!--            return values;-->
+<!--        }-->
+
+<!--        window.onload = () => {-->
+<!--            const itemCodes = getQueryParams("itemCode");-->
+<!--            const neededQtys = getQueryParams("needed");-->
+<!--            const rowCount = Math.max(itemCodes.length, neededQtys.length, 3);-->
+<!--            for (let i = 0; i < rowCount; i++) addRow();-->
+
+<!--            for (let i = 0; i < itemCodes.length; i++) {-->
+<!--                if (itemCodes[i]) {-->
+<!--                    document.getElementById(`itemCode-${i}`).value = itemCodes[i];-->
+<!--                    onItemCodeInput(i);-->
+<!--                }-->
+<!--                if (neededQtys[i]) document.getElementsByName("orderedQuantity")[i].value = neededQtys[i];-->
+<!--            }-->
+<!--        };-->
+
+<!--        async function fetchItemInfo(itemCode) {-->
+<!--            if (!itemCode) return null;-->
+<!--            try {-->
+<!--                const res = await fetch('/storeOwner/storeOrderItemInfo?itemCode=' + encodeURIComponent(itemCode));-->
+<!--                if (!res.ok) return null;-->
+<!--                return await res.json();-->
+<!--            } catch (e) {-->
+<!--                return null;-->
+<!--            }-->
+<!--        }-->
+
+<!--        async function onItemCodeInput(index) {-->
+<!--            const code = document.getElementById(`itemCode-${index}`).value.trim();-->
+<!--            if (!code) return;-->
+<!--            const data = await fetchItemInfo(code);-->
+<!--            if (data) {-->
+<!--                document.getElementById(`itemName-${index}`).innerText = data.itemName || '-';-->
+<!--                document.getElementById(`price-${index}`).innerText = data.itemPrice || 0;-->
+<!--                updateTotal(index);-->
+<!--            } else {-->
+<!--                document.getElementById(`itemName-${index}`).innerText = '-';-->
+<!--                document.getElementById(`price-${index}`).innerText = 0;-->
+<!--                updateTotal(index);-->
+<!--            }-->
+<!--        }-->
+<!--    </script>-->
+<!--</head>-->
+<!--<body>-->
+<!--<h2>주문 신청</h2>-->
+
+<!--<h3>주문번호: <span th:text="${orderNumber}"></span></h3>-->
+<!--<table border="1">-->
+<!--    <thead>-->
+<!--    <tr>-->
+<!--        <th>주문번호</th>-->
+<!--        <th>품목코드</th>-->
+<!--        <th>품목명</th>-->
+<!--        <th>수량</th>-->
+<!--        <th>재고</th>-->
+<!--        <th>단가(₩)</th>-->
+<!--        <th>소계(₩)</th>-->
+<!--    </tr>-->
+<!--    </thead>-->
+<!--    <tbody id="order-items">-->
+<!--    <tr>-->
+<!--        <td><span th:text="${orderNumber}"></span></td>-->
+<!--    </tr>-->
+<!--    </tbody>-->
+<!--</table>-->
+
+<!--<p><strong>총 금액:</strong> <span id="totalAmount">0</span>원</p>-->
+
+<!--<button type="button" onclick="addRow()">행 추가</button>-->
+<!--<button type="button" onclick="submitOrder()">주문</button>-->
+<!--</body>-->
+<!--</html>-->

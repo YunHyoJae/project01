@@ -20,7 +20,6 @@
     </tr>
     </thead>
     <tbody id="outbound-table">
-    <!-- 예시 데이터 -->
     <tr th:each="row : ${outbounds}">
         <td><input type="checkbox" class="outbound-checkbox" th:value="${row.outBoundId}" /></td>
         <td th:text="${row.storeName}"></td>
@@ -50,7 +49,7 @@
             return;
         }
 
-        fetch('/headoffice/outbound/update-status', {
+        fetch('/headOffice/outboundManagement', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ outBoundIds: checked, status: status })

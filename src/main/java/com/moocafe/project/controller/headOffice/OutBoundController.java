@@ -19,14 +19,14 @@ public class OutBoundController {
 
     private final OutBoundService outBoundService;
 
-    @GetMapping("/outbound/list")
+    @GetMapping("/outboundManagement")
     public String showOutBoundList(Model model) {
         List<OutBoundListResponseDto> list = outBoundService.getOutBoundList();
         model.addAttribute("outbounds", list);
-        return "headOffice/outbound-list";
+        return "/headoffice/outboundManagement";
     }
 
-    @PostMapping("/outbound/update-status")
+    @PostMapping("/outboundManagement")
     @ResponseBody
     public ResponseEntity<String> updateStatus(@RequestBody OutBoundStatusDto dto) {
         if (dto.getOutBoundIds() == null || dto.getOutBoundIds().isEmpty()) {
@@ -47,11 +47,8 @@ public class OutBoundController {
             }
             return ResponseEntity.ok("상태 변경이 완료되었습니다.");
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.internalServerError().body("서버 오류: 상태 변경 실패");
         }
-    }
-    @GetMapping("/update-status")
-    public String showUpdateStatusPage() {
-        return "headOffice/update-status";
     }
 }

@@ -1,10 +1,10 @@
 package com.moocafe.project.controller.storeOwner;
 
-import com.moocafe.project.dto.CustomUserDetails;
-import com.moocafe.project.dto.ItemSearchDto;
-import com.moocafe.project.dto.StoreOrderDto;
-import com.moocafe.project.dto.StoreOrderListResponseDto;
+import com.moocafe.project.dto.*;
+import com.moocafe.project.entity.InventoryItem;
 import com.moocafe.project.repository.InventoryItemRepository;
+import com.moocafe.project.repository.InventoryStoreRepository;
+import com.moocafe.project.service.ReturnService;
 import com.moocafe.project.service.StoreOrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -14,7 +14,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Controller
 @RequestMapping("/storeOwner")
@@ -23,14 +29,20 @@ public class StoreOrderController {
 
     private final StoreOrderService storeOrderService;
     private final InventoryItemRepository inventoryItemRepository;
+    private final InventoryStoreRepository inventoryStoreRepository;
+    private final ReturnService returnService;
 
-    @GetMapping("/storeorder/form")
-    public String showOrderForm(Model model) {
+    @GetMapping("/storeOrderForm")
+    public String showOrderForm(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Integer storeId = userDetails.toDto().getStoreId();
+
+        String orderNumber = storeOrderService.generateOrderNumber(storeId);
+        model.addAttribute("orderNumber", orderNumber);
         model.addAttribute("orderDto", new StoreOrderDto());
-        return "storeOwner/storeorder-form";
+        return "/storeOwner/storeOrderForm";
     }
 
-    @GetMapping("/storeorder/list-view")
+    @GetMapping("/storeOrderList")
     public String showOrderListPage(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") String startDate,
@@ -41,28 +53,50 @@ public class StoreOrderController {
 
         List<StoreOrderListResponseDto> orderList = storeOrderService.getOrderList(storeId, startDate, endDate);
 
+        List<ReturnItemDto> items = IntStream.range(0, 3)
+                .mapToObj(i -> new ReturnItemDto())
+                .collect(Collectors.toList());
+
+        ReturnDto returnDto = new ReturnDto();
+        returnDto.setItems(items); //returnDto.setReturnItems(items);
+        returnDto.setReturnNumber(generateReturnNumber());
+
+        model.addAttribute("returnDto", returnDto);
         model.addAttribute("orderList", orderList);
         model.addAttribute("startDate", startDate);
         model.addAttribute("endDate", endDate);
 
-        return "storeOwner/storeorder-list";
+        return "/storeOwner/storeOrderList";
     }
 
-    @GetMapping("/storeorder/storeorder-popup")
+    private String generateReturnNumber() {
+        String date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String random = UUID.randomUUID().toString().substring(0, 4).toUpperCase();
+        return "RE" + date + "-" + random;
+    }
+
+    @PostMapping("/storeOrderReturn") //return
+    public String submitReturn(@ModelAttribute ReturnDto returnDto) {
+        returnService.saveReturn(returnDto);
+        return "redirect:/storeOwner/storeOrderList"; //return "storeOwner/storeOrderList";
+    }
+
+    @GetMapping("/storeOrderPopup")
     public String showItemPopup(Model model) {
         List<ItemSearchDto> items = inventoryItemRepository.findAll()
-                        .stream()
-                        .map(i -> new ItemSearchDto(
-                                i.getItemCode(),
-                                i.getItemName(),
-                                i.getItemPrice()))
-                        .toList();
+                .stream()
+                .map(i -> new ItemSearchDto(
+                        i.getItemCode(),
+                        i.getItemName(),
+                        i.getItemQuantity(),
+                        i.getItemPrice()))
+                .toList();
         model.addAttribute("items", items);
-        return "storeOwner/storeorder-popup";
+        return "/storeOwner/storeOrderPopup";
     }
 
 
-    @PostMapping("/storeorder")
+    @PostMapping("/storeOrder")
     @ResponseBody
     public ResponseEntity<String> createOrder(
             @AuthenticationPrincipal CustomUserDetails userDetails,
@@ -78,15 +112,34 @@ public class StoreOrderController {
         return ResponseEntity.ok("주문성공");
     }
 
-    @GetMapping("/storeorder/list")
+    @GetMapping("/storeOrderItemInfo")
     @ResponseBody
-    public ResponseEntity<List<StoreOrderListResponseDto>> getOrderList(
-            @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") String startDate,
-            @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") String endDate
-    ) {
-        Integer storeId = userDetails.toDto().getStoreId();
-        List<StoreOrderListResponseDto> orderList = storeOrderService.getOrderList(storeId, startDate, endDate);
-        return ResponseEntity.ok(orderList);
+    public ResponseEntity<ItemSearchDto> getItemInfo(@RequestParam String itemCode) {
+        Optional<InventoryItem> itemOpt = inventoryItemRepository.findByItemCode(itemCode);
+        if (itemOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        InventoryItem item = itemOpt.get();
+        int stockQty = inventoryStoreRepository.findQuantityByStoreIdAndItemCode(1, itemCode);
+
+        ItemSearchDto dto = new ItemSearchDto(
+                item.getItemCode(),
+                item.getItemName(),
+                item.getItemPrice(),
+                stockQty);
+        return ResponseEntity.ok(dto);
     }
+
+//    @GetMapping("/storeOrderList")
+//    @ResponseBody
+//    public ResponseEntity<List<StoreOrderListResponseDto>> getOrderList(
+//            @AuthenticationPrincipal CustomUserDetails userDetails,
+//            @RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") String startDate,
+//            @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") String endDate
+//    ) {
+//        Integer storeId = userDetails.toDto().getStoreId();
+//        List<StoreOrderListResponseDto> orderList = storeOrderService.getOrderList(storeId, startDate, endDate);
+//        return ResponseEntity.ok(orderList);
+//    }
 }
