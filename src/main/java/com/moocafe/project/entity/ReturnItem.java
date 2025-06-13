@@ -21,7 +21,7 @@ public class ReturnItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "itemCode", referencedColumnName = "itemCode", nullable = false)
-    private InventoryStore itemCode;
+    private InventoryItem item;
 
 
     @Column(nullable = false)

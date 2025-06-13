@@ -1,16 +1,13 @@
 package com.moocafe.project.controller.headOffice;
 
-import com.moocafe.project.dto.CustomUserDetails;
-import com.moocafe.project.dto.InventoryShortageDto;
-import com.moocafe.project.dto.InventorySummaryDto;
-import com.moocafe.project.dto.InventorySummaryPivotRowDto;
-import com.moocafe.project.dto.SalesSummaryDto;
+import com.moocafe.project.dto.*;
 import com.moocafe.project.entity.Menu;
 import com.moocafe.project.entity.Store;
 import com.moocafe.project.repository.InventoryStoreRepository;
 import com.moocafe.project.repository.MenuRepository;
 import com.moocafe.project.repository.SalesRepository;
 import com.moocafe.project.repository.StoreRepository;
+import com.moocafe.project.service.FranchiseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -29,6 +26,7 @@ public class HeadIndexController {
     private final InventoryStoreRepository inventoryStoreRepository;
     private final StoreRepository storeRepository;
     private final MenuRepository menuRepository;
+    private final FranchiseService franchiseService;
 
     @GetMapping("/index")
     public String index(Model model, @AuthenticationPrincipal CustomUserDetails user) {
@@ -85,9 +83,12 @@ public class HeadIndexController {
             }
         }
         model.addAttribute("shortageList", shortageList);
-
-        // 사용자 정보 추가 (이미 있던 부분)
         model.addAttribute("user", user.toDto());
+
+        List<FranchiseBoardDto> alarmList = franchiseService.listByState("상담신청");
+        model.addAttribute("alarmList", alarmList);
+
+
         return "headOffice/index";
     }
 }

@@ -6,6 +6,7 @@ import com.moocafe.project.dto.PurchaseDto;
 import com.moocafe.project.entity.InventoryItem;
 import com.moocafe.project.entity.Purchase;
 import com.moocafe.project.entity.PurchaseItem;
+import com.moocafe.project.repository.PurchaseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +22,7 @@ public class PurchaseService {
 
     private final PurchaseDao purchaseDao;
     private final PurchaseItemDao purchaseItemDao;
+    private final PurchaseRepository purchaseRepository;
 
     @Transactional
     public void savePurchase(PurchaseDto purchaseDto) {
@@ -67,5 +70,10 @@ public class PurchaseService {
 
                     purchaseItemDao.savePurchaseItem(item);
                 });
+    }
+
+    @Transactional(readOnly = true)
+    public List<Purchase> findAll() {
+        return purchaseRepository.findAll();
     }
 }

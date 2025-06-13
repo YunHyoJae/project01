@@ -84,8 +84,12 @@
       <!-- 상단 월별 매출 그래프 -->
       <section class="salesSection">
         <div class="salesHeader">
-          <h2>최근 3개월 매출</h2>
+          <h3>최근 3개월 매출</h3>
           <a href="/storeOwner/salesList" class="moreLink">더보기</a>
+        </div>
+        <div style="margin-bottom: 1em;">
+          <button id="btnMonth" class="chart-toggle-btn" style="font-weight:bold;">월별보기</button>
+          <button id="btnMenu" class="chart-toggle-btn">메뉴별보기</button>
         </div>
         <canvas id="salesChart" height="80"></canvas>
         <div class="chartCaption"></div>
@@ -158,58 +162,151 @@
   let chartLabels = /*[[${chartLabels}]]*/ [];
   let menuDatasets = /*[[${menuDatasets}]]*/ [];
 
-  // 최신이 앞에 오도록 모든 데이터 reverse
+  // 블루톤 파레트 설정함요
+  const blueColors = [
+    'rgba(25,77,115,0.8)',
+    'rgba(39,96,136,0.8)',
+    'rgba(67,116,152,0.8)',
+    'rgba(101,146,175,0.8)',
+    'rgba(123,170,205,0.8)',
+    'rgba(147,186,214,0.8)',
+    'rgba(168,198,220,0.8)',
+    'rgba(189,209,223,0.8)',
+  ];
+
+  // [1] 월별 데이터(기존)
   chartLabels = chartLabels.slice().reverse();
-  menuDatasets = menuDatasets.map(ds => ({
+  menuDatasets = menuDatasets.map((ds, i) => ({
     ...ds,
-    data: ds.data.slice().reverse()
+    data: ds.data.slice().reverse(),
+    backgroundColor: blueColors[i % blueColors.length]
   }));
 
-  const ctx = document.getElementById('salesChart').getContext('2d');
-  new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: chartLabels,
-      datasets: menuDatasets
-    },
-    options: {
-      plugins: {
-        legend: { display: true },
-        datalabels: {
-          display: function(context) {
-            // 오직 맨 위(마지막 데이터셋)에만 표시
-            return context.datasetIndex === context.chart.data.datasets.length - 1;
+  // [2] 메뉴별 데이터(동적으로 변환)
+  function getMenuViewData(labels, datasets) {
+    // labels: 월 배열, datasets: [{label: 메뉴, data:[월별매출]}]
+    // 메뉴명 추출
+    const menuNames = datasets.map(ds => ds.label);
+    // 월별 데이터셋 수 만큼, 각 월의 매출을 메뉴별로 추출
+    // labels: 메뉴명 배열, datasets: [{ label: 월, data: [각 메뉴별 매출]}]
+    const newDatasets = labels.map((month, idx) => ({
+      label: month,
+      backgroundColor: `rgba(54, 162, 235, ${0.2 + 0.5 * (idx / labels.length)})`,
+      borderColor: `rgba(54, 162, 235, 1)`,
+      borderWidth: 1,
+      data: datasets.map(ds => ds.data[idx] || 0)
+    }));
+    return {
+      labels: menuNames,
+      datasets: newDatasets
+    };
+  }
+
+  // [3] 차트 객체 전역 변수
+  let salesChart = null;
+  let isMonthView = true;
+
+  // [4] 차트 그리기 함수
+  function drawChart(viewType) {
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    let chartData;
+    if (viewType === "menu") {
+      chartData = getMenuViewData(chartLabels, menuDatasets);
+    } else {
+      chartData = {
+        labels: chartLabels,
+        datasets: menuDatasets
+      };
+    }
+    if (salesChart) salesChart.destroy();
+    salesChart = new Chart(ctx, {
+      type: 'bar',
+      data: chartData,
+      options: {
+        plugins: {
+          legend: { display: true },
+          datalabels: {
+            display: function(context) {
+              return context.datasetIndex === context.chart.data.datasets.length - 1;
+            },
+            anchor: 'end',
+            align: 'end',
+            offset: 40,
+            font: { weight: 'bold', size: 14 },
+            color: '#333',
+            clip: false,
+            formatter: function(value, context) {
+              const idx = context.dataIndex;
+              let sum = 0;
+              context.chart.data.datasets.forEach(ds => {
+                sum += ds.data[idx] || 0;
+              });
+              return sum ? sum.toLocaleString() + '원' : '';
+            }
           },
-          anchor: 'end',
-          align: 'end',
-          font: { weight: 'bold', size: 12 },
-          color: '#333',
-          formatter: function(value, context) {
-            // 각 x축(월)에서 모든 데이터셋의 합계 구하기
-            const idx = context.dataIndex;
-            let sum = 0;
-            context.chart.data.datasets.forEach(ds => {
-              sum += ds.data[idx] || 0;
-            });
-            return sum.toLocaleString() + '원';
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                let value = context.raw || 0;
+                return context.dataset.label + ": " + value.toLocaleString() + "원";
+              }
+            }
           }
         },
-        tooltip: {
-          callbacks: {
-            label: function(context) {
-              let value = context.raw || 0;
-              return context.dataset.label + ": " + value.toLocaleString() + "원";
-            }
+        responsive: true,
+        layout: { padding: { bottom: 20 } },
+        scales: {
+          x: {
+            stacked: true,
+            ticks: { font: { size: 12 }, padding: 1 }
+          },
+          y: {
+            stacked: true,
+            beginAtZero: true,
+            ticks: { callback: v => v.toLocaleString() + '원' }
           }
         }
       },
-      responsive: true,
-      scales: {
-        x: { stacked: true },
-        y: { stacked: true, beginAtZero: true, ticks: { callback: v => v.toLocaleString() + '원' } }
-      }
-    },
-    plugins: [ChartDataLabels]
+      plugins: [
+        {
+          id: 'customTotalLabelBelowTick',
+          afterDraw: (chart) => {
+            const { ctx, chartArea, scales } = chart;
+            ctx.save();
+            ctx.font = 'bold 14px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#222';
+            const xAxis = scales.x;
+            const yAxis = scales.y;
+            chart.data.labels.forEach((label, i) => {
+              let sum = 0;
+              chart.data.datasets.forEach(ds => { sum += ds.data[i] || 0; });
+              const x = xAxis.getPixelForValue(i);
+              const yTick = chartArea.bottom + 38;
+              ctx.fillText(sum.toLocaleString() + '원', x, yTick);
+            });
+            ctx.restore();
+          }
+        }
+      ]
+    });
+  }
+
+  // [5] 버튼 이벤트
+  document.addEventListener('DOMContentLoaded', function() {
+    drawChart("month");
+    document.getElementById('btnMonth').onclick = function() {
+      isMonthView = true;
+      this.style.fontWeight = 'bold';
+      document.getElementById('btnMenu').style.fontWeight = 'normal';
+      drawChart("month");
+    };
+    document.getElementById('btnMenu').onclick = function() {
+      isMonthView = false;
+      this.style.fontWeight = 'bold';
+      document.getElementById('btnMonth').style.fontWeight = 'normal';
+      drawChart("menu");
+    };
   });
   /*]]>*/
 </script>

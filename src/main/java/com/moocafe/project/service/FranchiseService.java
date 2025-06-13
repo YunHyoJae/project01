@@ -96,4 +96,10 @@ public class FranchiseService {
         };
         return new PageImpl<>(dtoList, pageable, franchiseBoardPage.getTotalElements());
     }
+    public List<FranchiseBoardDto> listByState(String state) {
+        return dao.list().stream()
+                .filter(entity -> state.equals(entity.getState()))
+                .map(FranchiseBoardDto::toDto)
+                .toList();
+    }
 }

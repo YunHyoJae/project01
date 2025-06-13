@@ -26,4 +26,15 @@ public class SalesService {
     public void saveSaleEntity(Sales sale) {
         salesRepository.save(sale);
     }
+
+
+    public List<SalesSummaryDto> getSalesSummary(Integer storeId, LocalDate startDate, LocalDate endDate, String menuName) {
+        List<SalesSummaryDto> rawList = getSalesSummary(storeId, startDate, endDate);
+        if (menuName != null && !menuName.trim().isEmpty()) {
+            return rawList.stream()
+                    .filter(dto -> dto.getMenuName() != null && dto.getMenuName().contains(menuName))
+                    .toList();
+        }
+        return rawList;
+    }
 }
