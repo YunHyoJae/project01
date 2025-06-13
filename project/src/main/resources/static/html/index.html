@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/index_style.css">
+
+</head>
+<body>
+    <div id="header">
+      헤더부분
+      아모레퍼시픽 참고
+    </div>
+
+    <div id="section">
+
+      <div class="main">
+        메인
+      </div>
+
+      <div class="adver">
+        <div>광고</div>
+        <div>광고</div>
+      </div>
+
+      <div class="menu">
+        메뉴
+      </div>
+
+      <div class="franchise">
+        프렌차이즈 안내
+      </div>
+
+    <div class="franchise_from">
+      <form>
+        <h1>창업문의</h1>
+        <table>
+          <tr>
+            <th>고객명</th>
+            <td><input type="text" name="" class="full-width" required></td>
+          </tr>
+          <tr>
+            <th>연락처</th>
+            <td><input type="tel" name="" class="full-width" required></td>
+          </tr>
+          <tr>
+            <th>이메일</th>
+            <td><input type="email" name="" class="full-width" required></td>
+          </tr>
+          <tr>
+            <th>창업희망지역</th>
+            <td>
+              <select id="region1" name="" required>
+                <option value="">-선택-</option>
+                <option value="서울">서울</option>
+                <option value="부산">부산</option>
+                <option value="대구">대구</option>
+                <option value="인천">인천</option>
+                <option value="광주">광주</option>
+                <option value="대전">대전</option>
+                <option value="울산">울산</option>
+                <option value="강원">강원</option>
+                <option value="경기">경기</option>
+                <option value="경남">경남</option>
+                <option value="경북">경북</option>
+                <option value="전남">전남</option>
+                <option value="전북">전북</option>
+                <option value="제주">제주</option>
+                <option value="충남">충남</option>
+                <option value="충북">충북</option>
+                <option value="세종">세종</option>
+              </select>
+              <select id="region2" name="">
+                <option value="">-선택-</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <th>점포보유유무</th>
+            <td>
+              <label><input type="radio" name="" value="있음" required> 있음</label>
+              <label><input type="radio" name="" value="없음"> 없음</label>
+            </td>
+          </tr>
+          <tr>
+            <th>창업시기</th>
+            <td>
+              <label><input type="radio" name="" value="즉시" required> 즉시</label>
+              <label><input type="radio" name="" value="3개월 후"> 3개월 후</label>
+              <label><input type="radio" name="" value="6개월 후"> 6개월 후</label>
+            </td>
+          </tr>
+          <tr>
+            <th>문의경로</th>
+            <td>
+              <label><input type="checkbox" name="" value="웹 검색"> 웹 검색</label>
+              <label><input type="checkbox" name="" value="블로그&카페"> 블로그&카페</label>
+              <label><input type="checkbox" name="" value="광고"> 광고</label>
+              <label><input type="checkbox" name="" value="유튜브"> 유튜브</label><br>
+              <label><input type="checkbox" name="" value="SNS"> SNS</label>
+              <label><input type="checkbox" name="" value="지인 추천"> 지인 추천</label>
+              <label><input type="checkbox" name="" value="인근 매장"> 인근 매장</label>
+              <label><input type="checkbox" name="" value="기타"> 기타</label>
+            </td>
+          </tr>
+          <tr>
+            <th>상세문의내용</th>
+            <td><textarea name="" rows="5" class="full-width"></textarea></td>
+          </tr>
+          <tr>
+            <th>개인정보동의</th>
+            <td>
+              <label>
+                <input type="checkbox" name="" required>
+                개인정보 수집 및 이용에 동의합니다. (필수)
+              </label>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" >
+              <button type="submit">제출</button>
+            </td>
+          </tr>
+        </table>
+      </form>
+    </div>
+
+    <div class="side_fran_menu"></div>
+    <div class="bt_fran_menu">
+      <div class="bt_gide">
+      <div class="bt_from">
+        <input type="text" name="" class="bt_textBox" value="성함" required>
+      <input type="text" name="" class="bt_textBox" value="연락처" required>
+      <input type="text" name="" class="bt_textBox" value="창업희망지역" required>
+      <select id="bt_checkBox" name="" required>
+        <option value="창업시기">창업시기</option>
+        <option value="유">유</option>
+        <option value="무">무</option>
+        </select>
+
+      <select id="bt_checkBox" name="" required>
+        <option value="점포보유유무">점포보유유무</option>
+        <option value="즉시">즉시</option>
+        <option value="3개월">3개월 후</option>
+        <option value="6개월">6개월 후</option>
+        </select>
+
+      <select id="bt_checkBox" name="" required>
+        <option value="문의경로">문의경로</option>
+        <option value="웹 검색">웹 검색</option>
+        <option value="블로그&카페">블로그&카페</option>
+        <option value="광고">광고</option>
+        <option value="유튜브">유튜브</option>
+        <option value="지인 추천">지인 추천</option>
+        <option value="인근 매장">인근 매장</option>
+        <option value="기타">기타</option>
+        </select>
+
+        <button type="submit">상담신청하기</button>
+      </div>
+      <div class="bt_checkBox">
+        <label>
+        <input type="checkbox" name="" required>
+          개인정보 수집 및 이용에 동의합니다. (필수)
+        </label>
+      </div>
+
+      </div>
+      
+      
+    </div>
+    </div>
+
+  <div id="footer">
+    푸터입니다
+  </div>
+
+  <!-- JavaScript 영역 -->
+  <script>
+    document.querySelector("form").addEventListener("submit", function(e) {
+  e.preventDefault(); // 폼 전송 방지
+
+
+});
+    const region1 = document.getElementById('region1');
+    const region2 = document.getElementById('region2');
+
+    const districts = {
+      '서울': ['강남구', '강동구', '강북구', '강서구', '관악구', '광진구', '구로구', '금천구', '노원구', '도봉구', '동대문구', '동작구', '마포구', '서대문구', '서초구', '성동구', '성북구', '송파구', '양천구', '영등포구', '용산구', '은평구', '종로구', '중구', '중랑구'],
+      '부산': ['강서구', '금정구', '남구', '동구', '동래구', '부산진구', '북구' ,'사상구', '사하구', '서구', '수영구', '연제구', '영도구', '중구', '해운대구', '기장군'],
+      '대구': ['남구', '달서구', '동구', '북구', '서구', '수성구', '중구', '달성군'],
+      '인천':['계양구', '남구', '남동구', '동구', '부평구', '서구', '연수구', '중구', '강화군', '옹진군'],
+      '광주':['광산구', '남구', '동구', '북구', '서구'],
+      '대전':['대덕구', '동구', '서구', '유성구', '중구'],
+      '울산':['남구', '동구', '북구', '중구', '울주군'],
+      '강원':['강릉시', '동해시', '삼척시', '속초시', '원주시', '춘천시', '태백시', '고성군', '양구군', '양양군', '영월군', '인제군', '정선군', '철원군', '평창군', '홍천군', '화천군', '횡성군'],
+      '경기':['고양시 덕양구', '고양시 일산서구', '고양시 일산동구', '과천시', '광명시', '광주시', '구리시', '군포시', '김포시', '남양주시', '동두천시', '부천시 소사구', '부천시 오정구', '부천시 원미구', '성남시 분당구', '성남시 수정구',  '성남시 중원구', '수원시 권선구', '수원시 장안구', '수원시 팔달구', '시흥시', '안산시 단원구', '안산시 상록구', '안성시', '안양시 동안구', '안양시 만안구', '오산시', '용인시', '의왕시', '의정부시', '이천시', '파주시', '평택시', '하남시', '화성시', '가평군', '양주군', '양평군', '여주군', '연천군', '포천군'],
+      '경남':['거제시', '김해시', '마산시', '밀양시', '사천시', '양산시', '진주시', '진해시', '창원시', '통영시', '거창군', '고성군', '남해군', '산청군', '의령군', '창녕군', '하동군', '함안군', '함양군', '합천군'],
+      '경북':['경산시', '경주시', '구미시', '김천시', '문경시', '상주시', '안동시', '영주시', '영천시', '포항시', '고령군', '군위군', '봉화군', '성주군', '영덕군', '영양군', '예천군', '울릉군', '울진군', '의성군', '청도군', '청송군', '칠곡군'],
+      '전남':['광양시', '나주시', '목포시', '순천시', '여수시', '강진군', '고흥군', '곡성군', '구례군', '담양군', '무안군', '보성군', '신안군', '영관군', '영암군', '완도군', '장성군', '장흥군', '진도군', '함평군', '해남군', '화순군'],
+      '전북':['군산시', '김제시', '남원시', '익산시', '전주시', '정읍시', '고창군', '무주군', '부안군', '순창군', '완주군', '임실군', '장수군', '진안군'],
+      '제주':['서귀포시', '제주시', '남제주군', '북제주군'],
+      '충남':['공주시', '논산시', '보령시', '서산시', '아산시', '천안시', '금산군', '당진군', '부여군', '서천군', '연기군', '예산군', '청양군', '태안군', '홍성군'],
+      '충북':['제천시', '청주시 상당구', '청주시 흥덕구', '충주시', '괴산군', '단양군', '보은군', '영동군', '옥천군', '음성군', '진천군', '청원군'],
+      '세종': []
+    };
+
+    region1.addEventListener('change', function () {
+      const selectedCity = this.value;
+      region2.innerHTML = '<option value="">-선택-</option>';
+      if (districts[selectedCity]) {
+        districts[selectedCity].forEach(function (gu) {
+          const option = document.createElement('option'); //노드생성?
+          option.value = gu;
+          option.textContent = gu;
+          region2.appendChild(option); //노드추가?
+        });
+      }
+    });
+  </script>
+</html>
