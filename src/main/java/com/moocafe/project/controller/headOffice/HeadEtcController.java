@@ -5,6 +5,7 @@ import com.moocafe.project.entity.Member;
 import com.moocafe.project.service.FaqService;
 import com.moocafe.project.service.FranchiseService;
 import com.moocafe.project.service.MemberStoreService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +14,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -79,14 +81,27 @@ public class HeadEtcController {
 
         return "headOffice/memberList";
     }
-    @GetMapping("/memberDetaile/{id}")
-    public String memberDetaile(@PathVariable("id") Integer id, Model model) {
-        model.addAttribute(memberStoreService.getStoreMember(id));
-        return "headOffice/memberInsert";
+    @GetMapping("/memberDetail/{id}")
+    public String memberDetail(@PathVariable("id") Integer id, Model model) {
+        MemberStoreDto msd = memberStoreService.getStoreMember(id);
+        model.addAttribute("dto", msd != null ? msd : new MemberStoreDto() );
+        return "headOffice/memberDetail";
+    }
+    @PostMapping("/memberDetail")
+    public String memberDetail(@Valid @ModelAttribute("dto") MemberStoreDto dto, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("dto", dto);
+            return "headOffice/memberDetail";
+        }
+        if(dto.getStateBoolean()){dto.setState("휴업");}else{dto.setState("영업중");};
+
+        System.out.println("==============자 저장해볼까??"+ dto);
+        memberStoreService.update(dto);
+        return "redirect:/headOffice/memberList";
     }
     @GetMapping("/memberInsert")
     public String memberInsert(Model model) {
-
+        model.addAttribute("dto", new MemberStoreDto());
         return "headOffice/memberInsert";
     }
 }

@@ -8,12 +8,17 @@ import com.moocafe.project.repository.PurchaseItemRepository;
 import com.moocafe.project.repository.PurchaseRepository;
 import com.moocafe.project.service.MemberStoreService;
 import jakarta.persistence.Column;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -35,6 +40,7 @@ public class DummyDataInitializer {
     private final OutBoundItemDao obid;
     private final StoreOrderDao sod;
     private final StoreOrderDetailDao sodd;
+    private final ReturnDao rd;
     public void setDummy(String adminID) throws ParseException {
         Member adminMember = Member.builder().userId(adminID)
                 .role(Role.ROLE_ADMIN)
@@ -263,7 +269,13 @@ public class DummyDataInitializer {
         //mpd.insertMenuPrice(menuPrice01);
         //=================================================================================
 
-
+        Return return01 = Return.builder()
+                .returnNumber("R20240602-007-8")
+                .orderNumber(storeOrder)
+                .returnNote("품질 이상")
+                .typeReturn("반품")
+                .build();
+        rd.saveReturn(return01);
         System.out.println("더미데이터를 생성하였습니다.");
     }
 }

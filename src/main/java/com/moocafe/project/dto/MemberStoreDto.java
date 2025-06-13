@@ -25,6 +25,7 @@ public class MemberStoreDto {
     private String userName;
     @NotBlank(message = "고객 전화번호를 입력해주세요.")
     private String userTel;
+    @NotBlank(message = "이메일을 입력해주세요.")
     private String userEmail;
     private String userZipcode;
     private String userAddress01;
@@ -43,6 +44,7 @@ public class MemberStoreDto {
     private String address01;
     private String address02;
     private String state;
+    private Boolean stateBoolean;
 
     public static Member toMemberEntity(MemberStoreDto dto) {
         return Member.builder()
@@ -90,6 +92,7 @@ public class MemberStoreDto {
                 .address01(entity.getStore().getAddress01())
                 .address02(entity.getStore().getAddress02())
                 .state(entity.getStore().getState())
+                .stateBoolean(entity.getStore().getState().equals("휴업"))
                 .regDate(entity.getRegDate()!=null?entity.getRegDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")):null)
                 .build();
     }

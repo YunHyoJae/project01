@@ -28,7 +28,7 @@ public class Store extends BaseEntity {
     private String zipcode;
     private String address01;
     private String address02;
-    private String state;
+    private String state ="오픈예정";
     public List<MemberStore> getMembers() {
         if (members == null){
             members = new ArrayList<>();
@@ -43,6 +43,6 @@ public class Store extends BaseEntity {
         this.zipcode=msd.getZipcode();
         this.address01=msd.getAddress01();
         this.address02=msd.getAddress02();
-        this.state=msd.getState();
+        this.state=msd.getState()==null?this.state:msd.getState();
     }
 }
