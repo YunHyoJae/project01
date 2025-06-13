@@ -518,29 +518,25 @@ body {
 }
 
 /*      출고관리     */
-.shippingForm .container {
-  padding: 20px;
-  font-family: sans-serif;
-}
-
 .shippingForm .filter-section {
   display: flex;
   flex-direction: column;
 }
-.shippingForm .date-filter {
-  margin-bottom: 20px;
-}
+
 .shippingForm .date-filter label,
 .shippingForm .store-filter label {
   font-weight: 600;
-  width: 80px;
+  width: 80px; height: 40px;
   display: inline-block;
+  margin-bottom: 10px;
 }
 
 .shippingForm .date-filter input,
 .shippingForm .store-filter input {
   width: 60px;
+  padding: 10px;
   margin-right: 5px;
+  height: 23px;
 }
 
 .shippingForm .shipment-table {
@@ -575,7 +571,8 @@ body {
 }
 .shippingForm .search-btn {
   float: none;
-  margin-left: 20px;
+  margin-left: 5px;
+  padding: 8px 14px;
 }
 
 /*     매장등록 팝업    */
@@ -860,6 +857,15 @@ body {
   color: white;
   font-weight: bold;
 }
+.inventoryStatus select {
+  width: 80px;
+}
+.inventoryStatus input[type="text"] {
+  width: 300px;
+  padding: 8px;
+  font-size: 14px;
+  margin-left: 5px;
+}
 
 /*   기초 품목 등록   */
 .newProduct .unit-form {
@@ -918,17 +924,63 @@ body {
 .newProduct .group-label {
   white-space: nowrap;
 }
-
+.newProduct label {
+  height: 40px;
+  font-weight: normal;
+}
 .newProduct input[type="text"] {
   width: 300px;
-  padding: 4px 8px;
+  padding: 10px;
+  font-size: 14px;
+  margin-left: 30px;
+}
+.newProduct input[type="radio"] {
+  width: 25px;
+}
+.newProduct select {
+  margin-left: 30px;
+}
+.newProduct .type-label,
+.newProduct .group-label {
+  margin-right: 15px;
+  font-weight: normal;
+}
+.newProduct .submit-btn {
+  float: right;
+  padding: 10px 24px;
+}
+/*    메뉴 등록     */
+.newMenu label {
+  display: inline-block;
+  width: 80px;
+  height: 55px;
+}
+.newMenu .label {
+  display: inline-block;
+  width: 60px;
+  margin-left: 30px;
+}
+.newMenu input[type="text"] {
+  width: 300px;
+  padding: 10px;
   font-size: 14px;
 }
-
-/*    메뉴 등록     */
-.newMenu .form-row label {
-  width: 100px;
-  margin-right: 20px;
+.newMenu .delete-btn,
+.newMenu .add-btn {
+  background: inherit;
+  border:none;
+  box-shadow:none;
+  border-radius:0;
+  padding:0;
+  overflow:visible;
+  cursor:pointer;
+}
+.newMenu .delete-btn:hover,
+.newMenu .add-btn:hover {
+  background: none;
+}
+.newMenu .default_btn {
+  padding: 10px 24px;
 }
 
 /*    입고현황      */
@@ -991,5 +1043,9 @@ body {
 /* 버튼 클릭시에 보이게 */
 .receiving_status_table_group.active {
   display: table;
+}
+
+.receivingOrder .po_number {
+  margin-top: 20px;
 }
 

@@ -14,7 +14,6 @@
       <!-- 본문 영역 -->
       <section class="return-apply">
         <div class="return-request">
-          반품신청
           <label for="modal-toggle">주문조회</label>
         </div>
 
@@ -80,12 +79,16 @@
     <div class="modal">
       <div class="modal-content">
         <div class="modal-title">주문검색</div>
-
-        <div class="search-box">
-          <input type="text" placeholder="주문번호검색" />
-          <input type="text" placeholder="품목코드검색" />
-        </div>
-
+        <form action="" class="search-box">
+          <div class="search_row">
+            <label>주문번호검색</label>
+            <label>품목코드검색</label>
+          </div>
+          <div class="search_row">
+            <input type="text" placeholder="주문번호검색" />
+            <input type="text" placeholder="품목코드검색" />
+          </div>
+        </form>
         <table class="result-table">
           <thead>
             <tr>

@@ -25,23 +25,28 @@
         <input type="text" placeholder="판매가격" />
       </div>
 
-      <div class="form-row item-row">
-        <label>품목코드</label>
-        <input type="text" placeholder="품목코드" />
-        <span>사용량</span>
-        <input type="text" placeholder="사용량" />
-        <button type="button" class="add-btn">➕</button>
-      </div>
+      <!-- 품목코드와 사용량 입력 필드가 추가될 item-container -->
+      <div class="item-container">
+        <div class="form-row item-row">
+          <label>품목코드</label>
+          <input type="text" placeholder="품목코드" />
+          <span class="label">사용량</span>
+          <input type="text" placeholder="사용량" />
+          <button type="button" class="add-btn" onclick="menuAddRow()">➕</button>
+        </div>
 
-      <div class="form-row item-row">
-        <label class="invisible-label">품목코드</label>
-        <input type="text" placeholder="품목코드" />
-        <span>사용량</span>
-        <input type="text" placeholder="사용량" />
+        <!-- 기본적으로 첫 번째 품목코드와 사용량 입력 필드 -->
+        <div class="form-row item-row">
+          <label class="invisible-label">품목코드</label>
+          <input type="text" placeholder="품목코드" />
+          <span class="label">사용량</span>
+          <input type="text" placeholder="사용량" />
+          <button type="button" class="delete-btn" onclick="menuDelRow(this)">❌</button>
+        </div>
       </div>
 
       <div style="text-align: left;">
-        <button type="submit" class="ask-btn">등록</button>
+        <button type="submit" class="ask-btn default_btn">등록</button>
       </div>
     </form>
   </div>
