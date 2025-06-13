@@ -9,7 +9,7 @@
     <li class="sale" th:if="${#strings.equals(title,'sale')}">
       <a href="/headOffice/salesList">매출</a>
       <ul class="submenu">
-        <li><a href="/headOffice/salesList">매장별 매출 현황</a></li>
+        <li><a href="/headOffice/salesList" th:classappend="${#strings.equals(sub, 'salesList') ? 'active' : ''}">매장별 매출 현황</a></li>
       </ul>
     </li>
     <li class="receiving" th:if="${#strings.equals(title,'receiving')}">
