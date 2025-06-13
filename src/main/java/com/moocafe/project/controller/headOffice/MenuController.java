@@ -23,12 +23,6 @@ public class MenuController {
         this.inventoryItemRepository = inventoryItemRepository;
     }
 
-//    @GetMapping("/headOffice/menuRegister")
-//    public String showForm(Model model) {
-//        model.addAttribute("menuWrapper", new MenuRegisterDto());
-//        return "headOffice/menuRegister";
-//    }
-
     @PostMapping("/headOffice/menuRegister")
     public String process(@ModelAttribute MenuRegisterDto dto) {
         menuService.registerMenuWithItems(dto);
@@ -38,7 +32,6 @@ public class MenuController {
     @GetMapping("/headOffice/checkMenuId")
     @ResponseBody
     public String checkMenuIdDuplicate(@RequestParam String menuId) {
-        // 공백 제거 필수
         String trimmed = menuId != null ? menuId.trim() : "";
         boolean exists = menuRepository.existsByMenuId(trimmed);
 

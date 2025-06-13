@@ -1,5 +1,6 @@
 package com.moocafe.project.controller.headOffice;
 
+import com.moocafe.project.dto.PurchaseDto;
 import com.moocafe.project.entity.InventoryItem;
 import com.moocafe.project.service.ItemSearchService;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
 @Controller
-@RequestMapping("/itemSearch")
+@RequestMapping("/headOffice")
 @RequiredArgsConstructor
 public class ItemSearchController {
     private final ItemSearchService itemSearchService;
@@ -32,9 +33,10 @@ public class ItemSearchController {
         else {
             itemList = itemSearchService.getAllItems();
         }
+        model.addAttribute("purchaseDto", new PurchaseDto());
         model.addAttribute("itemList", itemList);
         model.addAttribute("keyword", keyword);
         model.addAttribute("code", type);
-        return "itemSearch/itemSearchPopup";
+        return "/headOffice/itemSearchPopup";
     }
 }

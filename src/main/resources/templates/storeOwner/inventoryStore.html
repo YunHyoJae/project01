@@ -61,8 +61,7 @@
       params.push('itemCode=' + encodeURIComponent(cb.dataset.itemCode));
       params.push('needed=' + encodeURIComponent(cb.dataset.needed));
     });
-    // 배열 파라미터 형식으로 GET 요청
-    window.location.href = '/storeOwner/storeorder/form?' + params.join('&');
+    window.location.href = '/storeOwner/storeOrderForm?' + params.join('&');
   }
 </script>
 

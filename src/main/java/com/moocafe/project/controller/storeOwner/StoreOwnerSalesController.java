@@ -34,6 +34,7 @@ public class StoreOwnerSalesController {
     public String viewSalesList(@AuthenticationPrincipal CustomUserDetails userDetails,
                                 @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
                                 @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+                                @RequestParam(required = false) String menuName,
                                 Model model) {
 
         Member loginMember = userDetails.getLoggedMember();
@@ -51,7 +52,7 @@ public class StoreOwnerSalesController {
             }
 
             // SalesSummaryDto 리스트에서 합계 구하기
-            List<SalesSummaryDto> summaryList = salesService.getSalesSummary(storeId, startDate, endDate);
+            List<SalesSummaryDto> summaryList = salesService.getSalesSummary(storeId, startDate, endDate, menuName);
 
             // 총 수량 및 총 매출액 구하기
             int totalQuantity = summaryList.stream()
@@ -72,6 +73,7 @@ public class StoreOwnerSalesController {
             model.addAttribute("endDate", java.sql.Date.valueOf(endDate));
             model.addAttribute("totalQuantity", totalQuantity);
             model.addAttribute("totalAmount", totalAmount);
+            model.addAttribute("menuName", menuName);
         }
 
         return "storeOwner/salesList"; // 📄 점주용 템플릿 (복사 필요)

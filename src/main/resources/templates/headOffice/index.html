@@ -16,7 +16,7 @@
   .salesSection {
     background: #fff;
     border-radius: 8px;
-    padding: 24px 10px 36px 10px; /* 아래쪽(padding-bottom)만 늘리기 */
+    padding: 38px; /* 아래쪽(padding-bottom)만 늘리기 */
     margin-bottom: 32px;
     box-shadow: 0 2px 8px #0001;
   }
@@ -83,7 +83,12 @@
           <h2>전체 매출</h2>
           <a href="/headOffice/salesList" class="moreLink">더보기</a>
         </div>
-        <canvas id="salesChart" height="100"></canvas>
+        <div style="margin-bottom:1em;">
+          <button id="btnYear" class="chart-toggle-btn" style="font-weight:bold;">금년</button>
+          <button id="btnThisMonth" class="chart-toggle-btn">금월</button>
+          <button id="btnPrevMonth" class="chart-toggle-btn">전월</button>
+        </div>
+        <canvas id="salesChart" height="80"></canvas>
         <div class="chartCaption">
         </div>
       </section>
@@ -130,10 +135,23 @@
         <section class="gridBox">
           <div class="boxHeader">
             <span>상담 알림</span>
-            <a href="#" class="moreLink">더보기</a>
+            <a href="/headOffice/franchiseList" class="moreLink">더보기</a>
           </div>
           <div class="boxContent">
-            프랜차이즈 상담내용 알림
+            <ul>
+              <th:block th:if="${#lists.isEmpty(alarmList)}">
+                <li>새로운 상담신청이 없습니다.</li>
+              </th:block>
+              <th:block th:each="item : ${alarmList}">
+                <li>
+                  <a th:href="@{'/headOffice/franchiseDetail/' + ${item.id}}">
+                    [[${item.name}]] ([[${item.tel}]]) - [[${item.space}]]
+                    <br>
+                    <span style="font-size:12px;color:#888;">[[${item.regDate}]]</span>
+                  </a>
+                </li>
+              </th:block>
+            </ul>
           </div>
         </section>
       </div>
@@ -141,83 +159,181 @@
   </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 <script th:inline="javascript">
   /*<![CDATA[*/
   let summaryList = /*[[${summaryList}]]*/ [];
   if (!summaryList) summaryList = [];
 
-  const storeNames = [...new Set(summaryList.map(r => r.storeName))];
-  const menuNames = [...new Set(summaryList.map(r => r.menuName))];
+  // 블루 계열 색상 팔레트
+  const blueColors = [
+    'rgba(25,77,115,0.8)',
+    'rgba(189,209,223,0.8)',
+    'rgba(39,96,136,0.8)',
+    'rgba(168,198,220,0.8)',
+    'rgba(67,116,152,0.8)',
+    'rgba(147,186,214,0.8)',
+    'rgba(69,136,189,0.8)',
+    'rgba(101,146,175,0.8)',
 
-  const colors = ['#e57373','#64b5f6','#81c784','#ffd54f','#ba68c8','#ffb74d','#4dd0e1','#ff8a65','#9575cd','#aed581','#f06292'];
 
-  const datasets = menuNames.map((menu, idx) => ({
-    label: menu,
-    data: storeNames.map(store => {
-      let found = summaryList.find(r => r.storeName === store && r.menuName === menu);
-      return found && found.totalAmount ? Number(found.totalAmount) : 0;
-    }),
-    backgroundColor: colors[idx % colors.length],
-    stack: '매출'
-  }));
 
-  // 커스텀 플러그인: 매장명 아래에 총매출액 표시
-  const totalLabelPlugin = {
-    id: 'totalLabelPlugin',
-    afterDatasetsDraw(chart, args, opts) {
-      const {ctx, chartArea, scales} = chart;
-      ctx.save();
-      const xAxis = scales.x;
-      const yAxis = scales.y;
 
-      chart.data.labels.forEach((store, i) => {
-        // 해당 매장 총매출액 계산
-        let sum = 0;
-        chart.data.datasets.forEach(ds => {
-          sum += ds.data[i] || 0;
-        });
+  ];
 
-        // x축 tick의 가운데 좌표 구하기
-        const x = xAxis.getPixelForValue(i);
-        // 매장명 tick의 아래쪽(y축 기준)
-        const y = yAxis.getPixelForValue(yAxis.min) + 28; // 적당한 위치 조정
+  // 날짜 유틸
+  function getYear(dt) {
+    return dt.slice(0, 4);
+  }
+  function getMonth(dt) {
+    return dt.slice(0, 7); // 'YYYY-MM'
+  }
+  function getNowYear() {
+    return (new Date()).getFullYear().toString();
+  }
+  function getNowMonth() {
+    const now = new Date();
+    return now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+  }
+  function getPrevMonth() {
+    const now = new Date();
+    now.setMonth(now.getMonth() - 1);
+    return now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+  }
 
-        ctx.font = 'bold 11px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillStyle = '#333';
-        ctx.fillText(sum.toLocaleString() + '원', x, y);
-      });
+  // summaryList의 날짜필드명 맞춰서 변경 (예: salesDate, dealDate 등)
+  const dateField = summaryList.length > 0 && summaryList[0].salesDate ? "salesDate"
+          : summaryList.length > 0 && summaryList[0].dealDate ? "dealDate"
+                  : null;
 
-      ctx.restore();
-    }
-  };
+  // === 원본 데이터 저장(필터링에 사용) ===
+  const originalSummaryList = summaryList;
 
-  const ctx = document.getElementById('salesChart').getContext('2d');
-  new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: storeNames,
-      datasets: datasets
-    },
-    options: {
-      plugins: {
-        legend: { display: true },
-        tooltip: {
-          callbacks: {
-            label: function(context) {
-              let value = context.raw || 0;
-              return context.dataset.label + ': ' + value.toLocaleString() + '원';
+  // === 매출 차트 데이터 생성 함수 ===
+  function getChartData(filteredList) {
+    const storeNames = [...new Set(filteredList.map(r => r.storeName))];
+    const menuNames = [...new Set(filteredList.map(r => r.menuName))];
+
+    const datasets = menuNames.map((menu, idx) => ({
+      label: menu,
+      data: storeNames.map(store => {
+        let found = filteredList.find(r => r.storeName === store && r.menuName === menu);
+        return found && found.totalAmount ? Number(found.totalAmount) : 0;
+      }),
+      backgroundColor: blueColors[idx % blueColors.length],
+      stack: '매출'
+    }));
+
+    return { labels: storeNames, datasets };
+  }
+
+  // === 차트 객체 전역 ===
+  let salesChart = null;
+
+  // === 차트 그리기 ===
+  function drawChart(filteredList) {
+    const { labels, datasets } = getChartData(filteredList);
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    if (salesChart) salesChart.destroy();
+    salesChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: datasets
+      },
+      options: {
+        plugins: {
+          legend: { display: true },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                let value = context.raw || 0;
+                return context.dataset.label + ': ' + value.toLocaleString() + '원';
+              }
+            }
+          }
+        },
+        responsive: true,
+        layout: {
+          padding: { bottom: 20 }
+        },
+        scales: {
+          x: {
+            stacked: true,
+            ticks: {
+              font: { size: 12 },
+              padding: 1
+            }
+          },
+          y: {
+            stacked: true,
+            beginAtZero: true,
+            ticks: {
+              callback: v => v.toLocaleString() + '원'
             }
           }
         }
       },
-      responsive: true,
-      scales: {
-        x: { stacked: true },
-        y: { stacked: true, beginAtZero: true, ticks: { callback: v => v.toLocaleString() + '원' } }
-      }
-    },
-    plugins: [totalLabelPlugin]
+      plugins: [
+        {
+          id: 'customTotalLabelBelowTick',
+          afterDraw: (chart) => {
+            const { ctx, chartArea, scales } = chart;
+            ctx.save();
+            ctx.font = 'bold 14px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#222';
+            const xAxis = scales.x;
+            chart.data.labels.forEach((store, i) => {
+              let sum = 0;
+              chart.data.datasets.forEach(ds => { sum += ds.data[i] || 0; });
+              const x = xAxis.getPixelForValue(i);
+              const yTick = chartArea.bottom + 38;
+              ctx.fillText(sum.toLocaleString() + '원', x, yTick);
+            });
+            ctx.restore();
+          }
+        }
+      ]
+    });
+  }
+
+  // === 필터 함수 정의 ===
+  function filterByYear(list) {
+    const year = getNowYear();
+    return list.filter(r => !dateField || getYear(r[dateField]) === year);
+  }
+  function filterByThisMonth(list) {
+    const m = getNowMonth();
+    return list.filter(r => !dateField || getMonth(r[dateField]) === m);
+  }
+  function filterByPrevMonth(list) {
+    const m = getPrevMonth();
+    return list.filter(r => !dateField || getMonth(r[dateField]) === m);
+  }
+
+  // === 버튼 클릭 이벤트 ===
+  document.addEventListener('DOMContentLoaded', function() {
+    // 기본: 금년
+    drawChart(filterByYear(originalSummaryList));
+    document.getElementById('btnYear').onclick = function() {
+      this.style.fontWeight = 'bold';
+      document.getElementById('btnThisMonth').style.fontWeight = 'normal';
+      document.getElementById('btnPrevMonth').style.fontWeight = 'normal';
+      drawChart(filterByYear(originalSummaryList));
+    };
+    document.getElementById('btnThisMonth').onclick = function() {
+      this.style.fontWeight = 'bold';
+      document.getElementById('btnYear').style.fontWeight = 'normal';
+      document.getElementById('btnPrevMonth').style.fontWeight = 'normal';
+      drawChart(filterByThisMonth(originalSummaryList));
+    };
+    document.getElementById('btnPrevMonth').onclick = function() {
+      this.style.fontWeight = 'bold';
+      document.getElementById('btnYear').style.fontWeight = 'normal';
+      document.getElementById('btnThisMonth').style.fontWeight = 'normal';
+      drawChart(filterByPrevMonth(originalSummaryList));
+    };
   });
   /*]]>*/
 </script>
