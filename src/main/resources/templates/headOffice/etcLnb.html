@@ -6,39 +6,40 @@
 <div class="sidebar" th:fragment="nonActive"></div>
 <div class="sidebar" th:fragment="active(title,sub)">
   <ul>
-    <li class="etc" style="display:block" th:if="${#strings.equals(title,'etc')}">
+    <li class="sale" th:if="${#strings.equals(title,'sale')}">
+      <a href="/headOffice/salesList">매출</a>
+      <ul class="submenu">
+        <li><a href="/headOffice/salesList">매장별 매출 현황</a></li>
+      </ul>
+    </li>
+    <li class="receiving" th:if="${#strings.equals(title,'receiving')}">
+      <a href="/headOffice/purchaseOrder">입고</a>
+      <ul class="submenu">
+        <li><a href="#" th:classappend="${#strings.equals(sub, 'receiving') ? 'active' : ''}">입고현황</a></li>
+        <li><a href="#" th:classappend="${#strings.equals(sub, 'inventoryStore') ? 'active' : ''}">입고등록</a></li>
+        <li><a href="/headOffice/purchaseOrder" th:classappend="${#strings.equals(sub, 'purchaseOrder') ? 'active' : ''}">발주서</a></li>
+      </ul>
+    </li>
+    <li class="shipping" th:if="${#strings.equals(title,'shipping')}">
+      <a href="#">출고</a>
+      <ul class="submenu">
+        <li><a href="#" th:classappend="${#strings.equals(sub, 'inventoryStore') ? 'active' : ''}">출고관리</a></li>
+      </ul>
+    </li>
+    <li class="inventory" th:if="${#strings.equals(title,'inventory')}">
+      <a href="/headOffice/inventoryStore">재고</a>
+      <ul class="submenu">
+        <li><a href="/headOffice/inventoryStore" th:classappend="${#strings.equals(sub, 'inventoryStore') ? 'active' : ''}">매장별 재고현황</a></li>
+        <li><a href="/headOffice/inventoryRegister" th:classappend="${#strings.equals(sub, 'inventoryRegister') ? 'active' : ''}">기초품목 등록</a></li>
+        <li><a href="/headOffice/menuRegister" th:classappend="${#strings.equals(sub, 'menuRegister') ? 'active' : ''}">메뉴 등록</a></li>
+      </ul>
+    </li>
+    <li class="etc" th:if="${#strings.equals(title,'etc')}">
       <a href="/headOffice/franchiseList">게시판관리</a>
       <ul class="submenu">
-        <li><a href="/headOffice/franchiseList" th:classappend="${#strings.equals(sub, 'franchise') ? 'on' : ''}">프랜차이즈 상담</a></li>
-        <li><a href="/headOffice/faqList" th:classappend="${#strings.equals(sub, 'faq') ? 'on' : ''}">점주 질문</a></li>
-        <li><a href="/headOffice/memberList" th:classappend="${#strings.equals(sub, 'member') ? 'on' : ''}">매장 현황</a></li>
-      </ul>
-    </li>
-    <li class="return" style="display:block" th:if="${#strings.equals(title,'return')}">
-      <a href="#">반품</a>
-      <ul class="submenu">
-        <li><a href="#">반품신청</a></li>
-        <li><a href="#">반품현황</a></li>
-      </ul>
-    </li>
-    <li class="sales">
-      <a href="#">매출</a>
-      <ul class="submenu">
-        <li><a href="#">매출분석</a></li>
-      </ul>
-    </li>
-    <li class="stock">
-      <a href="#">재고</a>
-      <ul class="submenu">
-        <li><a href="#">매장재고</a></li>
-        <li><a href="#">판매현황</a></li>
-      </ul>
-    </li>
-    <li class="inquiry">
-      <a href="#">고객센터</a>
-      <ul class="submenu">
-        <li><a href="#">문의 게시판</a></li>
-        <li><a href="#">문의하기</a></li>
+        <li><a href="/headOffice/franchiseList" th:classappend="${#strings.equals(sub, 'franchise') ? 'active' : ''}">프랜차이즈 상담</a></li>
+        <li><a href="/headOffice/faqList" th:classappend="${#strings.equals(sub, 'faq') ? 'active' : ''}">점주 질문</a></li>
+        <li><a href="/headOffice/memberList" th:classappend="${#strings.equals(sub, 'member') ? 'active' : ''}">매장 현황</a></li>
       </ul>
     </li>
   </ul>

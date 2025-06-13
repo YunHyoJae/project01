@@ -152,6 +152,10 @@ body {
 .sidebar .submenu li a.active {
   color: #000;
 }
+/* 서브메뉴 항목 숨기기 */
+.sidebar > ul > li {
+  display: none;
+}
 /*     본문 컨텐츠     */
 .content {
   flex-grow: 1;

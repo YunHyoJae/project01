@@ -7,6 +7,8 @@ import com.moocafe.project.entity.Store;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.time.format.DateTimeFormatter;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -27,6 +29,7 @@ public class MemberStoreDto {
     private String userZipcode;
     private String userAddress01;
     private String userAddress02;
+    private String regDate;
     private Role role;
 
     private int storeId;
@@ -87,6 +90,7 @@ public class MemberStoreDto {
                 .address01(entity.getStore().getAddress01())
                 .address02(entity.getStore().getAddress02())
                 .state(entity.getStore().getState())
+                .regDate(entity.getRegDate()!=null?entity.getRegDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")):null)
                 .build();
     }
 }

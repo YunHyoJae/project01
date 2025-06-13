@@ -1,0 +1,245 @@
+/* 공통 - 체크박스 전체선택 기능 */
+function selectAll(selectAll)  {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+    checkboxes.forEach((checkbox) => {
+        checkbox.checked = selectAll.checked;
+    })
+}
+
+/* 입고 현황 필터 초기화 함수 */
+function initializeReceivingFilter() {
+    const buttons = document.querySelectorAll(".receiving_status_filter_buttons label");
+    const receivingTable = document.querySelector('[data-group="receiving"]');
+
+    if (!buttons.length || !receivingTable) return; // 요소 없으면 실행 안 함
+
+    const allRows = receivingTable.querySelectorAll("tbody tr");
+
+    buttons.forEach(button => {
+        button.addEventListener("click", () => {
+            // 버튼 활성화 토글
+            buttons.forEach(btn => btn.classList.remove("active"));
+            button.classList.add("active");
+
+            const status = button.dataset.status;
+
+            allRows.forEach(row => {
+                const type = row.children[0]?.textContent.trim();     // 입고유형
+                const progress = row.children[4]?.textContent.trim(); // 상태
+
+                let show = false;
+
+                // 조건에 따라 표시 여부 결정
+                if (status === "all") {
+                    show = true;
+                } else if (status === "pending" && progress === "진행중") {
+                    show = true;
+                } else if (status === "completed" && progress === "완료") {
+                    show = true;
+                } else if (status === "order_check" && type === "발주") {
+                    show = true;
+                } else if (status === "return_check" && type === "반품") {
+                    show = true;
+                }
+
+                row.style.display = show ? "" : "none";
+            });
+        });
+    });
+}
+
+/* 반품 리스트 */
+function initReturnTableHandler({
+                                    wrapperSelector = '.return-wrapper',
+                                    buttonSelector = '.return-btn',
+                                }) {
+    const returnWrapper = document.querySelector(wrapperSelector);
+    if (!returnWrapper) return;
+
+    const returnTableBody = returnWrapper.querySelector('tbody');
+    const returnButtons = document.querySelectorAll(buttonSelector);
+
+    returnButtons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            const row = btn.closest('tr');
+            if (!row) return;
+
+            const cells = row.querySelectorAll('td');
+            const orderNum = cells[0].textContent.trim();
+            const itemCode = cells[2].textContent.trim();
+            const itemName = cells[3].textContent.trim();
+
+            const alreadyExists = Array.from(returnTableBody.querySelectorAll('tr')).some(tr => {
+                return tr.children[1].textContent.trim() === itemCode;
+            });
+
+            if (!alreadyExists) {
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+          <td>${orderNum}</td>
+          <td>${itemCode}</td>
+          <td>${itemName}</td>
+          <td><input type="number" value="1" min="1" style="width: 60px;"></td>
+          <td><button class="delete-row-btn">삭제</button></td>
+        `;
+                returnTableBody.appendChild(newRow);
+            }
+
+            returnWrapper.style.display = 'block';
+            window.scrollTo({ top: returnWrapper.offsetTop, behavior: 'smooth' });
+            console.log('initReturnTableHandler 실행됨');
+            console.log('returnWrapper:', returnWrapper);
+            console.log('returnButtons:', returnButtons.length);
+        });
+    });
+
+    returnWrapper.addEventListener('click', function (e) {
+        if (e.target.classList.contains('delete-row-btn')) {
+            const row = e.target.closest('tr');
+            if (row) row.remove();
+
+            if (returnTableBody.children.length === 0) {
+                returnWrapper.style.display = 'none';
+            }
+        }
+    });
+}
+
+/*  반품 조회  */
+function initializeReturnFilter() { // 탭 변경 이벤트
+    const filterButtons = document.querySelectorAll('.return_Inquiry_filter_buttons label');
+    const rows = document.querySelectorAll('.return_row');
+
+    if (!filterButtons.length || !rows.length) return; // 요소 없으면 실행하지 않음
+
+    filterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            // 활성화 스타일 토글
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+
+            const status = button.getAttribute('data-status');
+
+            rows.forEach(row => {
+                if (status === 'all') {
+                    row.classList.remove('hidden');
+                } else if (status === 'pending') {
+                    row.classList.toggle('hidden', !row.classList.contains('pending'));
+                } else if (status === 'completed') {
+                    row.classList.toggle('hidden', !row.classList.contains('completed'));
+                }
+            });
+        });
+    });
+}
+
+/*   주문신청서   */
+// 행 추가
+function addRow() {
+    const tbody = document.querySelector('#orderFormTable tbody');
+    let rows = tbody.rows;
+
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
+    <td><input type="checkbox"/></td>
+    <td><input type="text"></td>
+    <td><input type="text" class="pd_code"></td>
+    <td><input type="text" class="pd_name"></td>
+    <td class="search_td"><button class="default_btn" onclick="showModal(this)">검색</button></td>
+    <td><input type="number"></td>
+    <td><input type="number"></td>
+    <td><input type="text"></td>
+    <td><button onclick="deleteRow(this)" class="del_rowBtn">❌</button></td>
+  `;
+
+    // 행이 1개 이상 있을 경우 마지막 전 위치에 추가
+    if (rows.length >= 1) {
+        tbody.insertBefore(newRow, rows[rows.length - 1]);
+    } else {
+        tbody.appendChild(newRow); // 행이 없으면 그냥 추가
+    }
+}
+
+// 행 삭제
+function deleteRow(row) {
+    const tbody = document.querySelector('#orderFormTable tbody');
+    let rows = tbody.rows;
+    let thisRow = row.closest('tr');
+    if (rows.length > 2) {  //행 1개만 남아있을 땐 삭제 불가
+        tbody.removeChild(thisRow);
+    }
+}
+
+// 검색 버튼 -> 모달
+let currentRow = null;  // 클릭된 행 저장할 변수
+function showModal(button) { // 검색 버튼 클릭 시 모달 창 열림
+    currentRow = button.closest('tr');
+    document.getElementById('modalBg').style.display = 'block';
+}
+function hideModal() { // 모달 창 닫기
+    document.getElementById('modalBg').style.display = 'none';
+}
+
+// 날짜 유효성 검사
+const startDateInput = document.getElementById("startDate");
+const endDateInput = document.getElementById("endDate");
+
+if (startDateInput && endDateInput) {
+    startDateInput.addEventListener("change", () => {
+        if (endDateInput.value && startDateInput.value > endDateInput.value) {
+            alert("시작일은 종료일보다 앞서야 합니다.");
+            startDateInput.value = "";
+        }
+    });
+
+    endDateInput.addEventListener("change", () => {
+        if (startDateInput.value && endDateInput.value < startDateInput.value) {
+            alert("종료일은 시작일보다 뒤여야 합니다.");
+            endDateInput.value = "";
+        }
+    });
+}
+
+/*  메뉴 등록  */
+// 행 추가
+function menuAddRow() {
+    const itemContainer = document.querySelector('.item-container');
+
+    // 새로운 줄을 생성
+    const newRow = document.createElement('div');
+    newRow.classList.add('form-row', 'item-row');
+    newRow.innerHTML = `
+    <label class="invisible-label">품목코드</label>
+    <input type="text" placeholder="품목코드" />
+    <span class="label">사용량</span>
+    <input type="text" placeholder="사용량" />
+    <button type="button" class="delete-btn" onclick="menuDelRow(this)">❌</button>
+  `;
+
+    // 새로운 줄을 item-container에 추가
+    itemContainer.appendChild(newRow);
+}
+
+// 행 삭제
+function menuDelRow(button) {
+    const row = button.closest('.form-row');  // 삭제 버튼이 포함된 행을 찾음
+    row.remove();  // 해당 행 삭제
+}
+
+// 프로필 정보 수정 <!-- 카카오 주소 API -->
+function execDaumPostcode(type) {
+    new daum.Postcode({
+        oncomplete: function (data) {
+            if (type === 'user') {
+                document.getElementById('user-postcode').value = data.zonecode;
+                document.getElementById('user-address').value = data.address;
+                document.getElementById('user-detail-address').focus();
+            } else if (type === 'store') {
+                document.getElementById('store-postcode').value = data.zonecode;
+                document.getElementById('store-address').value = data.address;
+                document.getElementById('store-detail-address').focus();
+            }
+        }
+    }).open();
+}

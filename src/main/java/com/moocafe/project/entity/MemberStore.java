@@ -17,9 +17,12 @@ public class MemberStore {
     @Id
     @GeneratedValue(strategy= GenerationType.SEQUENCE)
     private Integer id;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "member_id")
     private Member member;
-    @ManyToOne
+
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "store_id")
     private Store store;
 
     @CreatedDate

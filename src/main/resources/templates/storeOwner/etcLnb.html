@@ -6,39 +6,38 @@
 <div class="sidebar" th:fragment="nonActive"></div>
 <div class="sidebar" th:fragment="active(title,sub)">
   <ul>
-    <li class="order">
-      <a href="#">주문</a>
+    <li class="sale" th:if="${#strings.equals(title,'sale')}">
+      <a href="/storeOwner/salesList">매출</a>
       <ul class="submenu">
-        <li><a href="#">주문신청</a></li>
-        <li><a href="#">주문현황</a></li>
+        <li><a href="/storeOwner/salesList" th:classappend="${#strings.equals(sub, 'salesList') ? 'active' : ''}">판매현황</a></li>
       </ul>
     </li>
-    <li class="return">
+    <li class="order" th:if="${#strings.equals(title,'order')}">
+      <a href="/storeOwner/storeorderList">주문</a>
+      <ul class="submenu">
+        <li><a href="/storeOwner/storeorderList" th:classappend="${#strings.equals(sub, 'storeorderList') ? 'active' : ''}">주문현황</a></li>
+        <li><a href="/storeOwner/storeorderForm" th:classappend="${#strings.equals(sub, 'storeorderForm') ? 'active' : ''}">주문신청</a></li>
+      </ul>
+    </li>
+    <li class="return" th:if="${#strings.equals(title,'return')}">
       <a href="#">반품</a>
       <ul class="submenu">
         <li><a href="#">반품신청</a></li>
         <li><a href="#">반품현황</a></li>
       </ul>
     </li>
-    <li class="sales">
-      <a href="#">매출</a>
+    <li class="inventory" th:if="${#strings.equals(title,'inventory')}">
+      <a href="/storeOwner/inventoryStore">재고</a>
       <ul class="submenu">
-        <li><a href="#">매출분석</a></li>
+        <li><a href="/storeOwner/inventoryStore" th:classappend="${#strings.equals(sub, 'inventoryStore') ? 'active' : ''}">매장재고</a></li>
       </ul>
     </li>
-    <li class="stock">
-      <a href="#">재고</a>
-      <ul class="submenu">
-        <li><a href="#">매장재고</a></li>
-        <li><a href="#">판매현황</a></li>
-      </ul>
-    </li>
-    <li class="etc" style="display:block" th:if="${#strings.equals(title,'etc')}">
+    <li class="etc" th:if="${#strings.equals(title,'etc')}">
       <a href="/storeOwner/faqList">고객센터</a>
       <ul class="submenu">
-        <li><a href="/storeOwner/faqList" th:classappend="${#strings.equals(sub, 'list') ? 'on' : ''}">문의 게시판</a></li>
-        <li><a href="/storeOwner/faqEdit" th:classappend="${#strings.equals(sub, 'edit') ? 'on' : ''}">문의하기</a></li>
-        <li><a href="/storeOwner/faqList/owner" th:classappend="${#strings.equals(sub, 'owner') ? 'on' : ''}">내 문의글</a></li>
+        <li><a href="/storeOwner/faqList" th:classappend="${#strings.equals(sub, 'list') ? 'active' : ''}">문의 게시판</a></li>
+        <li><a href="/storeOwner/faqEdit" th:classappend="${#strings.equals(sub, 'edit') ? 'active' : ''}">문의하기</a></li>
+        <li><a href="/storeOwner/faqList/owner" th:classappend="${#strings.equals(sub, 'owner') ? 'active' : ''}">내 문의글</a></li>
       </ul>
     </li>
   </ul>

@@ -80,7 +80,7 @@ public class DummyDataInitializer {
                 .zipcode("00000")
                 .address01("본사창고 주소")
                 .address02("본사창고 상세주소")
-                .state("운영중")
+                .state("영업중")
                 .build();
         Store store1=Store.builder()
                 .name("월담 고양점")
@@ -90,7 +90,7 @@ public class DummyDataInitializer {
                 .zipcode("10401")
                 .address01("경기도 고양시 일산동구 중앙로1275번길 38-10")
                 .address02("201호(장항동, 우림 로데오스위트)")
-                .state("운영중")
+                .state("영업중")
                 .build();
         Store store01=Store.builder()
                 .name("홍대점")
@@ -100,7 +100,7 @@ public class DummyDataInitializer {
                 .zipcode("04050")
                 .address01("서울 마포구 양화로 45")
                 .address02("2층")
-                .state("운영중")
+                .state("영업중")
                 .build();
         Store store02=Store.builder()
                 .name("부산점")
@@ -110,7 +110,7 @@ public class DummyDataInitializer {
                 .zipcode("48093")
                 .address01("부산 해운대구 센텀동로 99")
                 .address02("10층")
-                .state("점검중")
+                .state("휴업")
                 .build();
         Store store03=Store.builder()
                 .name("일산점")
@@ -120,7 +120,7 @@ public class DummyDataInitializer {
                 .zipcode("04220")
                 .address01("경기 고양시 일산서구 112-1")
                 .address02("2층")
-                .state("운영중")
+                .state("영업중")
                 .build();
         mss.save(adminMember,store);
         mss.save(member1,store);

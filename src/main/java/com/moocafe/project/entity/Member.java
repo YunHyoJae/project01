@@ -29,7 +29,7 @@ public class Member extends BaseEntity {
     private String zipcode;
     private String address01;
     private String address02;
-    @OneToMany(mappedBy = "member",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "member",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberStore> stores = new ArrayList<>();
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

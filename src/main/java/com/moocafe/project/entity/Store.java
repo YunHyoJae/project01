@@ -17,7 +17,7 @@ public class Store extends BaseEntity {
     @GeneratedValue(strategy= GenerationType.SEQUENCE)
     private Integer id;
 
-    @OneToMany(mappedBy = "store",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "store",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberStore> members = new ArrayList<>();
     @Column(nullable=false, columnDefinition = "VARCHAR(30)")
     private String name;
