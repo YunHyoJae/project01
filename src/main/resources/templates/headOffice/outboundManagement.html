@@ -7,6 +7,16 @@
 <body>
 <h2>본사 관리자 - 출고 관리</h2>
 
+<form method="get" th:action="@{/headOffice/outboundManagement}">
+    <label>요청 일자: </label>
+    <input type="date" name="startDate" th:value="${startDate}">
+    <input type="date" name="endDate" th:value="${endDate}">
+    <label>매장명: </label>
+    <input type="text" name="storeName" th:value="${storeName}" placeholder="매장명 입력">
+    <button type="submit">검색</button>
+</form>
+<br>
+
 <table border="1">
     <thead>
     <tr>

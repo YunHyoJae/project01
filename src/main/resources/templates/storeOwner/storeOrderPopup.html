@@ -23,9 +23,11 @@
     <td>
       <button type="button"
               class="select-item-btn"
-              th:attr="data-code=${item.itemCode},
-                 data-name=${item.itemName},
-                 data-price=${item.itemPrice}">
+              th:data-index="${index}"
+              th:data-code="${item.itemCode}"
+              th:data-name="${item.itemName}"
+              th:data-price="${item.itemPrice}"
+              th:data-stock="${item.stockQuantity}">
         선택
       </button>
     </td>
@@ -40,10 +42,12 @@
   window.onload = () => {
     document.querySelectorAll('.select-item-btn').forEach(btn => {
       btn.addEventListener('click', () => {
+        const index = btn.getAttribute('data-index');
         const code = btn.getAttribute('data-code');
         const name = btn.getAttribute('data-name');
         const price = btn.getAttribute('data-price');
-        window.opener.selectItem(index, code, name, price);
+        const stock = btn.getAttribute('data-stock');
+        window.opener.selectItemFromPopup(index, code, name, price, stock);
         window.close();
       });
     });

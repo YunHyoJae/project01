@@ -7,9 +7,7 @@ import com.moocafe.project.dto.StoreOrderDetailDto;
 import com.moocafe.project.dto.StoreOrderDto;
 import com.moocafe.project.dto.StoreOrderListResponseDto;
 import com.moocafe.project.entity.*;
-import com.moocafe.project.repository.OutBoundItemRepository;
-import com.moocafe.project.repository.OutBoundRepository;
-import com.moocafe.project.repository.StoreOrderRepository;
+import com.moocafe.project.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +28,8 @@ public class StoreOrderService {
     private final StoreOrderRepository storeOrderRepository;
     private final OutBoundRepository outBoundRepository;
     private final OutBoundItemRepository outBoundItemRepository;
+    private final InventoryStoreRepository inventoryStoreRepository;
+    private final InventoryItemRepository inventoryItemRepository;
 
     @Transactional
     public void createOrder(StoreOrderDto orderDto) {
@@ -46,14 +46,19 @@ public class StoreOrderService {
                         .build()
         );
 
-
         for (StoreOrderDetailDto item : orderDto.getItems()) {
+
+            int stock = inventoryStoreRepository.findQuantityByStoreIdAndItemCode(1, item.getItemCode());
+            if (item.getOrderedQuantity() > stock) {
+                throw new IllegalArgumentException("[" + item.getItemCode() + "] 재고 부족: 주문수량이 재고보다 많습니다.");
+            }
+
             StoreOrderDetailId id = new StoreOrderDetailId(savedOrder.getId(), item.getItemCode());
             StoreOrderDetail detail = StoreOrderDetail.builder()
                     .orderId(id.getOrderId())
                     .itemCode(id.getItemCode())
                     .orderedQuantity(item.getOrderedQuantity())
-                    .status("주문완료")
+                    .status("출고요청")
                     .storeOrder(savedOrder)
                     .build();
             storeOrderDetailDao.save(detail);

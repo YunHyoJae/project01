@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Controller
@@ -20,10 +21,28 @@ public class OutBoundController {
     private final OutBoundService outBoundService;
 
     @GetMapping("/outboundManagement")
-    public String showOutBoundList(Model model) {
-        List<OutBoundListResponseDto> list = outBoundService.getOutBoundList();
+    public String showOutBoundList(
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            @RequestParam(required = false) String storeName,
+            Model model) {
+
+
+        if (startDate == null || endDate == null) {
+            LocalDate now = LocalDate.now();
+            startDate = now.minusYears(1).toString();
+            endDate = now.toString();
+        }
+
+        List<OutBoundListResponseDto> list =
+                outBoundService.getOutBoundListWithConditions(startDate, endDate, storeName);
+
         model.addAttribute("outbounds", list);
-        return "/headoffice/outboundManagement";
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
+        model.addAttribute("storeName", storeName);
+
+        return "headOffice/outboundManagement";
     }
 
     @PostMapping("/outboundManagement")
@@ -38,7 +57,7 @@ public class OutBoundController {
         try {
             for (Integer id : dto.getOutBoundIds()) {
                 if ("승인".equals(status)) {
-                    outBoundService.completeOutBound(id, "준비중");
+                    outBoundService.completeOutBound(id, "출고준비");
                 } else if ("출고완료".equals(status)) {
                     outBoundService.completeOutBound(id, "출고완료");
                 } else {

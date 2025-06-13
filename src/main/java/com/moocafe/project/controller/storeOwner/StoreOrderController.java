@@ -2,6 +2,7 @@ package com.moocafe.project.controller.storeOwner;
 
 import com.moocafe.project.dto.*;
 import com.moocafe.project.entity.InventoryItem;
+import com.moocafe.project.entity.InventoryStore;
 import com.moocafe.project.repository.InventoryItemRepository;
 import com.moocafe.project.repository.InventoryStoreRepository;
 import com.moocafe.project.service.ReturnService;
@@ -49,6 +50,12 @@ public class StoreOrderController {
             @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") String endDate,
             Model model
     ) {
+        if (startDate == null || endDate == null) {
+            LocalDate today = LocalDate.now();
+            startDate = today.minusYears(1).toString();
+            endDate = today.toString();
+        }
+
         Integer storeId = userDetails.toDto().getStoreId();
 
         List<StoreOrderListResponseDto> orderList = storeOrderService.getOrderList(storeId, startDate, endDate);
@@ -82,16 +89,23 @@ public class StoreOrderController {
     }
 
     @GetMapping("/storeOrderPopup")
-    public String showItemPopup(Model model) {
-        List<ItemSearchDto> items = inventoryItemRepository.findAll()
+    public String showItemPopup(@RequestParam("index") int index, Model model) {
+        List<ItemSearchDto> items = inventoryStoreRepository.findByStoreId(1)
                 .stream()
-                .map(i -> new ItemSearchDto(
-                        i.getItemCode(),
-                        i.getItemName(),
-                        i.getItemQuantity(),
-                        i.getItemPrice()))
-                .toList();
+                .map(store -> {
+                    InventoryItem item = inventoryItemRepository.findByItemCode(store.getItemCode())
+                            .orElseThrow(() -> new IllegalArgumentException("해당 itemCode에 대한 기초 품목 정보가 없습니다: " + store.getItemCode()));
+                    return new ItemSearchDto(
+                            item.getItemCode(),
+                            item.getItemName(),
+                            item.getItemPrice(),
+                            store.getCount()
+                    );
+                }).toList();
+
         model.addAttribute("items", items);
+        model.addAttribute("index", index);
+
         return "/storeOwner/storeOrderPopup";
     }
 
@@ -130,16 +144,4 @@ public class StoreOrderController {
                 stockQty);
         return ResponseEntity.ok(dto);
     }
-
-//    @GetMapping("/storeOrderList")
-//    @ResponseBody
-//    public ResponseEntity<List<StoreOrderListResponseDto>> getOrderList(
-//            @AuthenticationPrincipal CustomUserDetails userDetails,
-//            @RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") String startDate,
-//            @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") String endDate
-//    ) {
-//        Integer storeId = userDetails.toDto().getStoreId();
-//        List<StoreOrderListResponseDto> orderList = storeOrderService.getOrderList(storeId, startDate, endDate);
-//        return ResponseEntity.ok(orderList);
-//    }
 }

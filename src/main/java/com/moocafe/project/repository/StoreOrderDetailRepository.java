@@ -15,12 +15,16 @@ import java.util.List;
 @Repository
 public interface StoreOrderDetailRepository extends JpaRepository<StoreOrderDetail, StoreOrderDetailId> {
     @Query(
-            value = "SELECT o.orderNumber, TO_CHAR(o.orderDate, 'YYYY-MM-DD'), d.itemCode, i.itemName, d.orderedQuantity, d.status " +
-                    "FROM StoreOrder o " +
-                    "JOIN StoreOrderDetail d ON o.id = d.orderId " +
-                    "JOIN InventoryRegistration i ON d.itemCode = i.itemCode " +
-                    "WHERE o.storeId = :storeId " +
-                    "AND TRUNC(o.orderDate) BETWEEN TO_DATE(:startDate, 'YYYY-MM-DD') AND TO_DATE(:endDate, 'YYYY-MM-DD')",
+            value = """
+        SELECT o.orderNumber, TO_CHAR(o.orderDate, 'YYYY-MM-DD'), d.itemCode,
+               ir.itemName, d.orderedQuantity, d.status
+        FROM StoreOrder o
+        JOIN StoreOrderDetail d ON o.id = d.orderId
+        JOIN InventoryStore s ON d.itemCode = s.itemCode AND s.storeId = 1
+        JOIN InventoryRegistration ir ON s.itemCode = ir.itemCode
+        WHERE o.storeId = :storeId
+        AND TRUNC(o.orderDate) BETWEEN TO_DATE(:startDate, 'YYYY-MM-DD') AND TO_DATE(:endDate, 'YYYY-MM-DD')
+        """,
             nativeQuery = true
     )
     List<Object[]> findOrderListByStoreAndDate(

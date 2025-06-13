@@ -3,8 +3,10 @@ package com.moocafe.project.service;
 import com.moocafe.project.dao.OutBoundDao;
 import com.moocafe.project.dao.OutBoundItemDao;
 import com.moocafe.project.dto.OutBoundListResponseDto;
+import com.moocafe.project.entity.InventoryStore;
 import com.moocafe.project.entity.OutBound;
 import com.moocafe.project.entity.OutBoundItem;
+import com.moocafe.project.repository.InventoryStoreRepository;
 import com.moocafe.project.repository.OutBoundRepository;
 import com.moocafe.project.repository.StoreOrderDetailRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ public class OutBoundService {
     private final OutBoundItemDao outBoundItemDao;
     private final OutBoundRepository outBoundRepository;
     private final StoreOrderDetailRepository storeOrderDetailRepository;
+    private final InventoryStoreRepository inventoryStoreRepository;
 
     @Transactional
     public void completeOutBound(Integer outBoundId, String status) {
@@ -36,8 +39,8 @@ public class OutBoundService {
         Date dueDate = origin.getDueDate();
 
         if ("준비중".equals(status)) {
-            requiredDate = null;
-            approvedDate = null;
+            requiredDate = now;
+            approvedDate = now;
             dueDate = null;
         } else if ("출고완료".equals(status)) {
             if (requiredDate == null) requiredDate = now;
@@ -54,23 +57,61 @@ public class OutBoundService {
                 dueDate,
                 status
         );
-
         outBoundDao.save(updated);
 
-        String newOrderStatus = status.equals("출고완료") ? "출고완료" : "출고중";
+        String newOrderStatus = status.equals("출고완료") ? "출고완료" : "준비중";
 
         List<OutBoundItem> items = outBoundItemDao.findByOutBoundId(outBoundId);
         for (OutBoundItem item : items) {
+            String itemCode = item.getItemCode();
+            int qty = item.getReceivedQuantity();
+
             storeOrderDetailRepository.updateStatusByStoreAndItem(
                     origin.getStoreId(),
-                    item.getItemCode(),
+                    itemCode,
                     newOrderStatus
             );
+
+            if ("출고완료".equals(status)) {
+                inventoryStoreRepository.decreaseStock(1, itemCode, qty);
+
+                List<InventoryStore> storeStockList = inventoryStoreRepository
+                        .findByItemCodeAndStoreId(itemCode, origin.getStoreId());
+
+                InventoryStore storeInventory;
+                if (storeStockList.isEmpty()) {
+                    storeInventory = new InventoryStore(
+                            itemCode,
+                            origin.getStoreId(),
+                            qty,
+                            now
+                    );
+                } else {
+                    storeInventory = storeStockList.get(0);
+                    storeInventory.updateCount(storeInventory.getCount() + qty, now);
+                }
+
+                inventoryStoreRepository.save(storeInventory);
+            }
         }
     }
+
     public List<OutBoundListResponseDto> getOutBoundList() {
-        //return outBoundRepository.findAllOutBoundDtos();
-        List<Object[]> results=outBoundRepository.findAllOutBoundDtosNative();
+        List<Object[]> results = outBoundRepository.findAllOutBoundDtosNative();
+        return results.stream().map(obj -> new OutBoundListResponseDto(
+                (Integer) obj[0],
+                (String) obj[1],
+                (String) obj[2],
+                (String) obj[3],
+                (Integer) obj[4],
+                (String) obj[5],
+                (String) obj[6],
+                (String) obj[7]
+        )).collect(Collectors.toList());
+    }
+
+    public List<OutBoundListResponseDto> getOutBoundListWithConditions(String startDate, String endDate, String storeName) {
+        List<Object[]> results = outBoundRepository.findOutBoundsByConditionNative(startDate, endDate, storeName);
         return results.stream().map(obj -> new OutBoundListResponseDto(
                 (Integer) obj[0],
                 (String) obj[1],
@@ -83,4 +124,5 @@ public class OutBoundService {
         )).collect(Collectors.toList());
     }
 }
+
 
