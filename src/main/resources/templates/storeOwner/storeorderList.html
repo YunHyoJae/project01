@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{/storeOwner/meta::myHead('주문현황')}"></head>
+<body>
+<header th:replace="~{/storeOwner/tnb}"></header>
+<div class="section">
+  <div th:replace="~{/storeOwner/header}"></div>
+  <div class="main-layout">
+    <div th:replace="~{/storeOwner/etcLnb::active('order','storeorderList')}"></div>
+    <div class="order_wrap">
+      <div class="orderList">
+        <h2>주문현황</h2>
+        <div class="orderList-box box">
+          <form method="get" th:action="@{/storeOwner/storeorderList}">
+            <div class="search-section-orderlist">
+              요청일자
+              <input type="date" class="start-date-orderlist" name="startDate" th:value="${startDate}" /> -
+              <input type="date" class="end-date-orderlist" name="endDate" th:value="${endDate}" />
+              <button class="search-btn-orderlist" type="submit">검색</button>
+            </div>
+          </form>
+
+          <table class="orderlist-table">
+            <thead>
+            <tr>
+              <th>주문번호</th>
+              <th>요청일</th>
+              <th>품목코드</th>
+              <th>품목명</th>
+              <th>수량</th>
+              <th>주문상태</th>
+              <th>비고</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="order : ${orderList}">
+              <td th:text="${order.orderNumber}"></td>
+              <td th:text="${order.orderDate}"></td>
+              <td th:text="${order.itemCode}"></td>
+              <td th:text="${order.itemName}"></td>
+              <td th:text="${order.orderedQuantity}"></td>
+              <td th:text="${order.status}"></td>
+              <td>
+                <button type="button"
+                        th:if="${order.status == '출고요청'}"
+                        onclick="addToReturnList(this)" class="return-btn">반품</button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="return-wrapper" id="returnSection" style="display: none;">
+        <h3 class="return_tit">반품리스트</h3>
+        <form method="post" th:action="@{/storeOwner/return}" id="returnForm" th:object="${returnDto}">
+          <table class="return-table">
+            <thead>
+            <tr>
+              <th>주문번호</th>
+              <th>품목코드</th>
+              <th>품목명</th>
+              <th>반품수량</th>
+              <th>삭제</th>
+            </tr>
+            </thead>
+            <tbody id="returnTableBody"></tbody>
+          </table>
+          <div class="return-reason">
+            <label>반품사유 :</label><br>
+            <textarea th:field="*{returnNote}" rows="3"></textarea>
+          </div>
+          <div class="return-number">
+            <label>반품번호 :</label>
+            <input type="text" th:field="*{returnNumber}" readonly />
+          </div>
+          <button class="submit-return-btn" type="submit">반품신청</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script th:inline="javascript">
+  let returnIndex = 0;
+
+  function addToReturnList(button) {
+    const row = button.closest('tr');
+    const orderNumber = row.children[0].innerText;
+    const itemCode = row.children[2].innerText;
+    const itemName = row.children[3].innerText;
+    const quantity = row.children[4].innerText;
+
+    const existing = [...document.querySelectorAll('#returnTableBody input[name$=".orderNumber"]')];
+    const isDuplicate = existing.some(input => {
+      const codeInput = input.closest('tr').querySelector('input[name$=".itemCode"]');
+      return input.value === orderNumber && codeInput?.value === itemCode;
+    });
+
+    if (isDuplicate) {
+      alert("이미 반품리스트에 추가된 항목입니다.");
+      return;
+    }
+
+    const section = document.getElementById("returnSection");
+    const table = document.getElementById("returnTableBody");
+    section.style.display = "block";
+
+    const newRow = table.insertRow();
+    newRow.innerHTML = `
+      <td>
+        ${orderNumber}
+        <input type="hidden" name="items[${returnIndex}].orderNumber" value="${orderNumber}" />
+      </td>
+      <td>
+        ${itemCode}
+        <input type="hidden" name="items[${returnIndex}].itemCode" value="${itemCode}" />
+      </td>
+      <td>
+        ${itemName}
+        <input type="hidden" name="items[${returnIndex}].itemName" value="${itemName}" />
+      </td>
+      <td>
+        <input type="number" name="items[${returnIndex}].returnQuantity" value="${quantity}" min="1" max="${quantity}" />
+      </td>
+      <td><button type="button" onclick="removeRow(this)">삭제</button></td>
+    `;
+    returnIndex++;
+  }
+
+  function removeRow(button) {
+    const row = button.closest('tr');
+    row.remove();
+    const table = document.getElementById("returnTableBody");
+    const section = document.getElementById("returnSection");
+    if (table.rows.length === 0) {
+      section.style.display = "none";
+      returnIndex = 0;
+    }
+  }
+</script>
+</body>
+</html>

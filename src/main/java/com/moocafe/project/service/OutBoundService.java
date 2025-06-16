@@ -10,12 +10,13 @@ import com.moocafe.project.repository.InventoryStoreRepository;
 import com.moocafe.project.repository.OutBoundRepository;
 import com.moocafe.project.repository.StoreOrderDetailRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -96,23 +97,26 @@ public class OutBoundService {
         }
     }
 
-    public List<OutBoundListResponseDto> getOutBoundList() {
-        List<Object[]> results = outBoundRepository.findAllOutBoundDtosNative();
-        return results.stream().map(obj -> new OutBoundListResponseDto(
-                (Integer) obj[0],
-                (String) obj[1],
-                (String) obj[2],
-                (String) obj[3],
-                (Integer) obj[4],
-                (String) obj[5],
-                (String) obj[6],
-                (String) obj[7]
-        )).collect(Collectors.toList());
-    }
+//    public List<OutBoundListResponseDto> getOutBoundList() {
+//        List<Object[]> results = outBoundRepository.findAllOutBoundDtosNative();
+//        return results.stream().map(obj -> new OutBoundListResponseDto(
+//                (Integer) obj[0],
+//                (String) obj[1],
+//                (String) obj[2],
+//                (String) obj[3],
+//                (Integer) obj[4],
+//                (String) obj[5],
+//                (String) obj[6],
+//                (String) obj[7]
+//        )).collect(Collectors.toList());
+//    }
 
-    public List<OutBoundListResponseDto> getOutBoundListWithConditions(String startDate, String endDate, String storeName) {
-        List<Object[]> results = outBoundRepository.findOutBoundsByConditionNative(startDate, endDate, storeName);
-        return results.stream().map(obj -> new OutBoundListResponseDto(
+    public Page<OutBoundListResponseDto> getOutBoundListWithConditions(
+            String startDate, String endDate, String storeName, Pageable pageable) {
+
+        Page<Object[]> result = outBoundRepository.findOutBoundsByConditionNativePageable(startDate, endDate, storeName, pageable);
+
+        return result.map(obj -> new OutBoundListResponseDto(
                 (Integer) obj[0],
                 (String) obj[1],
                 (String) obj[2],
@@ -121,7 +125,7 @@ public class OutBoundService {
                 (String) obj[5],
                 (String) obj[6],
                 (String) obj[7]
-        )).collect(Collectors.toList());
+        ));
     }
 }
 
