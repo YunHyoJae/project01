@@ -103,7 +103,7 @@ body {
 .main-layout {
   display: flex;
   flex-wrap: wrap;
-  height: 700px;
+  min-height: 700px;
 }
 
 /* 왼쪽 사이드바 */
