@@ -53,6 +53,12 @@ public class StoreOrderController {
     ) {
         Integer storeId = userDetails.toDto().getStoreId();
 
+        if (startDate == null || endDate == null) {
+            LocalDate now = LocalDate.now();
+            startDate = now.minusYears(1).toString();
+            endDate = now.toString();
+        }
+
         List<StoreOrderListResponseDto> orderList = storeOrderService.getOrderList(storeId, startDate, endDate);
 
         List<ReturnItemDto> items = IntStream.range(0, 3)
