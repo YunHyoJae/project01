@@ -38,6 +38,7 @@ public class InventoryStore {
         this.regDate = regDate;
     }
 
+
     public void updateCount(Integer newCount, Date modifyDate) {
         this.count = newCount;
         this.modifyDate = modifyDate;
@@ -47,4 +48,5 @@ public class InventoryStore {
         this.storeId = toStoreId;
         this.moveDate = moveDate;
     }
+
 }

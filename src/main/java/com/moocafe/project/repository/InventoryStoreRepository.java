@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface InventoryStoreRepository extends JpaRepository<InventoryStore, Long> {
 
@@ -17,6 +18,10 @@ public interface InventoryStoreRepository extends JpaRepository<InventoryStore, 
     List<InventoryStore> findByItemCode(String itemCode);
 
     List<InventoryStore> findByItemCodeAndStoreId(String itemCode, Integer storeId);
+
+    Optional<InventoryStore> findByStoreIdAndItemCode(Integer storeId, String itemCode);
+
+
 
     /**
      * ✅ 수량 차감: 레시피 사용 시 재고 감소
@@ -73,4 +78,29 @@ public interface InventoryStoreRepository extends JpaRepository<InventoryStore, 
             @Param("storeId") Integer storeId,
             @Param("itemCode") String itemCode
     );
-}
+
+
+
+        // 본사 재고 증가
+        @Modifying
+        @Transactional
+        @Query("UPDATE InventoryStore s " +
+                "SET s.count = s.count + :quantity, s.modifyDate = CURRENT_DATE " +
+                "WHERE s.itemCode = :itemCode AND s.storeId = 1")
+        int increaseHeadOfficeStock(@Param("itemCode") String itemCode, @Param("quantity") Integer quantity);
+
+        // 매장 재고 감소
+        @Modifying
+        @Transactional
+        @Query("UPDATE InventoryStore s " +
+                "SET s.count = s.count - :quantity, s.modifyDate = CURRENT_DATE " +
+                "WHERE s.itemCode = :itemCode AND s.storeId = :storeId")
+        int decreaseStoreStock(@Param("itemCode") String itemCode, @Param("quantity") Integer quantity, @Param("storeId") int storeId);
+
+        // 매장별 재고 조회
+
+    }
+
+
+
+

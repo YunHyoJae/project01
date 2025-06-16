@@ -37,6 +37,7 @@ public class PurchaseItem {
     private String supplier;
 
     @Column(nullable = false)
+    @Setter
     private String status = "진행중";
 
     @ManyToOne(fetch = FetchType.LAZY)

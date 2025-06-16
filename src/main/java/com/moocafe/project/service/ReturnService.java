@@ -1,17 +1,13 @@
 package com.moocafe.project.service;
 
 import com.moocafe.project.dao.InventoryItemDao;
+import com.moocafe.project.dao.PurchaseItemDao;
 import com.moocafe.project.dao.ReturnDao;
 import com.moocafe.project.dao.ReturnItemDao;
 import com.moocafe.project.dto.ReturnDto;
 import com.moocafe.project.dto.ReturnItemDto;
-import com.moocafe.project.entity.InventoryItem;
-import com.moocafe.project.entity.InventoryStore;
-import com.moocafe.project.entity.Return;
-import com.moocafe.project.entity.ReturnItem;
-import com.moocafe.project.repository.InventoryItemRepository;
-import com.moocafe.project.repository.InventoryStoreRepository;
-import com.moocafe.project.repository.ReturnRepository;
+import com.moocafe.project.entity.*;
+import com.moocafe.project.repository.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
@@ -30,12 +26,14 @@ public class ReturnService {
     private final InventoryStoreRepository inventoryStoreRepository;
     private final ReturnRepository returnRepository;
     private final InventoryItemRepository inventoryItemRepository;
+    private final PurchaseRepository purchaseRepository;
+    private final PurchaseItemRepository purchaseItemRepository;
 
-    @PersistenceContext
-    private EntityManager em;
+    //@PersistenceContext
+    //private EntityManager em;
 
     @Transactional
-    public void saveReturn(ReturnDto returnDto) {
+    public void saveReturn(ReturnDto returnDto, String itemCode, Integer returnQuantity, int storeId) {
         Return returnEntity = Return.builder()
                 .returnNumber(returnDto.getReturnNumber())
                 .returnNote(returnDto.getReturnNote())
@@ -65,6 +63,10 @@ public class ReturnService {
                     .build();
 
             returnItemDao.saveReturnItem(returnItem);
+//            returnDao.updateReturnStock(itemCode, returnQuantity, storeId);
+
+            inventoryStoreRepository.increaseHeadOfficeStock(itemCode, returnQuantity);
+            inventoryStoreRepository.decreaseStoreStock(itemCode, returnQuantity, storeId);
         }
     }
 
@@ -77,4 +79,6 @@ public class ReturnService {
         returns.forEach(r -> r.getItems().size());
         return returns;
     }
+
+
 }

@@ -15,6 +15,6 @@ public class ReturnItemDto {
     private String itemCode;
     private String itemName;
     private String orderNumber;
-    private int returnQuantity;
+    private Integer returnQuantity;
     private String status;
 }
