@@ -5,75 +5,81 @@
 <header th:replace="~{/headOffice/tnb}"></header>
 <div class="section">
     <div th:replace="~{/headOffice/header}"></div>
-
-
     <div class="main-layout">
         <div th:replace="~{/headOffice/etcLnb::active('etc','franchise')}"></div>
-
         <div class="content">
-            <h2>프랜차이즈 문의</h2>
-            <div class="question-box">
-                <!-- 프렌차이즈 문의 폼 -->
-                <table>
-                    <tr>
-                        <th>고객명</th>
-                        <td th:text="${content.name}"></td>
-                    </tr>
-                    <tr>
-                        <th>연락처</th>
-                        <td th:text="${content.tel}"></td>
-                    </tr>
-                    <tr>
-                        <th>이메일</th>
-                        <td th:text="${content.email}"><input type="email" name="" class="full-width" required></td>
-                    </tr>
-                    <tr>
-                        <th>창업희망지역</th>
-                        <td th:text="${content.space}"></td>
-                    </tr>
-                    <tr>
-                        <th>점포보유유무</th>
-                        <td th:text="${content.store}"></td>
-                    </tr>
-                    <tr>
-                        <th>창업시기</th>
-                        <td th:text="${content.time}"></td>
-                    </tr>
-                    <tr>
-                        <th>문의경로</th>
-                        <td th:text="${content.course}"></td>
-                    </tr>
-                    <tr>
-                        <th>상세문의내용</th>
-                        <td><textarea rows="5" class="full-width" th:text="${content.content}" readonly></textarea></td>
-                    </tr>
-                </table>
-            </div>
-            <form action="/headOffice/franchiseDetail" method="post">
-                <input type="hidden" name="id" th:value="${content.reply.id}">
-            <div class="counsel-form">
-                <div class="counsel-header">
-                    <div class="counsel-status">[[${content.reply.memberName}]]</div>
-                    <div class="counsel-status">[[${content.reply.state}]]</div>
-                    <div class="counsel-date" th:text="${content.reply.modifyDate != null ? content.reply.modifyDate : content.reply.regDate}"></div>
+            <div class="franchDetail">
+                <h2>프랜차이즈 문의</h2>
+                <div class="question-box">
+                    <!-- 프렌차이즈 문의 폼 -->
+                    <table>
+                        <colgroup><col style="width:320px;" /><col /></colgroup>
+                        <tbody>
+                        <tr>
+                            <th>고객명</th>
+                            <td th:text="${content.name}"></td>
+                        </tr>
+                        <tr>
+                            <th>연락처</th>
+                            <td th:text="${content.tel}"></td>
+                        </tr>
+                        <tr>
+                            <th>이메일</th>
+                            <td th:text="${content.email}"><input type="email" name="" class="full-width" required></td>
+                        </tr>
+                        <tr>
+                            <th>창업희망지역</th>
+                            <td th:text="${content.space}"></td>
+                        </tr>
+                        <tr>
+                            <th>점포보유유무</th>
+                            <td th:text="${content.store}"></td>
+                        </tr>
+                        <tr>
+                            <th>창업시기</th>
+                            <td th:text="${content.time}"></td>
+                        </tr>
+                        <tr>
+                            <th>문의경로</th>
+                            <td th:text="${content.course}"></td>
+                        </tr>
+                        <tr>
+                            <th>상세문의내용</th>
+                            <td><textarea rows="5" class="full-width" th:text="${content.content}" readonly></textarea></td>
+                        </tr>
+                        </tbody>
+                    </table>          
+                    <form action="/headOffice/franchiseDetail" method="post">
+                        <input type="hidden" name="id" th:value="${content.reply.id}">
+                        <table class="answer_table">
+                            <tr>
+                                <th>상태</th>
+                                <td>[[${content.reply.state}]]</td>
+                                <th>답변일시</th>
+                                <td th:text="${content.reply.modifyDate != null ? content.reply.modifyDate : content.reply.regDate}"></td>
+                            </tr>
+                            <tr>
+                                <th>상담내용</th>
+                                <th:block th:if="${content.reply.state == '상담완료'}">
+                                    <td colspan="3" th:text="${content.reply.content}"></td>
+                                </th:block>
+                                <th:block th:unless="${content.reply.state == '상담완료'}">
+                                    <td colspan="3">
+                                        <textarea id="counsel-input" placeholder="상담 내용을 입력해주세요." rows="5" class="full-width" name="content"></textarea>
+                                    </td>
+                                </th:block>
+                            </tr>
+                        </table>
+                        <th:block th:if="${content.reply.state == '상담완료'}">
+                            <button class="default_btn close-btn" type="button" onclick="window.history.back()">목록보기</button>
+                        </th:block>
+                        <th:block th:unless="${content.reply.state == '상담완료'}">
+                            <button class="default_btn" style="margin-left:10px;">상담완료</button>
+                            <button class="default_btn close-btn" type="button" onclick="window.history.back()">보류</button>
+                        </th:block>
+                    </form>
                 </div>
-                <th:block th:if="${content.reply.state == '상담완료'}">
-                    <div class="counsel-body" th:text="${content.reply.content}"></div>
-                </th:block>
-                <th:block th:unless="${content.reply.state == '상담완료'}">
-                    <div class="counsel-body">
-                        <textarea id="counsel-input" placeholder="상담 내용을 입력해주세요." name="content"></textarea>
-                    </div>
-                </th:block>
             </div>
-            <th:block th:if="${content.reply.state == '상담완료'}">
-                <button class="ask-btn" type="button" onclick="window.history.back()">목록보기</button>
-            </th:block>
-            <th:block th:unless="${content.reply.state == '상담완료'}">
-                <button class="ask-btn">상담완료</button>
-                <button class="ask-btn" type="button" onclick="window.history.back()">보류</button>
-            </th:block>
-            </form>
         </div>
     </div>
 </div>

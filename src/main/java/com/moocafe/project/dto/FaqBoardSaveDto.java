@@ -1,7 +1,6 @@
 package com.moocafe.project.dto;
 
 import com.moocafe.project.entity.Faq;
-import com.moocafe.project.entity.FranchiseBoard;
 import com.moocafe.project.entity.Member;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
