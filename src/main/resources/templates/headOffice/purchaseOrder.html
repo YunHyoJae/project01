@@ -1,103 +1,202 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/headOffice.css">
-    <title>발주서</title>
-</head>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{/headOffice/meta::myHead('발주신청')}"></head>
+<style>
+    .delete-btn {
+        background-color: #ff4d4f;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 6px 12px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: background-color 0.2s ease;
+    }
+
+    .delete-btn:hover {
+        background-color: #d9363e;
+    }
+
+    .receiving_entry_table {
+        border-collapse: separate;
+        border-spacing: 0 10px;
+        width: 100%;
+    }
+
+    .receiving_entry_table th,
+    .receiving_entry_table td {
+        padding: 10px;
+    }
+
+    .receiving_entry_table td input {
+        padding: 6px;
+        margin: 2px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .form-section {
+        margin-top: 30px;
+    }
+
+    .po_number input {
+        margin-left: 10px;
+    }
+    .receiving_search-box {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background-color: #f5f5f5;
+        padding: 16px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+
+    .receiving_search-box select,
+    .receiving_search-box input[type="text"] {
+        padding: 8px 12px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 1rem;
+    }
+
+    .receiving_search-box button {
+        background-color: royalblue;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 16px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background-color 0.2s ease;
+    }
+
+    .receiving_search-box button:hover {
+        background-color: #1e40af; /* 좀 더 진한 파랑 */
+    }
+
+</style>
 <body>
-<div class="receivingOrder">
-    <!-- 모달 토글용 체크박스(숨김) -->
-    <input type="checkbox" id="order-modal-toggle" style="display:none;">
+<header th:replace="~{/headOffice/tnb}"></header>
 
-    <!-- 제목 및 모달 열기 버튼 -->
-    <div style="display: flex; align-items: center; gap: 10px;">
-        <h2 style="margin: 0;">발주서</h2>
-        <button type="button" class="ask-btn-receiving-madal" onclick="openItemModal()">🔍 품목 검색</button>
+<div class="section">
+    <div th:replace="~{/headOffice/header}"></div>
 
-    </div>
+    <div class="main-layout">
+        <div th:replace="~{/headOffice/etcLnb::active('receiving','purchaseOrder')}"></div>
 
-    <!-- 발주서 폼 시작 -->
-    <div class="question-box">
-        <form th:action="@{/headOffice/purchaseOrder}" method="post" th:object="${purchaseDto}">
+        <div class="receivingOrder" style="margin: 0 auto; width: 80%; padding: 40px;">
+            <!-- 모달 토글용 체크박스(숨김) -->
+            <input type="checkbox" id="order-modal-toggle" style="display:none;">
 
-                <table class="receiving_entry_table">
-                <thead>
-                <tr>
-                    <th>품목명</th>
-                    <th>품목코드</th>
-                    <th>거래처</th>
-                    <th>신청수량</th>
-                    <th>입고예정일</th>
-                    <th>유통기한</th>
-                    <th>삭제</th>
-                </tr>
-                </thead>
-                <tbody id="itemTableBody">
-                <!-- 초기 행 없음 -->
-                </tbody>
-            </table>
-
-            <div class="form-section">
-                <label class="po_number">발주번호:
-                    <input type="text" th:field="*{purchaseNumber}" readonly/>
-                </label>
-            </div>
-            <button class="ask-btn default_btn" type="submit">저장</button>
-        </form>
-    </div>
-
-    <!-- 모달창 영역 -->
-    <div class="receiving_modal">
-        <div class="receiving_modal_content">
-            <h2 class="receiving_modal_title">품목 검색</h2>
-            <!-- 모달 열기 버튼 예시 -->
-
-            <!-- 검색창 -->
-            <div class="receiving_search-box">
-                <select id="searchType">
-                    <option value="code">코드</option>
-                    <option value="name">이름</option>
-                </select>
-                <input type="text" id="searchKeyword" placeholder="검색어 입력"/>
-                <button type="button" onclick="searchItems()">검색</button>
+            <!-- 제목 및 모달 열기 버튼 -->
+            <div style="display: flex; align-items: flex-start; gap: 20px;">
+                <h2 style="margin: 0;">발주서</h2>
+                <button type="button" class="ask-btn-receiving-madal" onclick="openItemModal()" style="margin-top: 6px;">
+                    🔍 품목 검색
+                </button>
             </div>
 
-            <!-- 결과 테이블 -->
-            <table class="receiving_result-table" border="1">
-                <thead>
-                <tr>
-                    <th>품목코드</th>
-                    <th>품목명</th>
-                    <th>현재수량</th>
-                    <th>가격</th>
-                    <th>선택</th>
-                </tr>
-                </thead>
-                <tbody id="searchResultBody">
-                <tr>
-                    <td colspan="5" style="color:#aaa;">검색 결과 없음</td>
-                </tr>
-                </tbody>
-            </table>
+            <!-- 발주서 폼 시작 -->
+            <div class="question-box">
+                <form th:action="@{/headOffice/purchaseOrder}" method="post" th:object="${purchaseDto}">
+                    <table class="receiving_entry_table">
+                        <thead>
+                        <tr>
+                            <th>품목명</th>
+                            <th>품목코드</th>
+                            <th>거래처</th>
+                            <th>신청수량</th>
+                            <th>입고예정일</th>
+                            <th>유통기한</th>
+                            <th>삭제</th>
+                        </tr>
+                        </thead>
+                        <tbody id="itemTableBody">
+                        </tbody>
+                    </table>
 
-            <!-- 닫기 버튼 -->
-            <div class="receiving_modal-footer">
-                <button type="button" class="close-btn" onclick="confirmSelectedItems()">확인</button>
+                    <div class="form-section">
+                        <label class="po_number">발주번호:
+                            <input type="text" th:field="*{purchaseNumber}" readonly />
+                        </label>
+                    </div>
+
+                    <button class="ask-btn default_btn" type="submit">저장</button>
+                </form>
             </div>
-        </div>
-    </div>
 
-</div>
+            <!-- 모달창 영역 -->
+            <div class="receiving_modal">
+                <div class="receiving_modal_content">
+                    <h2 class="receiving_modal_title">품목 검색</h2>
 
+                    <!-- 검색창 -->
+                    <div class="receiving_search-box">
+                        <select id="searchType">
+                            <option value="code">코드</option>
+                            <option value="name">이름</option>
+                        </select>
+                        <input type="text" id="searchKeyword" placeholder="검색어 입력" />
+                        <button type="button" onclick="searchItems()">검색</button>
+                    </div>
+
+                    <!-- 결과 테이블 -->
+                    <table class="receiving_result-table" border="1">
+                        <thead>
+                        <tr>
+                            <th>품목코드</th>
+                            <th>품목명</th>
+                            <th>현재수량</th>
+                            <th>가격</th>
+                            <th>선택</th>
+                        </tr>
+                        </thead>
+                        <tbody id="searchResultBody">
+                        <tr>
+                            <td colspan="5" style="color:#aaa;">검색 결과 없음</td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- 닫기 버튼 -->
+                    <div class="receiving_modal-footer">
+                        <button type="button" class="close-btn" onclick="confirmSelectedItems()">확인</button>
+                    </div>
+                </div>
+            </div> <!-- /.receiving_modal -->
+        </div> <!-- /.receivingOrder -->
+    </div> <!-- /.main-layout -->
+</div> <!-- /.section -->
+
+<!-- JS 스크립트 영역 -->
 <script th:inline="javascript">
+
+    window.onload = function () {
+        addRow(); // 첫 줄 자동 추가
+    };
+
+    function removeEmptyRowIfExists() {
+        const tbody = document.getElementById("itemTableBody");
+        const rows = tbody.querySelectorAll("tr");
+
+        rows.forEach((row, index) => {
+            const inputs = row.querySelectorAll("input");
+            const isEmpty = Array.from(inputs).every(input => input.value.trim() === "");
+            if (isEmpty) {
+                row.remove();
+            }
+        });
+    }
+
     function openItemModal() {
         document.querySelector(".receiving_modal").style.display = "block";
         fetchAllItems();
     }
 
     function addRow(code = '', name = '', supplier = '', quantity = '') {
+        removeEmptyRowIfExists();
+
         const tbody = document.getElementById("itemTableBody");
         const index = tbody.querySelectorAll("tr").length;
 
@@ -109,12 +208,11 @@
       <td><input type="number" name="items[${index}].receivedQuantity" value="${quantity}" /></td>
       <td><input type="date" name="items[${index}].dueDate" /></td>
       <td><input type="date" name="items[${index}].expirationDate" /></td>
-      <td><button type="button" onclick="deleteRow(this)">삭제</button></td>
+      <td><button type="button" class="delete-btn" onclick="deleteRow(this)">삭제</button></td>
     `;
 
         tbody.appendChild(newRow);
     }
-
 
     function fetchAllItems() {
         fetch("/headOffice/inventory-items/all")
@@ -145,18 +243,18 @@
         items.forEach(item => {
             const row = document.createElement("tr");
             row.innerHTML = `
-            <td>${item.itemCode}</td>
-            <td>${item.itemName}</td>
-            <td>${item.stockQuantity}</td>
-            <td>${item.itemPrice}</td>
-            <td>
-                <input type="checkbox" class="item-checkbox"
-                data-code="${item.itemCode}"
-                data-name="${item.itemName}"
-                data-supplier=""
-                data-quantity="1">
-            </td>
-        `;
+        <td>${item.itemCode}</td>
+        <td>${item.itemName}</td>
+        <td>${item.stockQuantity}</td>
+        <td>${item.itemPrice}</td>
+        <td>
+          <input type="checkbox" class="item-checkbox"
+            data-code="${item.itemCode}"
+            data-name="${item.itemName}"
+            data-supplier=""
+            data-quantity="1">
+        </td>
+      `;
             tbody.appendChild(row);
         });
     }
@@ -181,9 +279,13 @@
         closeModal();
     }
 
+    function deleteRow(button) {
+        const row = button.closest("tr");
+        row.remove();
 
+
+    }
 </script>
-
 
 </body>
 </html>
