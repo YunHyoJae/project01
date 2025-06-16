@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{/headOffice/meta::myHead('점주질문')}"></head><!-- 화면제목 -->
+<body>
+<header th:replace="~{/headOffice/tnb}"></header><!-- 최상단 -->
+<div class="section">
+    <div th:replace="~{/headOffice/header}"></div><!-- 상단메뉴 -->
+
+
+    <div class="main-layout">
+        <div th:replace="~{/headOffice/etcLnb::active('etc','faq')}"></div><!-- 왼쪽메뉴 -->
+
+        <!-- s:본문 컨텐츠 -->
+
+        <!-- e:본문 컨텐츠 -->
+        
+    </div>
+</div>
+<!-- 화면에 대한 스크립트 -->
+<script defer>
+    
+</script>
+</body>
+</html>

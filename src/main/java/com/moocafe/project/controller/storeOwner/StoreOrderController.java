@@ -2,7 +2,6 @@ package com.moocafe.project.controller.storeOwner;
 
 import com.moocafe.project.dto.*;
 import com.moocafe.project.entity.InventoryItem;
-import com.moocafe.project.entity.InventoryStore;
 import com.moocafe.project.repository.InventoryItemRepository;
 import com.moocafe.project.repository.InventoryStoreRepository;
 import com.moocafe.project.service.ReturnService;
@@ -33,17 +32,17 @@ public class StoreOrderController {
     private final InventoryStoreRepository inventoryStoreRepository;
     private final ReturnService returnService;
 
-    @GetMapping("/storeOrderForm")
+    @GetMapping("/storeorderForm")
     public String showOrderForm(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
         Integer storeId = userDetails.toDto().getStoreId();
 
         String orderNumber = storeOrderService.generateOrderNumber(storeId);
         model.addAttribute("orderNumber", orderNumber);
         model.addAttribute("orderDto", new StoreOrderDto());
-        return "/storeOwner/storeOrderForm";
+        return "/storeOwner/storeorderForm";
     }
 
-    @GetMapping("/storeOrderList")
+    @GetMapping("/storeorderList")
     public String showOrderListPage(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") String startDate,
@@ -73,7 +72,17 @@ public class StoreOrderController {
         model.addAttribute("startDate", startDate);
         model.addAttribute("endDate", endDate);
 
-        return "/storeOwner/storeOrderList";
+        return "/storeOwner/storeorderList";
+    }
+
+    @GetMapping("/orderList")
+    public String redirectToOrderListPage(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam(value = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") String startDate,
+            @RequestParam(value = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") String endDate,
+            Model model
+    ) {
+        return showOrderListPage(userDetails, startDate, endDate, model);
     }
 
     private String generateReturnNumber() {
@@ -88,9 +97,10 @@ public class StoreOrderController {
         return "redirect:/storeOwner/storeOrderList"; //return "storeOwner/storeOrderList";
     }
 
-    @GetMapping("/storeOrderPopup")
-    public String showItemPopup(@RequestParam("index") int index, Model model) {
-        List<ItemSearchDto> items = inventoryStoreRepository.findByStoreId(1)
+    @GetMapping("/storeOrderItems")
+    @ResponseBody
+    public List<ItemSearchDto> getItemList() {
+        return inventoryStoreRepository.findByStoreId(1)
                 .stream()
                 .map(store -> {
                     InventoryItem item = inventoryItemRepository.findByItemCode(store.getItemCode())
@@ -102,12 +112,27 @@ public class StoreOrderController {
                             store.getCount()
                     );
                 }).toList();
-
-        model.addAttribute("items", items);
-        model.addAttribute("index", index);
-
-        return "/storeOwner/storeOrderPopup";
     }
+//    @GetMapping("/storeOrderPopup")
+//    public String showItemPopup(@RequestParam("index") int index, Model model) {
+//        List<ItemSearchDto> items = inventoryStoreRepository.findByStoreId(1)
+//                .stream()
+//                .map(store -> {
+//                    InventoryItem item = inventoryItemRepository.findByItemCode(store.getItemCode())
+//                            .orElseThrow(() -> new IllegalArgumentException("해당 itemCode에 대한 기초 품목 정보가 없습니다: " + store.getItemCode()));
+//                    return new ItemSearchDto(
+//                            item.getItemCode(),
+//                            item.getItemName(),
+//                            item.getItemPrice(),
+//                            store.getCount()
+//                    );
+//                }).toList();
+//
+//        model.addAttribute("items", items);
+//        model.addAttribute("index", index);
+//
+//        return "/storeOwner/storeOrderPopup";
+//    }
 
 
     @PostMapping("/storeOrder")
