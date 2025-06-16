@@ -20,4 +20,5 @@ public class PurchaseItemDto {
     private LocalDate dueDate;
     private LocalDate expirationDate;
     private String status;
+    private String purchaseNumber;
 }

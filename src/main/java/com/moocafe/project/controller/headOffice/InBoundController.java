@@ -1,21 +1,25 @@
 package com.moocafe.project.controller.headOffice;
 
 import com.moocafe.project.dto.InboundDto;
+import com.moocafe.project.dto.PurchaseItemDto;
 import com.moocafe.project.dto.ReturnDto;
 import com.moocafe.project.dto.ReturnItemDto;
 import com.moocafe.project.entity.*;
 import com.moocafe.project.repository.InventoryItemRepository;
+import com.moocafe.project.repository.PurchaseItemRepository;
+import com.moocafe.project.repository.PurchaseRepository;
 import com.moocafe.project.service.PurchaseService;
 import com.moocafe.project.service.ReturnService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Controller
@@ -26,6 +30,7 @@ public class InBoundController {
     private final PurchaseService purchaseService;
     private final ReturnService returnService;
     private final InventoryItemRepository inventoryItemRepository;
+    private final PurchaseRepository purchaseRepository;
 
     @GetMapping("/inboundList")
     public String inboundList(Model model) {
@@ -95,4 +100,29 @@ public class InBoundController {
 
         return "headOffice/inboundList";
     }
+
+    @GetMapping("/order-detail")
+    @ResponseBody
+    public List<PurchaseItemDto> getOrderDetail(@RequestParam String purchaseNumber) {
+        return purchaseService.findItemsByPurchaseNumber(purchaseNumber);
+    }
+
+
+    @PostMapping("/mark-complete")
+    @ResponseBody
+    public ResponseEntity<String> markItemAsComplete(@RequestBody Map<String, String> request) {
+        String purchaseNumberStr = request.get("purchaseNumber");
+        String itemCodeStr = request.get("itemCode");
+
+        Purchase purchase = purchaseRepository.findByPurchaseNumber(purchaseNumberStr)
+                .orElseThrow(() -> new RuntimeException("해당 발주가 없습니다: " + purchaseNumberStr));
+
+        InventoryItem item = inventoryItemRepository.findByItemCode(itemCodeStr)
+                .orElseThrow(() -> new RuntimeException("해당 품목이 없습니다: " + itemCodeStr));
+
+        purchaseService.updateStatusToComplete(purchase, item);
+
+        return ResponseEntity.ok("OK");
+    }
+
 }

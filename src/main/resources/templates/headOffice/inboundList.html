@@ -13,7 +13,48 @@
     table {width: 100%; border-collapse: collapse; margin-bottom: 16px;}
     th, td {border: 1px solid #e0e0e0; padding: 8px 10px; text-align: center;}
     th {background: #faf7f2;}
+
+    /* 모달 스타일 */
+    .receiving_modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    #purchase-detail-modal-toggle:checked + .receiving_modal {
+      display: flex;
+    }
+
+    .receiving_modal_content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      width: 900px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      position: relative;
+    }
+
+    .close-btn {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 8px 16px;
+      background: #ff9900;
+      color: #fff;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+    }
   </style>
+
   <script th:inline="javascript">
     function setTab(status) {
       const url = new URL(window.location.href);
@@ -28,7 +69,6 @@
         else btn.classList.remove("active");
       });
       document.querySelectorAll('.tab-table').forEach(table => {
-        // status=ALL이면 모든 테이블, 아니면 해당 테이블만
         if (status === "ALL" || table.dataset.status === status) table.style.display = "";
         else table.style.display = "none";
       });
@@ -45,7 +85,7 @@
     <button type="button" class="tab-btn" data-status="RETURN" onclick="setTab('RETURN')">매장반품조회</button>
   </div>
 
-  <!-- 발주현황 테이블 (발주조회/주문전체에서만 보임) -->
+  <!-- 발주현황 테이블 -->
   <table class="tab-table" data-status="ORDER">
     <thead>
     <tr>
@@ -63,7 +103,10 @@
       <td th:text="${#temporals.format(purchase.orderedDate, 'yyyy-MM-dd HH:mm')}">2025-06-13 12:34</td>
       <td th:text="${purchase.typeOrder}">발주</td>
       <td>
-        <a th:href="@{/headOffice/inboundDetail(purchaseNumber=${purchase.purchaseNumber})}">상세보기</a>
+        <a href="#" class="open-detail-btn"
+           th:attr="onclick=|openOrderDetailModal('${purchase.purchaseNumber}')|">
+          상세보기
+        </a>
       </td>
     </tr>
     <tr th:if="${purchaseList == null or #lists.isEmpty(purchaseList)}">
@@ -72,7 +115,7 @@
     </tbody>
   </table>
 
-  <!-- 반품현황 테이블 (매장반품조회/주문전체에서만 보임) -->
+  <!-- 반품현황 테이블 -->
   <table class="tab-table" data-status="RETURN">
     <thead>
     <tr>
@@ -88,7 +131,7 @@
     </thead>
     <tbody>
     <th:block th:each="returnDto : ${returnList}">
-      <tr th:each="returnDto : ${returnList}" th:if="${returnDto.items != null and !#lists.isEmpty(returnDto.items)}">
+      <tr th:if="${returnDto.items != null and !#lists.isEmpty(returnDto.items)}">
         <td th:rowspan="${#lists.size(returnDto.items)}" th:text="${returnDto.returnNumber}"></td>
         <td th:rowspan="${#lists.size(returnDto.items)}" th:text="${#temporals.format(returnDto.requiredDate, 'yyyy-MM-dd HH:mm')}"></td>
         <td th:rowspan="${#lists.size(returnDto.items)}" th:text="${returnDto.typeReturn}"></td>
@@ -110,6 +153,102 @@
     </tr>
     </tbody>
   </table>
+
+  <!-- 모달: 팝업처럼 작동 -->
+  <input type="checkbox" id="purchase-detail-modal-toggle" style="display:none;" />
+  <label class="receiving_modal" for="purchase-detail-modal-toggle">
+    <div class="receiving_modal_content" onclick="event.stopPropagation()">
+      <h2 class="receiving_modal_title">발주 상세내역</h2>
+      <div class="receiving_status_order_check_table_wrap">
+        <table class="receiving_status_order_check_table">
+          <thead>
+          <tr>
+            <th>발주번호</th>
+            <th>품목코드</th>
+            <th>품목명</th>
+            <th>거래처</th>
+            <th>신청수량</th>
+            <th>납기일</th>
+            <th>유통기한</th>
+            <th>상태</th>
+          </tr>
+          </thead>
+          <tbody id="purchaseDetailBody">
+          <!-- JS로 동적 삽입 -->
+          </tbody>
+        </table>
+      </div>
+      <div class="receiving_modal-footer">
+        <label for="purchase-detail-modal-toggle" class="close-btn">닫기</label>
+      </div>
+    </div>
+  </label>
 </div>
+
+<script>
+  function openOrderDetailModal(purchaseNumber) {
+    document.getElementById("purchase-detail-modal-toggle").checked = true;
+    fetch(`/headOffice/order-detail?purchaseNumber=${purchaseNumber}`)
+            .then(res => res.json())
+            .then(data => renderOrderDetail(data))
+            .catch(err => console.error("상세보기 오류", err));
+  }
+
+  function renderOrderDetail(items) {
+    const tbody = document.getElementById("purchaseDetailBody");
+    tbody.innerHTML = "";
+
+    if (!items || items.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="8">조회된 항목이 없습니다.</td></tr>';
+      return;
+    }
+
+    items.forEach(item => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${item.purchaseNumber}</td>
+        <td>${item.itemCode}</td>
+        <td>${item.itemName}</td>
+        <td>${item.supplier}</td>
+        <td>${item.receivedQuantity}</td>
+        <td>${item.dueDate}</td>
+        <td>${item.expirationDate}</td>
+            <td>
+      <span class="status-text">${item.status}</span>
+      <button class="complete-btn" onclick="markAsCompleted(this)">입고완료</button>
+    </td>
+      `;
+      tbody.appendChild(row);
+    });
+  }
+
+  function markAsCompleted(button) {
+    const row = button.closest('tr');
+    const purchaseNumber = row.children[0].textContent.trim(); // 1번째 <td>: 발주번호
+    const itemCode = row.children[1].textContent.trim();       // 2번째 <td>: 품목코드
+
+    fetch('/headOffice/mark-complete', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ purchaseNumber, itemCode })
+    })
+            .then(response => {
+              if (!response.ok) throw new Error("업데이트 실패");
+              return response.text();
+            })
+            .then(() => {
+              row.querySelector('.status-text').textContent = '완료';
+              button.disabled = true;
+              button.textContent = '완료됨';
+            })
+            .catch(err => {
+              alert('입고완료 처리 중 오류 발생');
+              console.error(err);
+            });
+  }
+
+</script>
 </body>
 </html>

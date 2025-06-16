@@ -1,15 +1,17 @@
 package com.moocafe.project.controller.headOffice;
 
+import com.moocafe.project.dto.InventoryItemDto;
+import com.moocafe.project.dto.ItemSearchDto;
 import com.moocafe.project.dto.PurchaseDto;
 import com.moocafe.project.dto.PurchaseItemDto;
+import com.moocafe.project.service.InventoryItemService;
 import com.moocafe.project.service.PurchaseService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -23,9 +25,10 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor
 public class PurchaseController {
     private final PurchaseService purchaseService;
+    private final InventoryItemService inventoryItemService;
 
     @GetMapping("/purchaseOrder")
-    public String showForm(Model model) {
+    public String showForm(Model model, HttpServletRequest request) {
         List<PurchaseItemDto> emptyItems = IntStream.range(0, 5)
                 .mapToObj(i -> new PurchaseItemDto())
                 .collect(Collectors.toList());
@@ -40,6 +43,7 @@ public class PurchaseController {
         return "headOffice/purchaseOrder";
     }
 
+
     private String generatePurchaseNumber() {
         String date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String random = UUID.randomUUID().toString().substring(0, 4).toUpperCase();
@@ -50,7 +54,29 @@ public class PurchaseController {
     @PostMapping("/purchaseOrder")
     public String purchaseOrder(@ModelAttribute PurchaseDto purchaseDto) {
         purchaseService.savePurchase(purchaseDto);
+        purchaseService.updateInventoryByPurchase(purchaseDto.getPurchaseNumber());
         return "redirect:/headOffice/purchaseOrder";
     }
+
+    @GetMapping("/inventory-items/all")
+    @ResponseBody
+    public List<ItemSearchDto> getAllItems() {
+        return purchaseService.getAllItems();
+    }
+
+    @GetMapping("/inventory-items")
+    @ResponseBody
+    public List<ItemSearchDto> searchItems(
+            @RequestParam String type,
+            @RequestParam String keyword
+    ) {
+        if (type.equals("name")) {
+            return purchaseService.searchByName(keyword);
+        } else if (type.equals("code")) {
+            return purchaseService.searchByCode(keyword);
+        }
+        return List.of(); // 기본 빈 목록
+    }
+
 
 }

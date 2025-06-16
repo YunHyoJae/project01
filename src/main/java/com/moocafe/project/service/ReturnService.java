@@ -1,17 +1,13 @@
 package com.moocafe.project.service;
 
 import com.moocafe.project.dao.InventoryItemDao;
+import com.moocafe.project.dao.PurchaseItemDao;
 import com.moocafe.project.dao.ReturnDao;
 import com.moocafe.project.dao.ReturnItemDao;
 import com.moocafe.project.dto.ReturnDto;
 import com.moocafe.project.dto.ReturnItemDto;
-import com.moocafe.project.entity.InventoryItem;
-import com.moocafe.project.entity.InventoryStore;
-import com.moocafe.project.entity.Return;
-import com.moocafe.project.entity.ReturnItem;
-import com.moocafe.project.repository.InventoryItemRepository;
-import com.moocafe.project.repository.InventoryStoreRepository;
-import com.moocafe.project.repository.ReturnRepository;
+import com.moocafe.project.entity.*;
+import com.moocafe.project.repository.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +26,8 @@ public class ReturnService {
     private final InventoryStoreRepository inventoryStoreRepository;
     private final ReturnRepository returnRepository;
     private final InventoryItemRepository inventoryItemRepository;
+    private final PurchaseRepository purchaseRepository;
+    private final PurchaseItemRepository purchaseItemRepository;
 
     @PersistenceContext
     private EntityManager em;
@@ -76,5 +74,10 @@ public class ReturnService {
         // items 강제 초기화 (JPA LAZY 방지)
         returns.forEach(r -> r.getItems().size());
         return returns;
+    }
+
+
+    public void updateReturnStock(String itemCode, int returnQuantity, int storeId) {
+        returnDao.updateReturnStock(itemCode, returnQuantity, storeId);
     }
 }

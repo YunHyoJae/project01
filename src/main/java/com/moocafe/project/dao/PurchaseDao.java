@@ -13,4 +13,8 @@ public class PurchaseDao {
     public Purchase savePurchase (Purchase purchase) {
         return purchaseRepository.save(purchase);
     }
+
+    public void updateInventoryByPurchase(String purchaseNumber) {
+        purchaseRepository.updateInventoryByPurchase(purchaseNumber);
+    }
 }
