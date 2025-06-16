@@ -95,7 +95,6 @@ public class MemberStoreService {
     @Transactional
     public int update(MemberStoreDto ms) {
         Optional<MemberStore> memberStoreOpt = memberStoreDao.findByMemberIdAndStoreId(ms.getMemberId(), ms.getStoreId());
-        System.out.println("==============findMemberId");
         memberStoreOpt.ifPresent(memberStore -> {
             memberStore.getMember().updateMember(ms);
             memberStore.getStore().updateStore(ms);
@@ -103,11 +102,10 @@ public class MemberStoreService {
             storeDao.save(memberStore.getStore());    // 부모 저장
             memberStoreDao.save(memberStore);         // 자식 저장
         });
-        System.out.println("==============다됐는디?");
         return memberStoreOpt.isPresent() ? 1 : 0;
     }
     public String findUserId(String userId){
-
-        return null;
+        Optional<Member> member=memberDao.findByUserId(userId);
+        return member.map(Member::getUserId).orElse(null);
     }
 }

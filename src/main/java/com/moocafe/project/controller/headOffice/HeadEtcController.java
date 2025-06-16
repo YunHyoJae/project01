@@ -94,8 +94,6 @@ public class HeadEtcController {
             return "headOffice/memberDetail";
         }
         if(dto.getStateBoolean()){dto.setState("휴업");}else{dto.setState("영업중");};
-
-        System.out.println("==============자 저장해볼까??"+ dto);
         memberStoreService.update(dto);
         return "redirect:/headOffice/memberList";
     }
@@ -103,5 +101,15 @@ public class HeadEtcController {
     public String memberInsert(Model model) {
         model.addAttribute("dto", new MemberStoreDto());
         return "headOffice/memberInsert";
+    }
+    @PostMapping("/memberInsert")
+    public String memberInsert(@Valid @ModelAttribute("dto") MemberStoreDto dto, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("dto", dto);
+            return "headOffice/memberInsert";
+        }
+        if(dto.getStateBoolean()){dto.setState("영업중");}else{dto.setState("오픈예정");};
+        memberStoreService.save(dto);
+        return "redirect:/headOffice/memberList";
     }
 }

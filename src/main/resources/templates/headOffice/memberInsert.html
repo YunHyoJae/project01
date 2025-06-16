@@ -8,20 +8,22 @@
 
 
   <div class="main-layout">
-    <div th:replace="~{/headOffice/etcLnb::active('etc','member')}"></div>
+    <div th:replace="~{/headOffice/etcLnb::active('etc','memberInsert')}"></div>
 
     <div class="form-wrapper">
       <h2>정보수정</h2>
-      <form class="editProfile" action="/headOffice/memberDetaile" method="post" th:object="${dto}">
-        <input type="hidden" th:field="*{storeId}" readonly/>
-        <input type="hidden" th:field="*{memberId}" readonly/>
-        <input type="hidden" th:field="*{userPw}" /><!--초기비밀번호-->
+      <form class="editProfile" action="/headOffice/memberInsert" method="post" th:object="${dto}">
         <div class="form-row two-columns-split">
           <!-- 왼쪽: 사용자 정보 -->
           <div>
-            <div class="form-row">
+            <div class="form-row three-columns">
               <label>아이디</label>
-              <input type="text" th:field="*{userId}" readonly/>
+              <input type="text" th:field="*{userId}" id="userId"/>
+              <input type="button" value="중복확인" onclick="apiUserId()"/>
+            </div>
+            <div class="form-row">
+              <label>초기비밀번호</label>
+              <input type="password" th:field="*{userPw}"/>
               <label>이메일</label>
               <input type="password" th:field="*{userEmail}"/>
             </div>
@@ -51,15 +53,18 @@
 
           <!-- 오른쪽: 매장 정보 -->
           <div>
-            <div class="form-row three-columns">
+            <div class="form-row">
               <label>매장명</label>
               <input type="text" placeholder="매장명" th:field="*{name}" />
-              <input type="button" value="중복확인"/>
-            </div>
-
-            <div class="form-row">
               <label>매장 전화번호</label>
               <input type="text" placeholder="매장전화번호" th:field="*{tel}" />
+            </div>
+            <div class="form-row three-columns">
+              <label>매장 사업자번호</label>
+              <input type="text" placeholder="매장전화번호" th:field="*{storeNumber}" id="storeNumber" />
+              <input type="button" value="중복확인" onclick="apiStoreNumber()"/>
+            </div>
+            <div class="form-row">
             </div>
 
             <div class="form-row three-columns">
@@ -76,10 +81,10 @@
             </div>
 
             <div class="form-row checkbox-row">
-              <label>휴업 설정</label>
+              <label>영업중</label>
               <label class="checkbox-label">
                 <input type="checkbox" th:field="*{state}" />
-                휴업 또는 폐업 설정
+                영업계시 여부
               </label>
 
             </div>
@@ -96,7 +101,7 @@
 
         <div class="form-actions">
           <button type="button" class="cancel" onclick="window.history.back()">취소</button>
-          <button type="submit" class="submit">수정</button>
+          <button type="submit" class="submit">등록</button>
         </div>
 
       </form>
@@ -104,6 +109,43 @@
   </div>
 </div>
 <script defer>
+  function apiUserId(){
+    const input = document.getElementById("userId");
+  }
+  function apiStoreNumber(){
+    const input = document.getElementById("storeNumber");
+
+  }
+
+  // const btn_subscribe=document.querySelector(".btn_subscribe");
+  // const fromMemberID=/*[[${#authentication.principal.loggedMember.userID}]]*/ null;
+  // const toMemberID=/*[[${member.userID}]]*/ null;
+  // if(btn_subscribe){
+  //   btn_subscribe.addEventListener("click",(e)=>{
+  //     e.preventDefault();
+  //     const thisState=e.target.dataset.state;
+  //     if(thisState=="insert"){
+  //       fetch(`/api/subscribe/insert/${toMemberID}`,{})
+  //               .then(response=>response.json())
+  //               .then(json=>{
+  //                 if(json.success){
+  //                   e.target.dataset.state="delete";
+  //                   e.target.innerText="해제하기";
+  //                   alert("구독성공");
+  //                 }
+  //               });
+  //     }else if(thisState=="delete"){
+  //       fetch(`/api/subscribe/delete/${toMemberID}`,{})
+  //               .then(response=>response.json())
+  //               .then(json=>{
+  //                 if(json.success){
+  //                   e.target.dataset.state="insert";
+  //                   e.target.innerText="구독하기";
+  //                   alert("해제성공");
+  //                 }
+  //               });
+  //     }
+  //   });
 </script>
 </body>
 </html>
