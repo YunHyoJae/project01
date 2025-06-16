@@ -97,21 +97,39 @@
         <section class="gridBox">
           <div class="boxHeader">
             <span>입고현황</span>
-            <a href="#" class="moreLink">더보기</a>
+            <a href="/headOffice/inboundList" class="moreLink">더보기</a>
           </div>
-          <div class="boxContent">
-            입고 현황 - 최신 3항목<br/>
-            테이블?? 리스트??
+          <div class="boxContent outbound-scroll">
+            <ul>
+              <li th:each="item : ${recentPurchaseItems}">
+<!--                <span th:text="${item.itemCode}"></span>-->
+                <span th:text="${item.itemName}"></span>
+                <span th:text="' / ' + ${item.receivedQuantity}"></span>
+                <span th:text="' | ' + ${item.dueDate}"></span>
+<!--                <span th:text="' ~ ' + ${item.expirationDate}"></span>-->
+                <span th:text="' | ' + ${item.supplier}"></span>
+                <span th:text="' | ' + ${item.status}"></span>
+              </li>
+            </ul>
           </div>
         </section>
         <section class="gridBox">
           <div class="boxHeader">
             <span>출고현황</span>
-            <a href="#" class="moreLink">더보기</a>
+            <a href="/headOffice/outboundManagement" class="moreLink">더보기</a>
           </div>
-          <div class="boxContent">
-            출고 현황 - 최신 3항목<br/>
-            테이블?? 리스트??
+          <div class="boxContent outbound-scroll">
+            <ul>
+              <li th:each="o : ${recentOutbounds}">
+                <span th:text="${o.storeName}"></span>
+                <span th:if="${o.itemName != null}" th:text="' | ' + ${o.itemName}"></span>
+                <span th:if="${o.receivedQuantity != null}" th:text="' / ' + ${o.receivedQuantity}"></span>
+                <span th:if="${o.requiredDate != null}" th:text="' | ' + ${o.requiredDate}"></span>
+                <span th:if="${o.dueDate != null}" th:text="' | ' + ${o.dueDate}"></span>
+                <span th:if="${o.status != null}" th:text="' | ' + ${o.status}"></span>
+              </li>
+            </ul>
+            <span th:if="${#lists.isEmpty(recentOutbounds)}">출고 현황 없음</span>
           </div>
         </section>
         <section class="gridBox">
@@ -183,9 +201,11 @@
 
   // 날짜 유틸
   function getYear(dt) {
+    if (!dt) return '';
     return dt.slice(0, 4);
   }
   function getMonth(dt) {
+    if (!dt) return '';
     return dt.slice(0, 7); // 'YYYY-MM'
   }
   function getNowYear() {
@@ -202,9 +222,12 @@
   }
 
   // summaryList의 날짜필드명 맞춰서 변경 (예: salesDate, dealDate 등)
-  const dateField = summaryList.length > 0 && summaryList[0].salesDate ? "salesDate"
-          : summaryList.length > 0 && summaryList[0].dealDate ? "dealDate"
-                  : null;
+  const dateField = summaryList.length > 0 && summaryList[0].saleTime ? "saleTime"
+          : summaryList.length > 0 && summaryList[0].salesDate ? "salesDate"
+                  : summaryList.length > 0 && summaryList[0].dealDate ? "dealDate"
+                          : null;
+
+  // const dateField = "saleTime";
 
   // === 원본 데이터 저장(필터링에 사용) ===
   const originalSummaryList = summaryList;
@@ -217,8 +240,10 @@
     const datasets = menuNames.map((menu, idx) => ({
       label: menu,
       data: storeNames.map(store => {
-        let found = filteredList.find(r => r.storeName === store && r.menuName === menu);
-        return found && found.totalAmount ? Number(found.totalAmount) : 0;
+        // store, menu별로 전체 매출 합계
+        return filteredList
+                .filter(r => r.storeName === store && r.menuName === menu)
+                .reduce((sum, cur) => sum + (cur.totalAmount ? Number(cur.totalAmount) : 0), 0);
       }),
       backgroundColor: blueColors[idx % blueColors.length],
       stack: '매출'
@@ -297,6 +322,9 @@
       ]
     });
   }
+
+  console.log(summaryList)
+  console.log(filterByYear(originalSummaryList));
 
   // === 필터 함수 정의 ===
   function filterByYear(list) {

@@ -1,12 +1,11 @@
 package com.moocafe.project.controller.headOffice;
 
 import com.moocafe.project.dto.*;
+import com.moocafe.project.entity.InventoryItem;
 import com.moocafe.project.entity.Menu;
+import com.moocafe.project.entity.OutBound;
 import com.moocafe.project.entity.Store;
-import com.moocafe.project.repository.InventoryStoreRepository;
-import com.moocafe.project.repository.MenuRepository;
-import com.moocafe.project.repository.SalesRepository;
-import com.moocafe.project.repository.StoreRepository;
+import com.moocafe.project.repository.*;
 import com.moocafe.project.service.FranchiseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,7 +15,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/headOffice")
@@ -27,6 +28,9 @@ public class HeadIndexController {
     private final StoreRepository storeRepository;
     private final MenuRepository menuRepository;
     private final FranchiseService franchiseService;
+    private final OutBoundRepository outBoundRepository;
+    private final InventoryItemRepository inventoryItemRepository;
+    private final PurchaseItemRepository purchaseItemRepository;
 
     @GetMapping("/index")
     public String index(Model model, @AuthenticationPrincipal CustomUserDetails user) {
@@ -82,6 +86,51 @@ public class HeadIndexController {
                 }
             }
         }
+
+        // 출고리스트에서 최근 4개 가져오기 (status, 정렬 등 조건 필요시 조정)
+        List<Store> stores = storeRepository.findAll();
+        Map<Integer, String> storeIdNameMap = stores.stream()
+                .collect(Collectors.toMap(Store::getId, Store::getName));
+
+        List<InventoryItem> items = inventoryItemRepository.findAll();
+        Map<String, String> itemCodeNameMap = items.stream()
+                .collect(Collectors.toMap(InventoryItem::getItemCode, InventoryItem::getItemName));
+
+        List<Object[]> outBoundRawList = outBoundRepository.findRecentOutBoundListRaw();
+        List<OutBoundListResponseDto> recentOutbounds = outBoundRawList.stream()
+                .map(arr -> new OutBoundListResponseDto(
+                        (Integer) arr[0],                  // outBoundId
+                        (String) arr[1],                   // storeName
+                        (String) arr[2],                   // itemCode
+                        (String) arr[3],                   // itemName
+                        arr[4] != null ? ((Number) arr[4]).intValue() : null, // receivedQuantity
+                        (String) arr[5],                   // requiredDate
+                        (String) arr[6],                   // dueDate
+                        (String) arr[7]                    // status
+                ))
+                .collect(Collectors.toList());
+
+        // 입고리스트에서 최근 4개 가져오자
+
+        List<Object[]> recentItems = purchaseItemRepository.findRecent4();
+        List<HeadPurchaseItemDto> list = recentItems.stream()
+                .map(arr -> new HeadPurchaseItemDto(
+                        arr[0] == null ? null : Integer.valueOf(arr[0].toString()), // id
+                        arr[1] == null ? null : arr[1].toString(), // itemCode
+                        arr[2] == null ? null : arr[2].toString(), // itemName
+                        arr[3] == null ? null : Integer.valueOf(arr[3].toString()), // receivedQuantity
+                        arr[4] == null ? null : ((Date) arr[4]).toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), // dueDate
+                        arr[5] == null ? null : ((Date) arr[5]).toInstant().atZone(ZoneId.systemDefault()).toLocalDate(), // expirationDate
+                        arr[6] == null ? null : arr[6].toString(), // supplier
+                        arr[7] == null ? null : arr[7].toString()  // status
+                ))
+                .collect(Collectors.toList());
+
+        model.addAttribute("recentPurchaseItems", list);
+
+        model.addAttribute("recentOutbounds", recentOutbounds);
+        model.addAttribute("storeIdNameMap", storeIdNameMap);
+        model.addAttribute("itemCodeNameMap", itemCodeNameMap);
         model.addAttribute("shortageList", shortageList);
         model.addAttribute("user", user.toDto());
 

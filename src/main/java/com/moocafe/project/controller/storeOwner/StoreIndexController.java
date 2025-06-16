@@ -5,12 +5,10 @@ import com.moocafe.project.entity.Member;
 import com.moocafe.project.entity.MemberStore;
 import com.moocafe.project.entity.Menu;
 import com.moocafe.project.entity.Store;
-import com.moocafe.project.repository.MemberStoreRepository;
+import com.moocafe.project.repository.*;
 import com.moocafe.project.service.SalesService;
-import com.moocafe.project.repository.InventoryStoreRepository;
-import com.moocafe.project.repository.MenuRepository;
-import com.moocafe.project.repository.SalesRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.time.LocalDate;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -30,6 +29,8 @@ public class StoreIndexController {
     private final InventoryStoreRepository inventoryStoreRepository;
     private final MenuRepository menuRepository;
     private final SalesRepository salesRepository;
+    @Autowired
+    private StoreOrderRepository storeOrderRepository;
 
     @GetMapping("/index")
     public String index(Model model, @AuthenticationPrincipal CustomUserDetails user) {
@@ -128,6 +129,21 @@ public class StoreIndexController {
                     ));
                 }
             }
+
+            List<Object[]> orderRawList = storeOrderRepository.findRecentOrderListByStoreId(storeId);
+            List<StoreOrderListResponseDto> orderList = orderRawList.stream()
+                    .map(arr -> new StoreOrderListResponseDto(
+                            (String) arr[0],
+                            (String) arr[1],
+                            (String) arr[2],
+                            (String) arr[3],
+                            arr[4] != null ? ((Number) arr[4]).intValue() : 0,
+                            (String) arr[5]
+                    ))
+                    .collect(Collectors.toList());
+            model.addAttribute("orderList", orderList);
+
+
             model.addAttribute("shortageList", shortageList);
             model.addAttribute("store", store);
         }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.io.UnsupportedEncodingException;
@@ -49,6 +50,16 @@ public class SalesController {
             @RequestParam(required = false) String menuId,  // ✅ 이 줄 추가
             Model model
     ) {
+        if (endDate != null) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(endDate);
+            cal.set(Calendar.HOUR_OF_DAY, 23);
+            cal.set(Calendar.MINUTE, 59);
+            cal.set(Calendar.SECOND, 59);
+            cal.set(Calendar.MILLISECOND, 999);
+            endDate = cal.getTime();
+        }
+
         List<Sales> salesList;
 
         if (storeId != null || (startDate != null && endDate != null)) {
