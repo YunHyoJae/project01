@@ -79,13 +79,13 @@ public class StoreOrderController {
         return "RE" + date + "-" + random;
     }
 
-    @PostMapping("/storeOrderReturn") //return
-    public String submitReturn(@ModelAttribute ReturnDto returnDto,
-                               String itemCode, int returnQuantity, int storeId) {
-        returnService.saveReturn(returnDto);
-        returnService.updateReturnStock(itemCode, returnQuantity, storeId);
-        return "redirect:/storeOwner/storeOrderList"; //return "storeOwner/storeOrderList";
+    @PostMapping("/storeOrderReturn")
+    public String submitReturn(@ModelAttribute ReturnDto returnDto, String itemCode, int returnQuantity, int storeId) {
+        log.info("submit return: {}", returnDto);
+        returnService.saveReturn(returnDto, itemCode, returnQuantity, storeId);
+        return "redirect:/storeOwner/storeOrderList";
     }
+
 
     @GetMapping("/storeOrderPopup")
     public String showItemPopup(Model model) {

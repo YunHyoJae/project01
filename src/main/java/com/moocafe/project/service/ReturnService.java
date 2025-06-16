@@ -29,11 +29,11 @@ public class ReturnService {
     private final PurchaseRepository purchaseRepository;
     private final PurchaseItemRepository purchaseItemRepository;
 
-    @PersistenceContext
-    private EntityManager em;
+    //@PersistenceContext
+    //private EntityManager em;
 
     @Transactional
-    public void saveReturn(ReturnDto returnDto) {
+    public void saveReturn(ReturnDto returnDto, String itemCode, Integer returnQuantity, int storeId) {
         Return returnEntity = Return.builder()
                 .returnNumber(returnDto.getReturnNumber())
                 .returnNote(returnDto.getReturnNote())
@@ -63,6 +63,10 @@ public class ReturnService {
                     .build();
 
             returnItemDao.saveReturnItem(returnItem);
+//            returnDao.updateReturnStock(itemCode, returnQuantity, storeId);
+
+            inventoryStoreRepository.increaseHeadOfficeStock(itemCode, returnQuantity);
+            inventoryStoreRepository.decreaseStoreStock(itemCode, returnQuantity, storeId);
         }
     }
 
@@ -77,7 +81,4 @@ public class ReturnService {
     }
 
 
-    public void updateReturnStock(String itemCode, int returnQuantity, int storeId) {
-        returnDao.updateReturnStock(itemCode, returnQuantity, storeId);
-    }
 }

@@ -87,7 +87,7 @@ public interface InventoryStoreRepository extends JpaRepository<InventoryStore, 
         @Query("UPDATE InventoryStore s " +
                 "SET s.count = s.count + :quantity, s.modifyDate = CURRENT_DATE " +
                 "WHERE s.itemCode = :itemCode AND s.storeId = 1")
-        int increaseHeadOfficeStock(@Param("itemCode") String itemCode, @Param("quantity") int quantity);
+        int increaseHeadOfficeStock(@Param("itemCode") String itemCode, @Param("quantity") Integer quantity);
 
         // 매장 재고 감소
         @Modifying
@@ -95,7 +95,7 @@ public interface InventoryStoreRepository extends JpaRepository<InventoryStore, 
         @Query("UPDATE InventoryStore s " +
                 "SET s.count = s.count - :quantity, s.modifyDate = CURRENT_DATE " +
                 "WHERE s.itemCode = :itemCode AND s.storeId = :storeId")
-        int decreaseStoreStock(@Param("itemCode") String itemCode, @Param("quantity") int quantity, @Param("storeId") int storeId);
+        int decreaseStoreStock(@Param("itemCode") String itemCode, @Param("quantity") Integer quantity, @Param("storeId") int storeId);
 
         // 매장별 재고 조회
 

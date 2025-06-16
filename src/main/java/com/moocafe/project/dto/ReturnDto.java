@@ -24,6 +24,7 @@ public class ReturnDto {
 
     private String returnNote;
     private String typeReturn;
+    private String storeId;
 
     @Builder.Default
     private List<ReturnItemDto> items = new ArrayList<>();;
