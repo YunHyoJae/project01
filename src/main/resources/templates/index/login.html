@@ -2,20 +2,48 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>월담 로그인</title>
+    <link rel="stylesheet" href="/css/index_style.css" />
+    <style>
+      body {font-family: sans-serif;background-color: #f9f9f9;display: flex;justify-content: center;align-items: center;height: 100vh;margin: 0;}
+      form {background: white;padding: 3rem;border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);width: 100%;max-width: 500px;box-sizing: border-box;}
+      h1 {text-align: center;margin-bottom: 1.5rem;}
+      h2 {text-align: center;margin: 0 auto 1rem;}
+      .logo img {width: 200px;margin: 0 auto;display: block;transition: opacity 0.3s;}
+      label { display: block;margin-top: 1rem;font-weight: bold;}
+      input[type="text"], input[type="password"], select, button {width: 100%; box-sizing: border-box;border-radius: 5px; border: 1px solid #ccc;padding: 0.5rem;font-size: 1rem;margin-top: 0.25rem;}
+      button {background-color: black;color: white;border: none;cursor: pointer;margin-top: 1.5rem;}
+      button:hover {background-color: #333;}
+      p {font-size: 0.875rem; color: gray;margin-top: 1.5rem;text-align: center;}
+
+      /* ✅ 모바일 화면 좁을 때 폭 줄이기 */
+      @media (max-width: 480px) {
+        form {padding: 1.5rem;max-width: 90%; /* 거의 꽉 차게 */}
+        .logo img {width: 150px;}
+        input[type="text"], input[type="password"], select, button {font-size: 0.95rem;padding: 0.45rem;}
+      }
+      .error{color:red;font-size:0.85em;margin:1em 0.5em;}
+    </style>
 </head>
 <body>
-<form action="/login" method="post">
-  <div class="container">
-    <ul class="loginBox">
-      <li><label class="one_form_label"><span>아이디</span><input type="text" name="userId" /></label></li>
-      <li><label class="one_form_label"><span>비밀번호</span><input type="password" name="userPw" /></label></li>
-      <li>
-        <button class="btn_login">LOGIN</button>
-      </li>
-      <li th:if="${error}">[[${error}]]</li>
-    </ul>
-  </div>
+  <form action="/login" method="post">
+    <h2>
+      <div class="logo">
+        <a href="/"><img src="/images/moonlogo.jpg" alt="logo"></a>
+      </div>
+    </h2>
+
+    <h1>로그인</h1>
+    <label for="username">아이디</label>
+    <input type="text" id="username" name="userId" required />
+
+    <label for="password">비밀번호</label>
+    <input type="password" id="password" name="userPw" required />
+
+    <button type="submit">로그인</button>
+    <p class="error" th:if="${error}">[[${error}]]</p>
+
+    <p>아이디/비밀번호가 기억 안나시는 경우<br>본사 담당자 연락처로 연락 바랍니다</p>
 </form>
 
 </body>

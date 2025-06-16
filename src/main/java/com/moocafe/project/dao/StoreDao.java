@@ -26,4 +26,6 @@ public class StoreDao {
     public Page<Store> findByUserNameExcept(int id, String keyword, Pageable pageable) {return storeRepository.findByUserNameExcept(id, keyword, pageable);}
     public Page<Store> findByUserTelExcept(int id, String keyword, Pageable pageable) {return storeRepository.findByUserTelExcept(id, keyword, pageable);}
 
+    public Optional<Store> findByStoreNumber(String sn){return storeRepository.findByStoreNumber(sn);}
+
 }

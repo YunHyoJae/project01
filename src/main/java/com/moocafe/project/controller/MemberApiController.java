@@ -2,14 +2,14 @@ package com.moocafe.project.controller;
 
 import com.moocafe.project.service.MemberStoreService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.web.bind.annotation.GetMapping;
 
-@Controller
+
+@RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class MemberApiController {
@@ -19,10 +19,22 @@ public class MemberApiController {
         Map<String,Object> map = new HashMap<>();
         String findStore = memberStoreService.findUserId(userId);
         if(findStore != null) {
-            map.put("success",true);
-        }else{
             map.put("success",false);
+        }else{
+            map.put("success",true);
         }
         return map;
     }
+    @GetMapping("/storeNumber/{storeNumber}")
+    public Map<String,Object> storeNumber(@PathVariable String storeNumber) {
+        Map<String,Object> map = new HashMap<>();
+        String findStore = memberStoreService.findByStoreNumber(storeNumber);
+        if(findStore != null) {
+            map.put("success",false);
+        }else{
+            map.put("success",true);
+        }
+        return map;
+    }
+    
 }

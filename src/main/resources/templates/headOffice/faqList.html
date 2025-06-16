@@ -12,7 +12,27 @@
 
         <!-- 본문 컨텐츠 -->
         <div class="content storeStatus">
-            <h2>고객센터 <span>고객 문의글</span></h2>
+            <h2>점주 질문</h2>
+            <div class="search_box typePark">
+                <form action="/headOffice/faqList"
+                  method="get" class="search_form" id="searchForm">
+                    <input type="hidden" name="keyword" id="keywordBox">
+                    <select name="category" class="searchTerm" onchange="changeForm2(this)">
+                        <option value="member" th:selected="${pageDto.category == 'member'}">작성자</option>
+                        <option value="title" th:selected="${pageDto.category == 'title'}">제목</option>
+                        <option value="category" th:selected="${pageDto.category == 'category'}">유형</option>
+                    </select>
+                    <input type="text" th:value="${pageDto.category != 'category' ? pageDto.keyword : ''}" class="textBox" placeholder="검색어를 입력하시오." id="query"/>
+                    <select class="statusBox" id="statusBox" style="display:none">
+                        <option value="홈페이지" th:selected="${pageDto.category == 'category' and pageDto.keyword == '홈페이지'}">홈페이지</option>
+                        <option value="매출" th:selected="${pageDto.category == 'category' and pageDto.keyword == '매출'}">매출문의</option>
+                        <option value="재고" th:selected="${pageDto.category == 'category' and pageDto.keyword == '재고'}">재고문의</option>
+                        <option value="주문" th:selected="${pageDto.category == 'category' and pageDto.keyword == '주문'}">주문문의</option>
+                        <option value="반품" th:selected="${pageDto.category == 'category' and pageDto.keyword == '반품'}">반품문의</option>
+                    </select>
+                    <button type="button" onclick="submitForm()" class="search_btn"/>검색</button>
+                </form>
+            </div>
             <div class="storeStatus-box box">
                 <table>
                     <thead>
@@ -28,30 +48,15 @@
                     <tbody>
                     <th:block th:each="item:${list}">
                         <tr th:onclick="'handleClick(\''+${item.id}+'\')'">
-                            <td>[[${itemStat.count}]]</td><td>[[${item.category01}]]</td><td>[[${item.title}]]</td><td>[[${item.memberName}]]</td><td>[[${item.regDate}]]</td><td th:text="${#lists.isEmpty(item.faqReplyList) ? '문의' : '답변완료'}"></td>
+                            <td>[[${itemStat.count}]]</td><td>[[${item.category01}]]</td>
+                            <td>[[${item.title}]] <img src="/images/secureswitch.gif" alt="secure_switch" class="vault-locked" th:if="${#strings.equals(item.state,'비공개')}"></td>
+                            <td>[[${item.memberName}]]</td><td>[[${item.regDate}]]</td><td th:text="${#lists.isEmpty(item.faqReplyList) ? '문의' : '답변완료'}"></td>
                         </tr>
                     </th:block>
                     </tbody>
                 </table>
             </div>
-            <form action="/headOffice/faqList"
-                  method="get" class="search_form" id="searchForm">
-                <input type="hidden" name="keyword" id="keywordBox">
-                <select name="category" class="searchTerm" onchange="changeForm2(this)">
-                    <option value="member" th:selected="${pageDto.category == 'member'}">작성자</option>
-                    <option value="title" th:selected="${pageDto.category == 'title'}">제목</option>
-                    <option value="category" th:selected="${pageDto.category == 'category'}">유형</option>
-                </select>
-                <input type="text" th:value="${pageDto.category != 'category' ? pageDto.keyword : ''}" class="textBox" placeholder="검색어를 입력하시오." id="query"/>
-                <select class="statusBox" id="statusBox">
-                    <option value="홈페이지" th:selected="${pageDto.category == 'category' and pageDto.keyword == '홈페이지'}">홈페이지</option>
-                    <option value="매출" th:selected="${pageDto.category == 'category' and pageDto.keyword == '매출'}">매출문의</option>
-                    <option value="재고" th:selected="${pageDto.category == 'category' and pageDto.keyword == '재고'}">재고문의</option>
-                    <option value="주문" th:selected="${pageDto.category == 'category' and pageDto.keyword == '주문'}">주문문의</option>
-                    <option value="반품" th:selected="${pageDto.category == 'category' and pageDto.keyword == '반품'}">반품문의</option>
-                </select>
-                <button type="button" onclick="submitForm()" class="default_btn search_btn">검색</button>
-            </form>
+            
             <!-- 페이징 -->
             <div th:replace="/headOffice/pagination :: pagination(${pageDto})"></div>
         </div>

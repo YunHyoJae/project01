@@ -12,8 +12,28 @@
 
     <!-- 본문 컨텐츠 -->
     <div class="content storeStatus">
-      <h2>고객센터 <span th:text="${ownerState=='owner' ?'내 문의글':'문의 게시판'}"></span></h2>
-      <a href="/storeOwner/faqEdit" class="default_btn new_btn">문의하기</a>
+      <h2 th:text="${ownerState=='owner' ?'내 문의글':'문의 게시판'}">고객센터</h2>
+      <div class="search_box typePark">
+        <form th:action="${ownerState == 'owner' ? '/storeOwner/faqList/owner' : '/storeOwner/faqList'}"
+              method="get" class="search_form" id="searchForm">
+          <input type="hidden" name="keyword" id="keywordBox">
+          <select name="category" class="searchTerm" onchange="changeForm2(this)">
+            <option value="member">작성자</option>
+            <option value="title">제목</option>
+            <option value="category">유형</option>
+          </select>
+          <input type="text" class="textBox" placeholder="검색어를 입력하시오." id="query"/>
+          <select class="statusBox" id="statusBox" style="display:none;">
+            <option value="홈페이지">홈페이지</option>
+            <option value="매출">매출문의</option>
+            <option value="재고">재고문의</option>
+            <option value="주문">주문문의</option>
+            <option value="반품">반품문의</option>
+          </select>
+          <button type="button" onclick="submitForm()" class="search_btn">검색</button>
+        </form>
+        <a href="/storeOwner/faqEdit" class="default_btn new_btn">문의하기</a>
+      </div>
       <div class="storeStatus-box box">
         <table>
           <thead>
@@ -35,24 +55,6 @@
           </tbody>
         </table>
       </div>
-      <form th:action="${ownerState == 'owner' ? '/storeOwner/faqList/owner' : '/storeOwner/faqList'}"
-            method="get" class="search_form" id="searchForm">
-        <input type="hidden" name="keyword" id="keywordBox">
-        <select name="category" class="searchTerm" onchange="changeForm2(this)">
-          <option value="member">작성자</option>
-          <option value="title">제목</option>
-          <option value="category">유형</option>
-        </select>
-        <input type="text" class="textBox" placeholder="검색어를 입력하시오." id="query"/>
-        <select class="statusBox" id="statusBox">
-          <option value="홈페이지">홈페이지</option>
-          <option value="매출">매출문의</option>
-          <option value="재고">재고문의</option>
-          <option value="주문">주문문의</option>
-          <option value="반품">반품문의</option>
-        </select>
-        <button type="button" onclick="submitForm()" class="default_btn search_btn">검색</button>
-      </form>
       <!-- 페이징 -->
       <div th:replace="/storeOwner/pagination :: pagination(${pageDto})"></div>
     </div>

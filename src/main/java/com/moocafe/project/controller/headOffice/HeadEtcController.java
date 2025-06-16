@@ -97,16 +97,16 @@ public class HeadEtcController {
         memberStoreService.update(dto);
         return "redirect:/headOffice/memberList";
     }
-    @GetMapping("/memberInsert")
-    public String memberInsert(Model model) {
-        model.addAttribute("dto", new MemberStoreDto());
-        return "headOffice/memberInsert";
+    @GetMapping("/memberAdd")
+    public String memberAdd(Model model){
+        model.addAttribute("dto",new MemberStoreDto());
+        return "headOffice/memberAdd";
     }
-    @PostMapping("/memberInsert")
-    public String memberInsert(@Valid @ModelAttribute("dto") MemberStoreDto dto, BindingResult bindingResult, Model model) {
+    @PostMapping("/memberAdd")
+    public String memberAdd(@Valid @ModelAttribute("dto") MemberStoreDto dto, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("dto", dto);
-            return "headOffice/memberInsert";
+            return "headOffice/memberAdd";
         }
         if(dto.getStateBoolean()){dto.setState("영업중");}else{dto.setState("오픈예정");};
         memberStoreService.save(dto);

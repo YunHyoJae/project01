@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface StoreRepository extends JpaRepository<Store, Integer> {
@@ -35,4 +36,5 @@ public interface StoreRepository extends JpaRepository<Store, Integer> {
        WHERE (:keyword IS NULL OR m.tel LIKE %:keyword%) AND s.id <> :id
        """)
     Page<Store> findByUserTelExcept(int id, @Param("keyword") String keyword, Pageable pageable);
+    Optional<Store> findByStoreNumber(String storeNumber);
 }

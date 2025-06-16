@@ -2,6 +2,10 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{/storeOwner/meta::myHead('고객센터')}"></head>
 <body>
+<style>
+  .help .help-box .statusBox{padding:8px;height:54px;min-width:100px;width:100%;}
+  .help .help-box .write_tit{height:54px;box-sizing:border-box;width:100%;}
+</style>
 <header th:replace="~{/storeOwner/tnb}"></header>
 <div class="section">
   <div th:replace="~{/storeOwner/header}"></div>
@@ -12,13 +16,15 @@
 
     <!-- 본문 컨텐츠 -->
     <div class="content help">
-      <h2>고객 문의</h2>
+      <h2>문의하기</h2>
       <div class="help-box box">
         <form action="/storeOwner/faqEdit" method="post" th:object="${dto}">
         <table>
+          <colgroup><col><col style="width: 30px;"><col style="width:100px"><col></colgroup>
+          <tbody>
             <tr>
               <th><h3 class="tit">제목</h3></th>
-              <td>
+              <td style="padding-right:0" colspan="2">
                 <select class="statusBox" name="category01">
                   <option value="홈페이지">홈페이지</option>
                   <option value="매출">매출문의</option>
@@ -33,15 +39,16 @@
             </tr>
             <tr>
               <td><h3 class="tit">문의</h3></td>
-              <td colspan="2"><textarea name="content" th:field="*{content}" rows="20" class="write_txt"></textarea>
+              <td colspan="3"><textarea name="content" th:field="*{content}" rows="20" class="write_txt"></textarea>
                 <p class="error" th:errors="*{content}"></p>
               </td>
             </tr>
             <tr class="private_tr">
               <th><h3 class="tit">비공개</h3></th>
               <td class="private_td"><input type="checkbox" name="state"/></td>
-              <td><p>(미체크 시 다른사람이 볼 수 있으므로 개인정보에 유의하세요.)</p></td>
+              <td colspan="2"><p>(미체크 시 다른사람이 볼 수 있으므로 개인정보에 유의하세요.)</p></td>
             </tr>
+          </tbody>
         </table>
         <div class="write_btns">
           <button type="button" class="cancel-btn default_btn" onclick="window.history.back()">취소</button>

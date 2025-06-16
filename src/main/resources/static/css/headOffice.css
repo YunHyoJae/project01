@@ -68,6 +68,8 @@ body {
   color: #fff;
 }
 
+.error{color:red;font-size:0.85em;margin:0 0.5em 1em;}
+
 /* 상단 메뉴바 */
 .menu-bar {
   height: 50px;
@@ -342,6 +344,10 @@ body {
 .search_box input[type="button"] {
   color: #000;
 }
+.search_box.typePark select, .search_box.typePark input{height:40px;box-sizing: border-box;}
+.search_box.typePark .search_form{justify-content: start;margin:0 0 20px;display: flex;height:40px;}
+.search_box.typePark .textBox{width:280px;}
+.search_box.typePark .search_btn{background:#ddd;border-radius:5px;padding:6px 15px;width:auto;}
 
 /* 질문하기 버튼 */
 .ask-btn {
@@ -1357,3 +1363,159 @@ body {
     gap: 16px;
   }
 }
+
+/*   프로필 정보 수정   */
+.editProfile .form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.editProfile .form-row {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px; /* 행 간 간격 통일 */
+}
+
+
+
+.editProfile .form-row.three-columns {
+  grid-template-columns: 100px 1fr 100px;
+}
+
+.editProfile .form-row.address-combined {
+  grid-template-columns: 100px 1fr;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.editProfile .form-row.two-columns-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 100px;
+  margin-top: 20px;
+}
+
+.editProfile .form-row.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.editProfile .form-row label {
+  margin-right: 4px; /* 라벨과 인풋 사이 여백 */
+  white-space: nowrap; /* 라벨 줄바꿈 방지 */
+  font-weight: 500;
+  width: 150px; /* 라벨 너비 통일 */
+  display: flex;
+  align-items: center;
+}
+.editProfile .checkbox-row label {
+  width: 100px;
+}
+.editProfile .form-row input {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+  margin-left: 0;
+}
+.editProfile .check_btn input {
+  margin: 0 5px;
+}
+.editProfile .form-row button {
+  width: 90%;
+}
+
+.editProfile .address-group {
+  display: block; /* grid 해제 */
+}
+
+.editProfile .address-group input {
+  width: 100%;
+  margin-bottom: 8px;
+  box-sizing: border-box;
+}
+
+/* checkbox label 따로 스타일링 */
+.editProfile .checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+/* 버튼 스타일 */
+.editProfile .default_btn,
+.editProfile .submit {
+  background: #0400f5;
+  border: none;
+  color: #fff;
+  padding: 10px 24px;
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  margin: 20px 10px;
+}
+
+.editProfile .cancel {
+  background: #ccc;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  margin: 20px 10px;
+}
+
+.editProfile .default_btn:hover,
+.editProfile .submit:hover {
+  background: #030186;
+}
+
+.editProfile .line {
+  max-width: 800px;
+  width: 100%;
+  height: 1px;
+  background-color: #ededed;
+  margin: 10px 0;
+}
+
+.editProfile .form-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.editProfile .form-wrapper {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+.editProfile .info-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* 길면 ...으로 표시 */
+}
+.editProfile .form-row small {
+  white-space: nowrap; /* 줄바꿈 금지 */
+  display: inline-block; /* 줄 바꿈 방지 + 레이아웃 제어 */
+}
+
+/* 미디어쿼리 */
+@media (max-width: 768px) {
+  .form-row.two-columns-split {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+

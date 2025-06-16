@@ -13,6 +13,27 @@
         <!-- 본문 컨텐츠 -->
         <div class="content franchiseInquiry">
             <h2>매장현황</h2>
+            <div class="search_box typePark">
+            <form action="/headOffice/memberList" method="get" class="search_form" id="searchForm" >
+                <input type="hidden" name="keyword" id="keywordBox">
+                <select name="category" class="searchTerm" onchange="changeForm2(this)">
+                    <option value="userName" th:selected="${pageDto.category == 'userName'}">고객명</option>
+                    <option value="userTel" th:selected="${pageDto.category == 'userTel'}">연락처</option>
+                    <option value="name" th:selected="${pageDto.category == 'name'}">매장명</option>
+                    <option value="space" th:selected="${pageDto.category == 'space'}">매장위치</option>
+                    <option value="state" th:selected="${pageDto.category == 'state'}">매장상태</option>
+                </select>
+                <input type="text" class="textBox" placeholder="검색어를 입력하시오."
+                       th:value="${pageDto.category != 'state' ? pageDto.keyword : ''}" id="query"/>
+                <select class="statusBox" id="statusBox" style="display:none;">
+                    <option value="오픈예정" th:selected="${pageDto.category == 'state' and pageDto.keyword == '오픈예정'}">오픈예정</option>
+                    <option value="영업중" th:selected="${pageDto.category == 'state' and pageDto.keyword == '영업중'}">영업중</option>
+                    <option value="휴업" th:selected="${pageDto.category == 'state' and pageDto.keyword == '휴업'}">휴업</option>
+                    <option value="폐업" th:selected="${pageDto.category == 'state' and pageDto.keyword == '폐업'}">폐업</option>
+                </select>
+                <button type="button" onclick="submitForm()" class="search_btn">검색</button>
+            </form>
+            </div>
             <div class="franchiseInquiry-box">
                 <table>
                     <thead>
@@ -37,30 +58,6 @@
                     </th:block>
                 </table>
             </div>
-            <form action="/headOffice/memberList" method="get" class="search_form" id="searchForm" >
-                <input type="hidden" name="keyword" id="keywordBox">
-                <select name="category" class="searchTerm" onchange="changeForm2(this)">
-                    <option value="userName" th:selected="${pageDto.category == 'userName'}">고객명</option>
-                    <option value="userTel" th:selected="${pageDto.category == 'userTel'}">연락처</option>
-                    <option value="name" th:selected="${pageDto.category == 'name'}">매장명</option>
-                    <option value="space" th:selected="${pageDto.category == 'space'}">매장위치</option>
-                    <option value="state" th:selected="${pageDto.category == 'state'}">매장상태</option>
-                </select>
-                <input type="text" class="textBox" placeholder="검색어를 입력하시오."
-                       th:value="${pageDto.category != 'state' ? pageDto.keyword : ''}" id="query"/>
-                <div class="dateBox" id="dateBox">
-                    <input type="date" class="search_date">
-                    <span>~</span>
-                    <input type="date" class="search_date">
-                </div>
-                <select class="statusBox" id="statusBox">
-                    <option value="오픈예정" th:selected="${pageDto.category == 'state' and pageDto.keyword == '오픈예정'}">오픈예정</option>
-                    <option value="영업중" th:selected="${pageDto.category == 'state' and pageDto.keyword == '영업중'}">영업중</option>
-                    <option value="휴업" th:selected="${pageDto.category == 'state' and pageDto.keyword == '휴업'}">휴업</option>
-                    <option value="폐업" th:selected="${pageDto.category == 'state' and pageDto.keyword == '폐업'}">폐업</option>
-                </select>
-                <button type="button" onclick="submitForm()" class="default_btn search_btn">검색</button>
-            </form>
             <!-- 페이징 -->
             <div th:replace="/headOffice/pagination :: pagination(${pageDto})"></div>
         </div>

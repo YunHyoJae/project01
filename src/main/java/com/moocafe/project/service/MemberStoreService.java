@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,7 @@ public class MemberStoreService {
     private final MemberDao memberDao;
     private final StoreDao storeDao;
     private final MemberStoreDao memberStoreDao;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     public List<MemberStoreDto> getAll() {
         List<Store> stores = storeDao.findAll();
         List<MemberStoreDto> result = new ArrayList<>();
@@ -68,6 +70,8 @@ public class MemberStoreService {
     @Transactional
     public void save(MemberStoreDto ms) {
         ms.setRole(Role.ROLE_USER);
+        String pw=ms.getUserPw();
+        ms.setUserPw(bCryptPasswordEncoder.encode(pw));
         Member member=MemberStoreDto.toMemberEntity(ms);
         Store store=MemberStoreDto.toStoreEntity(ms);
         MemberStore memberStore = MemberStore.builder()
@@ -107,5 +111,9 @@ public class MemberStoreService {
     public String findUserId(String userId){
         Optional<Member> member=memberDao.findByUserId(userId);
         return member.map(Member::getUserId).orElse(null);
+    }
+    public String findByStoreNumber(String sn){
+        Optional<Store> store=storeDao.findByStoreNumber(sn);
+        return store.map(Store::getStoreNumber).orElse(null);
     }
 }

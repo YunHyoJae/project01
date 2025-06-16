@@ -13,17 +13,17 @@
       </ul>
     </li>
     <li class="receiving" th:if="${#strings.equals(title,'receiving')}">
-      <a href="/headOffice/purchaseOrder">입고</a>
+      <a href="/headOffice/inboundList">입고</a>
       <ul class="submenu">
-        <li><a href="#" th:classappend="${#strings.equals(sub, 'receiving') ? 'active' : ''}">입고현황</a></li>
+        <li><a href="/headOffice/inboundList" th:classappend="${#strings.equals(sub, 'inboundList') ? 'active' : ''}">입고현황</a></li>
         <li><a href="#" th:classappend="${#strings.equals(sub, 'inventoryStore') ? 'active' : ''}">입고등록</a></li>
         <li><a href="/headOffice/purchaseOrder" th:classappend="${#strings.equals(sub, 'purchaseOrder') ? 'active' : ''}">발주서</a></li>
       </ul>
     </li>
     <li class="shipping" th:if="${#strings.equals(title,'shipping')}">
-      <a href="#">출고</a>
+      <a href="/headOffice/outboundManagement">출고</a>
       <ul class="submenu">
-        <li><a href="#" th:classappend="${#strings.equals(sub, 'inventoryStore') ? 'active' : ''}">출고관리</a></li>
+        <li><a href="/headOffice/outboundManagement" th:classappend="${#strings.equals(sub, 'outboundManagement') ? 'active' : ''}">출고관리</a></li>
       </ul>
     </li>
     <li class="inventory" th:if="${#strings.equals(title,'inventory')}">
@@ -40,7 +40,7 @@
         <li><a href="/headOffice/franchiseList" th:classappend="${#strings.equals(sub, 'franchise') ? 'active' : ''}">프랜차이즈 상담</a></li>
         <li><a href="/headOffice/faqList" th:classappend="${#strings.equals(sub, 'faq') ? 'active' : ''}">점주 질문</a></li>
         <li><a href="/headOffice/memberList" th:classappend="${#strings.equals(sub, 'member') ? 'active' : ''}">매장 현황</a></li>
-        <li><a href="/headOffice/memberInsert" th:classappend="${#strings.equals(sub, 'memberInsert') ? 'active' : ''}">매장 등록</a></li>
+        <li><a href="/headOffice/memberAdd" th:classappend="${#strings.equals(sub, 'memberAdd') ? 'active' : ''}">매장 등록</a></li>
       </ul>
     </li>
   </ul>

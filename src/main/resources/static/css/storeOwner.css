@@ -70,6 +70,7 @@ body {
   font-size: 14px;
   color: #fff;
 }
+.error{color:red;font-size:0.85em;margin:0 0.5em 1em;}
 
 /*    상단 메뉴바    */
 .menu-bar {
@@ -1150,3 +1151,14 @@ body {
   font-size: 14px;
   margin-left: 5px;
 }
+.search_box.typePark{display: flex;justify-content: space-between;}
+.search_box.typePark select, .search_box.typePark input{height:40px;box-sizing: border-box;
+  width: 100px;
+  padding: 8px 0;
+  text-align: center;
+  color: #888888;
+  outline: none;}
+.search_box.typePark .search_form{justify-content: start;margin:0 0 20px;display: flex;height:40px;gap:10px;}
+.search_box.typePark .textBox{width:280px;}
+.search_box.typePark .search_btn{background:#ddd;border-radius:5px;padding:6px 15px;width:auto;border:none;}
+.search_box.typePark .default_btn{height:40px;box-sizing:border-box;}
