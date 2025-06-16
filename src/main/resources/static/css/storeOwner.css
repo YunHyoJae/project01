@@ -152,6 +152,10 @@ body {
 .sidebar .submenu li a.active {
   color: #000;
 }
+/* 서브메뉴 항목 숨기기 
+.sidebar > ul > li {
+  display: none;
+}*/
 /*     본문 컨텐츠     */
 .content {
   flex-grow: 1;
@@ -881,14 +885,18 @@ body {
   display: flex;
   align-items: center;
 }
-
+.editProfile .checkbox-row label {
+  width: 100px;
+}
 .editProfile .form-row input {
   width: 100%;
   padding: 8px;
   box-sizing: border-box;
   margin-left: 0;
 }
-
+.editProfile .check_btn input {
+  margin: 0 5px;
+}
 .editProfile .form-row button {
   width: 90%;
 }
@@ -982,24 +990,24 @@ body {
 
 
 /* 점주 관리자 메인 페이지 */
-.storeOwnerMain .content {
+/* 레이아웃 */
+.storeOwnerMain .contents {
   flex-grow: 1;
-  padding: 10px 30px;
+  padding: 0px 30px;
 }
 
-.storeOwnerMain .content h4 {
+.storeOwnerMain h4 {
   font-weight: 600;
-  margin-left: 20px;
 }
 
-.storeOwnerMain .content .section_02,
-.storeOwnerMain .content .section_03{
+.storeOwnerMain .section_02,
+.storeOwnerMain .section_03{
   display: flex;
   justify-content: space-between;
   margin-top: 20px;
 }
-.storeOwnerMain .content .section_02 div,
-.storeOwnerMain .content .section_03 div{
+.storeOwnerMain .section_02 > div,
+.storeOwnerMain .section_03 > div {
   width: 48%;
   height: 180px;
   border-radius: 20px;
@@ -1007,15 +1015,84 @@ body {
   box-shadow: 0 0 10px #0000002d;
 }
 
-.storeOwnerMain .content .total{
+.storeOwnerMain .sales {
   width: 100%;
   height: 250px;
   background-color: #ffffff;
   border-radius: 20px;
   box-shadow: 0 0 10px #0000002d;
 }
-.storeOwnerMain .content .total h4{
-  padding-top: 20px;
+.storeOwnerMain .cont {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.storeOwnerMain .cont_top {
+  width: 90%;
+  height: 20px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: absolute; top: 10px;
+}
+.storeOwnerMain .sales .cont_top {
+  width: 95%;
+}
+.storeOwnerMain .cont_top > span {
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/*   컨텐츠 내용   */
+.storeOwnerMain .chart_wrap {
+  width: 80%; height: 95%;
+  margin: 0 auto;
+}
+.storeOwnerMain input {
+  height: 10px;
+}
+.storeOwnerMain table {
+  width: 90%;
+  font-size: 12px;
+  margin-top: 20px;
+}
+.storeOwnerMain table tr {
+  height: 10px;
+}
+.storeOwnerMain table tr th,
+.storeOwnerMain table tr td {
+  padding: 5px;
+}
+.storeOwnerMain .low {
+  background-color: red;
+  color: white;
+  font-weight: bold;
+}
+.storeOwnerMain .notice {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  box-sizing: border-box;
+  padding-bottom: 5px;
+  box-sizing: border-box;
+}
+.storeOwnerMain .notice .cont_top > h4 {
+  margin-left: 35px;
+}
+.storeOwnerMain .todo_wrap {
+  margin-top: 45px;
+  width: 100%; height: 100%;
+  overflow-y: scroll;
+}
+.storeOwnerMain .notice .todo_list {
+  margin-left: 60px;
+  list-style-type: disc;
+}
+.storeOwnerMain .notice .todo_list > li {
+  margin-bottom: 8px;
+  font-size: 14px;
 }
 
 /*    매장 재고 현황    */

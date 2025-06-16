@@ -24,6 +24,7 @@ function includeHTML() {
             }
             script.parentNode.replaceChild(newScript, script);
           });
+
         })
         .catch(err => {
           console.error(err);

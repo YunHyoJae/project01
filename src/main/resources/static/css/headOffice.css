@@ -2,7 +2,6 @@
 
 /* 기본 설정 */
 * { margin: 0; padding: 0; }
-ul { list-style: none; }
 a { text-decoration: none; color: #000; }
 img { border: 0; vertical-align: top; }
 button{ background: inherit ; border:none; box-shadow:none; border-radius:0; padding:0; overflow:visible; cursor:pointer }
@@ -113,7 +112,7 @@ body {
   padding: 20px;
 }
 
-.sidebar ul {
+.sidebar > ul {
   list-style: none;
   padding: 0;
   margin: 0;
@@ -150,6 +149,11 @@ body {
 .sidebar .submenu li a.active {
   color: #000;
 }
+
+/* 서브메뉴 항목 숨기기
+.sidebar > ul > li {
+  display: none;
+} */
 
 /* 본문 컨텐츠 */
 .content {
@@ -379,6 +383,56 @@ body {
   margin-left: 10px;
 }
 
+/* 프랜차이즈 문의 상세 */
+.franchDetail table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.franchDetail thead {
+  background-color: #ededed;
+  color: #000;
+}
+
+.franchDetail table th,
+.franchDetail table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+
+}
+
+.franchDetail table .full-width{
+  width: 100%;
+  border: none;
+  outline: none;
+}
+.franchDetail table select{
+  width: 300px;
+  height: 30px;
+  text-align: center;
+  outline: none;
+}
+.franchDetail table #answer-date{
+  border: 1px solid rgb(234, 234, 234);
+}
+
+.franchDetail table tr:nth-child(10) td textarea{
+  height: 150px;
+}
+.franchDetail .answer_table {
+  margin: 20px 0px;
+}
+
+.franchDetail .close-btn {
+  background: #cacaca;
+  color: #fff;
+  margin-left: 10px;
+}
+
+.franchDetail .close-btn:hover {
+  background: #919191;
+}
 /*    입고등록     */
 /*  모달창 전체 영역  */
 .receiving_modal {
@@ -568,42 +622,6 @@ body {
   float: none;
   margin-left: 5px;
   padding: 8px 14px;
-}
-
-/*     매장등록 팝업    */
-.storeForm .form-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-  max-width: 800px;
-  margin: 0 auto;
-  /* border: 1px solid red; */
-}
-
-.storeForm.form-row {
-  display: grid;
-  grid-template-columns: 150px 1fr;
-  gap: 12px;
-  align-items: center;
-}
-.storeForm .form-row.three-columns {
-  grid-template-columns: 150px 1fr 100px; /* 레이블 + 입력 + 버튼 */
-}
-
-.storeForm .form-row input{
-  width: 100%;
-  padding: 8px;
-  box-sizing: border-box;
-}
-.storeForm .form-row button{
-  width: 90%;
-}
-.storeForm .line{
-  max-width: 800px;
-  width: 100%;
-  height: 1px;
-  background-color: #ededed;
-  margin: 10px 0;
 }
 
 /*    반품신청     */
@@ -801,7 +819,7 @@ body {
 }
 
 
-/*     매장별 재고 현황    */
+/*    매장별 재고 현황    */
 .newProduct select, input,
 .newMenu select, input,
 .inventoryStatus select, input {
@@ -827,7 +845,7 @@ body {
 .newProduct button:hover,
 .newMenu button:hover,
 .inventoryStatus button:hover {
-  background-color: #2a5bd3;
+  background-color: #030186;
 }
 
 .inventoryStatus .stock-table {
@@ -1044,3 +1062,298 @@ body {
   margin-top: 20px;
 }
 
+
+
+/* 본사 관리자 메인 페이지 */
+/* 레이아웃 */
+.headOfficeMain .contents {
+  flex-grow: 1;
+  padding: 0px 30px;
+}
+
+.headOfficeMain h4 {
+  font-weight: 600;
+}
+
+.headOfficeMain .section_02,
+.headOfficeMain .section_03{
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.headOfficeMain .section_02 > div,
+.headOfficeMain .section_03 > div {
+  width: 48%;
+  height: 180px;
+  border-radius: 20px;
+  background-color: #ffffff;
+  box-shadow: 0 0 10px #0000002d;
+}
+
+.headOfficeMain .sales {
+  width: 100%;
+  height: 250px;
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 0 10px #0000002d;
+}
+.headOfficeMain .cont {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.headOfficeMain .cont_top {
+  width: 90%;
+  height: 20px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: absolute; top: 10px;
+}
+.headOfficeMain .sales .cont_top {
+  width: 95%;
+}
+.headOfficeMain .cont_top > span {
+  font-size: 12px;
+  cursor: pointer;
+}
+/*   컨텐츠 내용   */
+/* 재고현황 */
+.headOfficeMain .inventory {
+  padding-left: 30px;
+  box-sizing: border-box;
+  display: flex; justify-content: left;
+  overflow: hidden;
+}
+.headOfficeMain .notice_wrap {
+  width: 100%; height: 75%;
+  margin-top: 40px;
+  overflow-y: scroll;
+}
+.headOfficeMain .stock_notice {
+  list-style: disc;
+  margin-left: 10px;
+}
+
+.headOfficeMain .stock_notice > li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 14px;
+  height: 18px;
+  margin-top: 3px;
+}
+.headOfficeMain .franchise_notice > li {
+  width: 75%;
+  margin-left: 60px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+.headOfficeMain .franchise_notice .date {
+  float: right;
+  font-size: 12px;
+}
+.headOfficeMain .stock_notice > li:last-child {
+  margin: 0;
+}
+.headOfficeMain .low {
+  padding: 3px 5px;
+  background-color: red;
+  border-radius: 3px;
+  color: white;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+/* 전체매출 */
+.headOfficeMain .chart_wrap {
+  width: 80%; height: 95%;
+  margin: 0 auto;
+}
+
+/* 공통 css */
+.headOfficeMain input {
+  height: 10px;
+}
+.headOfficeMain table {
+  width: 90%;
+  font-size: 12px;
+  margin-top: 20px;
+}
+.headOfficeMain table tr {
+  height: 10px;
+}
+.headOfficeMain table tr th,
+.headOfficeMain table tr td {
+  padding: 5px;
+}
+
+/*    매장등록     */
+.storeForm .form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.storeForm .form-row {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px; /* 행 간 간격 통일 */
+}
+
+.storeForm .form-row.three-columns {
+  grid-template-columns: 100px 1fr 100px;
+}
+
+.storeForm .form-row.address-combined {
+  grid-template-columns: 100px 1fr;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.storeForm .form-row.two-columns-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 100px;
+  margin-top: 20px;
+}
+
+.storeForm .form-row.checkbox-row {
+  margin-top: 4px;
+}
+
+.storeForm .form-row label {
+  margin-right: 4px; /* 라벨과 인풋 사이 여백 */
+  white-space: nowrap; /* 라벨 줄바꿈 방지 */
+  font-weight: 500;
+  width: 150px; /* 라벨 너비 통일 */
+  display: flex;
+  align-items: center;
+}
+.storeForm .form-row input[type="checkbox"] {
+  margin-right: 15px;
+}
+.storeForm .form-row input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+  margin-left: 0;
+}
+
+.storeForm .form-row button {
+  width: 90%;
+}
+
+.storeForm .address-group {
+  display: block; /* grid 해제 */
+}
+
+.storeForm .address-group input {
+  width: 100%;
+  margin-bottom: 8px;
+  box-sizing: border-box;
+}
+
+/* checkbox label 따로 스타일링 */
+.storeForm .checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.storeForm .close-btn {
+  background: #cacaca;
+  color: #fff;
+  margin-left: 10px;
+}
+
+.storeForm .close-btn:hover {
+  background: #919191;
+}
+
+.storeForm .form-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.storeForm .form-wrapper {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.storeForm .info-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* 길면 ...으로 표시 */
+}
+
+.storeForm .form-row small {
+  white-space: nowrap; /* 줄바꿈 금지 */
+  display: inline-block; /* 줄 바꿈 방지 + 레이아웃 제어 */
+}
+.storeForm .addFile-wrap {
+  margin-top: 10px;
+}
+.storeForm .set_txt {
+  font-weight: normal;
+}
+
+/*  매장 상세  */
+.storeDetail span {
+  display: inline-block;
+  width: 100px;
+}
+
+/*    매장별 판매 현황   */
+.inventorySalesStatus .filter-section, .input-section {
+  margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.inventorySalesStatus .status-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 10px;
+}
+.inventorySalesStatus .status-table th, .status-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: center;
+}
+.inventorySalesStatus .total-row {
+  background-color: #d1e8ff;
+  font-weight: bold;
+}
+.inventorySalesStatus input,
+.inventorySalesStatus select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.inventorySalesStatus .default_btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+}
+
+/* 미디어쿼리 */
+@media (max-width: 768px) {
+  .form-row.two-columns-split {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
