@@ -93,7 +93,7 @@ public class StoreOrderController {
     public String submitReturn(@ModelAttribute ReturnDto returnDto, String itemCode, int returnQuantity, int storeId) {
         log.info("submit return: {}", returnDto);
         returnService.saveReturn(returnDto, itemCode, returnQuantity, storeId);
-        return "redirect:/storeOwner/storeOrderList";
+        return "redirect:/storeOwner/storeorderList";
     }
     @GetMapping("/storeOrderItems")
     @ResponseBody
