@@ -113,19 +113,27 @@
             <span th:if="${#lists.isEmpty(shortageList)}" style="color:#888;">부족재고 없음</span>
           </div>
         </section>
+
+
         <section class="gridBox">
           <div class="boxHeader">
             <span>주문내역</span>
-            <a href="/storeOwner/orderList" class="moreLink">더보기</a>
+            <a href="/storeOwner/storeOrderList" class="moreLink">더보기</a>
           </div>
           <div class="boxContent">
-            <span>최근 주문 3건</span>
             <ul style="margin:8px 0 0 16px; padding:0; font-size:14px;">
-              <li th:each="o : ${orderList}"><span th:text="${o.menuName}"></span> <span th:text="${o.quantity}"></span>개</li>
+              <li th:each="o : ${orderList}">
+                <span th:text="${o.orderNumber}"></span>
+                <span th:if="${o.itemName != null}" th:text="' | ' + ${o.itemName}"></span>
+                <span th:if="${o.orderedQuantity != null}" th:text="' / ' + ${o.orderedQuantity}"></span>
+                <span th:if="${o.orderDate != null}" th:text="' | ' + ${o.orderDate}"></span>
+                <span th:if="${o.status != null}" th:text="' | ' + ${o.status}"></span>
+              </li>
             </ul>
             <span th:if="${#lists.isEmpty(orderList)}">주문 내역 없음</span>
           </div>
         </section>
+
         <section class="gridBox">
           <div class="boxHeader">
             <span>반품현황</span>

@@ -40,4 +40,17 @@ public interface OutBoundRepository extends JpaRepository<OutBound, Integer> {
             @Param("endDate") String endDate,
             @Param("storeName") String storeName
     );
+
+    @Query(value = """
+    SELECT o.outBoundId, s.name AS store_name, i.itemCode, i.itemName, oi.receivedQuantity,
+           TO_CHAR(o.requiredDate, 'YYYY-MM-DD') AS requiredDate,
+           TO_CHAR(o.dueDate, 'YYYY-MM-DD') AS dueDate, o.status
+      FROM OUTBOUNDITEM oi
+      JOIN OUTBOUND o ON oi.outBoundId = o.outBoundId
+      JOIN STORE s ON o.storeId = s.id
+      JOIN INVENTORYREGISTRATION i ON oi.itemCode = i.itemCode
+     ORDER BY o.requiredDate DESC, o.outBoundId DESC
+     FETCH FIRST 4 ROWS ONLY
+    """, nativeQuery = true)
+    List<Object[]> findRecentOutBoundListRaw();
 }

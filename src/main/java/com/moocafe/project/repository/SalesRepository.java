@@ -18,24 +18,27 @@ public interface SalesRepository extends JpaRepository<Sales, Long> {
     @Query("SELECT m FROM Menu m JOIN MenuPrice p ON m.menuId = p.menuId WHERE m.menuId = :menuId")
     List<Menu> findByMenuIdWithPrice(@Param("menuId") String menuId);
 
-    @Query("""
-SELECT new com.moocafe.project.dto.SalesSummaryDto(
-    s.storeId, st.name, s.menuId, s.menuName,
-    CAST(SUM(s.quantity) AS bigdecimal), 
-    CAST(SUM(s.quantity * mp.menuPrice) AS bigdecimal)
-)
-FROM Sales s
-JOIN MenuPrice mp ON s.menuId = mp.menuId
-JOIN Store st ON s.storeId = st.id
-WHERE (:storeId IS NULL OR s.storeId = :storeId)
-  AND (:startDate IS NULL OR s.saleTime >= :startDate)
-  AND (:endDate IS NULL OR s.saleTime <= :endDate)
-GROUP BY s.storeId, st.name, s.menuId, s.menuName
-""")
-    List<SalesSummaryDto> findSalesSummary(
-            @Param("storeId") Integer storeId,
-            @Param("startDate") Date startDate,
-            @Param("endDate") Date endDate);
+@Query(value = """
+    SELECT s.storeId AS storeId,
+    st.name AS storeName,
+    s.menuId AS menuId,
+    s.menuName AS menuName,
+    SUM(s.quantity) AS totalQuantity,
+    SUM(s.quantity * mp.menuPrice) AS totalAmount,
+    TO_CHAR(s.saleTime, 'YYYY-MM-DD') AS saleTime
+    FROM sales s
+    JOIN store st ON s.storeId = st.id
+    JOIN menuprice mp ON s.menuId = mp.menuId
+    WHERE (:storeId IS NULL OR s.storeid = :storeId)
+    AND (:startDate IS NULL OR s.saletime >= :startDate)
+    AND (:endDate IS NULL OR s.saletime <= :endDate)
+    GROUP BY s.storeId, st.name, s.menuId, s.menuName, TO_CHAR(s.saleTime, 'YYYY-MM-DD')
+    ORDER BY saleTime
+""", nativeQuery = true)
+List<SalesSummaryDto> findSalesSummary(
+        @Param("storeId") Integer storeId,
+        @Param("startDate") Date startDate,
+        @Param("endDate") Date endDate);
 
     @Query(value = """
 SELECT s.storeId AS storeId,
@@ -43,13 +46,15 @@ SELECT s.storeId AS storeId,
        s.menuId AS menuId,
        s.menuName AS menuName,
        CAST(SUM(s.quantity) AS DECIMAL(10,2)) AS totalQuantity,
-       CAST(SUM(s.quantity * mp.menuPrice) AS DECIMAL(10,2)) AS totalAmount
+       CAST(SUM(s.quantity * mp.menuPrice) AS DECIMAL(10,2)) AS totalAmount,
+       TO_CHAR(s.saleTime, 'YYYY-MM-DD') AS saleTime
 FROM SALES s
 JOIN STORE st ON s.storeId = st.id
 JOIN MENUPRICE mp ON s.menuId = mp.menuId
 WHERE s.storeId = :storeId
   AND s.saleTime BETWEEN :startDate AND :endDate
-GROUP BY s.storeId, st.name, s.menuId, s.menuName
+GROUP BY s.storeId, st.name, s.menuId, s.menuName, TO_CHAR(s.saleTime, 'YYYY-MM-DD')
+ORDER BY saleTime
 """, nativeQuery = true)
     List<SalesSummaryDto> findSummaryByStoreAndDate(
             @Param("storeId") Integer storeId,

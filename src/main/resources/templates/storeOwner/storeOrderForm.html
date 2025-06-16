@@ -98,15 +98,11 @@
 
         async function fetchItemInfo(itemCode) {
             if (!itemCode) return null;
-            try {
-                const res = await fetch('/storeOwner/storeOrderItemInfo?itemCode=' + encodeURIComponent(itemCode));
-                if (!res.ok) return null;
-                return await res.json();
-            } catch (e) {
-                return null;
-            }
+            // 아래 경로를 컨트롤러와 맞춰주세요!
+            const res = await fetch('/storeOwner/storeOrder/itemInfo?itemCode=' + encodeURIComponent(itemCode));
+            if (!res.ok) return null;
+            return await res.json();
         }
-
         async function onItemCodeInput(index) {
             const code = document.getElementById(`itemCode-${index}`).value.trim();
             if (!code) return;
@@ -114,19 +110,41 @@
             if (data) {
                 document.getElementById(`itemName-${index}`).innerText = data.itemName || '-';
                 document.getElementById(`price-${index}`).innerText = data.itemPrice || 0;
-                document.getElementById(`stock-${index}`).innerText = data.stockQuantity ?? "-";
                 updateTotal(index);
             } else {
                 document.getElementById(`itemName-${index}`).innerText = '-';
                 document.getElementById(`price-${index}`).innerText = 0;
-                document.getElementById(`stock-${index}`).innerText = '-';
                 updateTotal(index);
             }
         }
 
-        window.onload = () => {
-            for (let i = 0; i < 3; i++) addRow();
+        function getQueryParams(name) {
+            const params = new URLSearchParams(window.location.search);
+            const values = [];
+            for (const [key, value] of params.entries()) {
+                if (key === name) values.push(value);
+            }
+            return values;
         }
+
+        window.onload = () => {
+            const itemCodes = getQueryParams("itemCode");
+            const neededQtys = getQueryParams("needed");
+            const rowCount = Math.max(itemCodes.length, neededQtys.length, 3);
+            for (let i = 0; i < rowCount; i++) addRow();
+
+            for (let i = 0; i < itemCodes.length; i++) {
+                if (itemCodes[i]) {
+                    document.getElementById(`itemCode-${i}`).value = itemCodes[i];
+                    onItemCodeInput(i); // AJAX로 품목명/단가 자동채움
+                }
+                if (neededQtys[i]) document.getElementsByName("orderedQuantity")[i].value = neededQtys[i];
+            }
+        };
+        //
+        // window.onload = () => {
+        //     for (let i = 0; i < 3; i++) addRow();
+        // }
     </script>
 </head>
 <body>

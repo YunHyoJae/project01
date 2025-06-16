@@ -9,86 +9,97 @@
 <body>
 <header th:replace="~{/storeOwner/tnb}"></header>
 
-<script th:if="${param.alert}" th:inline="javascript">
-    alert([[${param.alert}]]);
-</script>
+<div class="section">
+    <div th:replace="~{/storeOwner/header}"></div>
 
-<div class="content salesStatus">
-    <div class="salesStatus">
-        <h2 class="title">판매 현황</h2>
-        <div class="date_box form_group">
-            <h3 class="tit">기준일자</h3>
-            <form th:action="@{/storeOwner/salesList}" class="date_form" method="get" style="display:flex;align-items:center;gap:24px;">
-                    <input type="date" class="search_date" name="startDate"
-                           th:value="${#dates.format(startDate, 'yyyy-MM-dd')}">
-                    <span>~</span>
-                    <input type="date" class="search_date" name="endDate"
-                           th:value="${#dates.format(endDate, 'yyyy-MM-dd')}">
-                    <h3 class="tit" style="margin-right:8px;">메뉴명</h3>
-                    <input type="text" class="search_name" placeholder="메뉴명 조회" name="menuName"
-                           th:value="${menuName}">
-                <button type="submit" class="default_btn check_btn">조회</button>
-            </form>
-        </div>
+    <div class="main-layout">
+        <div th:replace="storeOwner/etcLnb :: active('sale', 'salesList')"></div>
+
+        <script th:if="${param.alert}" th:inline="javascript">
+            alert([[${param.alert}]]);
+        </script>
+
+        <!--    본문컨텐츠-->
+        <div class="content salesStatus">
+            <div class="salesStatus">
+                <h2 class="title">판매 현황</h2>
+                <div class="date_box form_group">
+                    <h3 class="tit">기준일자</h3>
+                    <form th:action="@{/storeOwner/salesList}" class="date_form" method="get"
+                          style="display:flex;align-items:center;gap:24px;">
+                        <input type="date" class="search_date" name="startDate"
+                               th:value="${#dates.format(startDate, 'yyyy-MM-dd')}">
+                        <span>~</span>
+                        <input type="date" class="search_date" name="endDate"
+                               th:value="${#dates.format(endDate, 'yyyy-MM-dd')}">
+                        <h3 class="tit" style="margin-right:8px;">메뉴명</h3>
+                        <input type="text" class="search_name" placeholder="메뉴명 조회" name="menuName"
+                               th:value="${menuName}">
+                        <button type="submit" class="default_btn check_btn">조회</button>
+                    </form>
+                </div>
 
 
-        <!-- 매출 현황 -->
-        <div class="salesStatus-box box">
-            <table>
-                <thead>
-                <tr>
-                    <th>매장 ID</th>
-                    <th>매장명</th>
-                    <th>메뉴 ID</th>
-                    <th>메뉴명</th>
-                    <th>총 판매수량</th>
-                    <th>매출액</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="summary : ${summaryList}">
-                    <td th:text="${summary.storeId}"></td>
-                    <td th:text="${summary.storeName}"></td>
-                    <td th:text="${summary.menuId}"></td>
-                    <td th:text="${summary.menuName}"></td>
-                    <td th:text="${summary.totalQuantity}"></td>
-                    <td th:text="${#numbers.formatInteger(summary.totalAmount, 3, 'COMMA')}"></td>
-                </tr>
-                </tbody>
-                <tbody>
-                <tr>
-                    <td>합계</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td th:text="${totalQuantity}"></td>
-                    <td th:text="${#numbers.formatInteger(totalAmount, 0, 'COMMA')}"></td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
+                <!-- 매출 현황 -->
+                <div class="salesStatus-box box">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>매장 ID</th>
+                            <th>매장명</th>
+                            <th>메뉴 ID</th>
+                            <th>메뉴명</th>
+                            <th>총 판매수량</th>
+                            <th>매출액</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="summary : ${summaryList}">
+                            <td th:text="${summary.storeId}"></td>
+                            <td th:text="${summary.storeName}"></td>
+                            <td th:text="${summary.menuId}"></td>
+                            <td th:text="${summary.menuName}"></td>
+                            <td th:text="${summary.totalQuantity}"></td>
+                            <td th:text="${#numbers.formatInteger(summary.totalAmount, 3, 'COMMA')}"></td>
+                        </tr>
+                        </tbody>
+                        <tbody>
+                        <tr>
+                            <td>합계</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td th:text="${totalQuantity}"></td>
+                            <td th:text="${#numbers.formatInteger(totalAmount, 0, 'COMMA')}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-        <!-- 🧾 판매 입력 -->
-        <div class="input_box form_group">
-            <h3 class="tit">판매입력</h3>
-            <form th:action="@{/storeOwner/salesInput}" class="date_form" method="post">
-                <input type="hidden" name="storeId" th:value="${storeId}">
-                <span style="margin:0 20px; flex-shrink: 0;">시간</span>
-                <input type="datetime-local" class="search_date" name="saleTime" required style="max-width:200px;">
-                <span style="margin:0 20px; flex-shrink: 0;">메뉴</span>
-                <select name="menuId" class="search_name" required style="max-width:320px; min-height:40px;">
-                    <option th:each="menu : ${menuList}"
-                            th:value="${menu.menuId}"
-                            th:text="${menu.menuName + ' (' + menu.menuId + ') - ' + #numbers.formatInteger(menu.menuPrice, 3, 'COMMA') + '원'}">
-                    </option>
-                </select>
-                <span style="margin:0 20px; flex-shrink: 0;">수량</span>
-                <input type="number" class="search_name" name="quantity" min="1" required style="max-width:100px; margin-right: 20px;">
-                <button type="submit" class="default_btn check_btn">등록</button>
-            </form>
+                <!-- 🧾 판매 입력 -->
+                <div class="input_box form_group">
+                    <h3 class="tit">판매입력</h3>
+                    <form th:action="@{/storeOwner/salesInput}" class="date_form" method="post">
+                        <input type="hidden" name="storeId" th:value="${storeId}">
+                        <span style="margin:0 20px; flex-shrink: 0;">시간</span>
+                        <input type="datetime-local" class="search_date" name="saleTime" required
+                               style="max-width:200px;">
+                        <span style="margin:0 20px; flex-shrink: 0;">메뉴</span>
+                        <select name="menuId" class="search_name" required style="max-width:320px; min-height:40px;">
+                            <option th:each="menu : ${menuList}"
+                                    th:value="${menu.menuId}"
+                                    th:text="${menu.menuName + ' (' + menu.menuId + ') - ' + #numbers.formatInteger(menu.menuPrice, 3, 'COMMA') + '원'}">
+                            </option>
+                        </select>
+                        <span style="margin:0 20px; flex-shrink: 0;">수량</span>
+                        <input type="number" class="search_name" name="quantity" min="1" required
+                               style="max-width:100px; margin-right: 20px;">
+                        <button type="submit" class="default_btn check_btn">등록</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-
 </body>
 </html>
