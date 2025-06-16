@@ -21,6 +21,26 @@ function loadPage(pageUrl) {
     .then(html => {
       document.getElementById('content-area').innerHTML = html;
       
+      // 메인 페이지 진입 시 서브메뉴 숨김
+      if (
+        pageUrl.includes('main_headOffice.html') ||
+        pageUrl.includes('main_storeOwner.html')
+      ) {
+        hideAllSubmenus();
+      }
+
+      // 동적으로 삽입된 DOM 안에 차트가 있는 경우에만 실행
+      setTimeout(() => {
+        if (document.getElementById('monthlySalesChart')) {
+          createMonthlySalesChart('monthlySalesChart');
+        }
+        if (document.getElementById('totalSalesChart')) {
+          createtotalSalesChart('totalSalesChart');
+        }
+      }, 100);
+
+
+
       // 동적으로 로드된 후 초기화할 함수들
       initializeReturnFilter();       // 반품 필터
       initializeReceivingFilter();    // 입고 필터
@@ -87,7 +107,107 @@ function initializeSubmenu() {
         this.classList.add('active');
       });
     });
+  });
+}
 
+/*  점주 관리자 페이지 차트 구현 함수   */
+function createMonthlySalesChart(chartId) {
+  const ctx = document.getElementById(chartId).getContext('2d');
+  if (!ctx) return;
+
+  const monthlySalesData = {
+    labels: ['3월', '4월', '5월', '6월', '7월'],
+    datasets: [
+      {
+        label: '총 매출액',
+        data: [8200000, 8400000, 9000000, 9500000, 8000000],
+        borderColor: 'rgba(75, 192, 192, 1)',
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        tension: 0.3,
+        fill: true,
+        pointBackgroundColor: 'white',
+        pointBorderColor: 'rgba(75, 192, 192, 1)',
+        pointRadius: 5
+      }
+    ]
+  };
+
+  const config = {
+    type: 'line',
+    data: monthlySalesData,
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        title: {
+          display: true,
+          text: '최근 5개월 매출 추이'
+        },
+        tooltip: {
+          callbacks: {
+            label: (context) => `₩${context.parsed.y.toLocaleString()}`
+          }
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            callback: (value) => `₩${value.toLocaleString()}`
+          }
+        }
+      }
+    }
+  };
+
+  new Chart(ctx, config);
+}
+
+/*  본사 관리자 페이지 차트 구현 함수   */
+function createtotalSalesChart(canvasId) {
+  const ctx = document.getElementById(canvasId).getContext('2d');
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['강남매장', '강동매장', '강서매장', '강북매장'],
+      datasets: [
+        {
+          label: '카페라떼',
+          data: [300, 320, 280, 290],
+          backgroundColor: 'rgba(54, 162, 235, 0.8)',
+        },
+        {
+          label: '아메리카노',
+          data: [400, 380, 360, 370],
+          backgroundColor: 'rgba(255, 99, 132, 0.8)',
+        },
+        {
+          label: '초코라떼',
+          data: [500, 480, 450, 460],
+          backgroundColor: 'rgba(255, 223, 195, 0.8)',
+        },
+        {
+          label: '바닐라라떼',
+          data: [400, 320, 300, 280],
+          backgroundColor: 'rgba(255, 205, 86, 0.8)',
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      maxBarThickness: 150,
+      plugins: {
+        legend: {
+          position: 'bottom'
+        }
+      },
+      scales: {
+        x: { stacked: true },
+        y: { stacked: true, beginAtZero: true, max: 1800 }
+      }
+    }
   });
 }
 
