@@ -45,4 +45,7 @@ public class CustomUserDetails implements UserDetails {
         return loginDto;
     }
 
+    public int getStoreId() {
+        return loginDto.getStoreId();
+    }
 }

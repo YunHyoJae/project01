@@ -1,9 +1,6 @@
 package com.moocafe.project.service;
 
-import com.moocafe.project.dao.InventoryItemDao;
-import com.moocafe.project.dao.PurchaseItemDao;
-import com.moocafe.project.dao.ReturnDao;
-import com.moocafe.project.dao.ReturnItemDao;
+import com.moocafe.project.dao.*;
 import com.moocafe.project.dto.ReturnDto;
 import com.moocafe.project.dto.ReturnItemDto;
 import com.moocafe.project.entity.*;
@@ -11,6 +8,7 @@ import com.moocafe.project.repository.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +17,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ReturnService {
 
     private final ReturnDao returnDao;
@@ -28,16 +27,22 @@ public class ReturnService {
     private final InventoryItemRepository inventoryItemRepository;
     private final PurchaseRepository purchaseRepository;
     private final PurchaseItemRepository purchaseItemRepository;
-
+    private final StoreOrderService storeOrderService;
+    private final StoreOrderDao storeOrderDao;
     //@PersistenceContext
     //private EntityManager em;
 
     @Transactional
     public void saveReturn(ReturnDto returnDto, String itemCode, Integer returnQuantity, int storeId) {
+
+        StoreOrder storeOrder = storeOrderService.findByOrderNumber(returnDto.getOrderNumber());
+        log.info("Store order: {}", storeOrder);
+
         Return returnEntity = Return.builder()
                 .returnNumber(returnDto.getReturnNumber())
                 .returnNote(returnDto.getReturnNote())
                 .requiredDate(LocalDateTime.now())
+                .orderNumber(storeOrder)
                 .typeReturn("반품")
                 .build();
 
@@ -70,6 +75,12 @@ public class ReturnService {
         }
     }
 
+
+    public StoreOrder findByOrderNumber(String orderNumber) {
+        return storeOrderDao.findByOrderNumber(orderNumber)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 주문번호: " + orderNumber));
+    }
+
     @Transactional(readOnly = true)
     public List<Return> findAllWithItems() {
         // Spring Data JPA의 findAll()은 items가 LAZY일 수 있으므로, fetch join이 필요하다면 커스텀 쿼리 사용 권장
@@ -81,4 +92,7 @@ public class ReturnService {
     }
 
 
+    public List<ReturnItem> findByStoreId(int storeId) {
+        return returnDao.findByStoreId(storeId);
+    }
 }

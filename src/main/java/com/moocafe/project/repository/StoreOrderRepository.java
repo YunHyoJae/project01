@@ -42,4 +42,7 @@ public interface StoreOrderRepository extends JpaRepository<StoreOrder, Integer>
             nativeQuery = true
     )
     List<Object[]> findRecentOrderListByStoreId(@Param("storeId") Integer storeId);
+
+    Optional<StoreOrder> findByOrderNumber(String orderNumber);
+
 }

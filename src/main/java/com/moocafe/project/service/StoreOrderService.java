@@ -98,4 +98,10 @@ public class StoreOrderService {
                 (String) obj[5]
         )).toList();
     }
+
+    public StoreOrder findByOrderNumber(String orderNumber) {
+        return storeOrderDao.findByOrderNumber(orderNumber)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 주문번호: " + orderNumber));
+    }
+
 }
