@@ -40,4 +40,10 @@ public class StoreService {
     public void deleteById(Integer id) {
         storeRepository.deleteById(id);
     }
+
+    public Optional<Store> findStoreByMemberId(Integer memberId) {
+        Integer storeId = storeRepository.findStoreIdByMemberId(memberId);
+        if (storeId == null) return Optional.empty();
+        return storeRepository.findById(storeId);
+    }
 }

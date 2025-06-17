@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Date;
 
 @Service
 public class SalesService {
@@ -37,4 +38,31 @@ public class SalesService {
         }
         return rawList;
     }
+
+    public int sumQuantityByStoreIdAndMenuIdAndPeriod(Integer storeId, String menuId, Date startDate, Date endDate) {
+        return salesRepository.sumQuantityByStoreIdAndMenuIdAndPeriod(storeId, menuId, startDate, endDate);
+    }
+
+    public List<Sales> findByStoreIdAndSaleTimeBetween(Integer storeId, Date startDate, Date endDate) {
+        return salesRepository.findByStoreIdAndSaleTimeBetween(storeId, startDate, endDate);
+    }
+    public List<Sales> findAll() {
+        return salesRepository.findAll();
+    }
+    public List<SalesSummaryDto> findSalesSummary(Integer storeId, Date startDate, Date endDate) {
+        return salesRepository.findSalesSummaryByDate(storeId, startDate, endDate);
+    }
+    public void save(Sales sale) {
+        salesRepository.save(sale);
+    }
+
+    public List<SalesSummaryDto> findSalesSummaryTotal(Integer storeId, Date startDate, Date endDate) {
+        return salesRepository.findSalesSummaryTotal(storeId, startDate, endDate);
+    }
+
+    public List<SalesSummaryDto> getSalesMenuSummary(Integer storeId, LocalDate startDate, LocalDate endDate, String menuName) {
+        String menuNameParam = (menuName == null || menuName.isBlank()) ? null : "%" + menuName + "%";
+        return salesRepository.findMenuSummary(storeId, startDate, endDate, menuNameParam);
+    }
+
 }

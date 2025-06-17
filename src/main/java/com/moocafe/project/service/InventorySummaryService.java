@@ -111,6 +111,19 @@ public class InventorySummaryService {
         return shortageList;
     }
 
+    // 전체 매장 pivot: 재고+예상사용량
+    public List<InventorySummaryPivotRowDto> generateInventoryPivotForAllStores() {
+        List<Store> storeList = storeRepository.findAll();
+        return generateInventoryPivot(storeList);
+    }
+
+    // 특정 매장 pivot: 재고+예상사용량
+    public List<InventorySummaryPivotRowDto> generateInventoryPivotByStoreId(Integer storeId) {
+        Store store = storeRepository.findById(storeId).orElse(null);
+        if (store == null) return Collections.emptyList();
+        return generateInventoryPivot(List.of(store));
+    }
+
 
 
 

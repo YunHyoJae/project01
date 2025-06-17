@@ -5,6 +5,10 @@ import com.moocafe.project.entity.Menu;
 import com.moocafe.project.entity.MenuPrice;
 import com.moocafe.project.entity.Sales;
 import com.moocafe.project.repository.*;
+import com.moocafe.project.service.InventoryStoreService;
+import com.moocafe.project.service.MenuService;
+import com.moocafe.project.service.SalesService;
+import com.moocafe.project.service.StoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -23,23 +27,21 @@ import java.util.Objects;
 @Controller
 public class SalesController {
 
-    private final StoreRepository storeRepository;
-    private final SalesRepository salesRepository;
-    private final MenuRepository menuRepository;
-    private final InventoryStoreRepository inventoryStoreRepository;
-    private final MenuPriceRepository menuPriceRepository;
+    private final StoreService storeService;
+    private final SalesService salesService;
+    private final MenuService menuService;
+    private final InventoryStoreService inventoryStoreService;
 
-    @Autowired
-    public SalesController(SalesRepository salesRepository,
-                           MenuRepository menuRepository,
-                           InventoryStoreRepository inventoryStoreRepository,
-                           MenuPriceRepository menuPriceRepository,
-                           StoreRepository storeRepository) {
-        this.salesRepository = salesRepository;
-        this.menuRepository = menuRepository;
-        this.inventoryStoreRepository = inventoryStoreRepository;
-        this.menuPriceRepository = menuPriceRepository;
-        this.storeRepository = storeRepository;
+    public SalesController(
+            SalesService salesService,
+            MenuService menuService,
+            InventoryStoreService inventoryStoreService,
+            StoreService storeService
+    ) {
+        this.salesService = salesService;
+        this.menuService = menuService;
+        this.inventoryStoreService = inventoryStoreService;
+        this.storeService = storeService;
     }
 
     @GetMapping("/headOffice/salesList")
@@ -63,17 +65,17 @@ public class SalesController {
         List<Sales> salesList;
 
         if (storeId != null || (startDate != null && endDate != null)) {
-            salesList = salesRepository.findByStoreIdAndSaleTimeBetween(
+            salesList = salesService.findByStoreIdAndSaleTimeBetween(
                     storeId,
                     startDate,
                     endDate
             );
         } else {
-            salesList = salesRepository.findAll();
+            salesList = salesService.findAll();
         }
 
         // SalesSummaryDto 리스트에서 합계 구하기
-        List<SalesSummaryDto> summaryList = salesRepository.findSalesSummary(storeId, startDate, endDate);
+        List<SalesSummaryDto> summaryList = salesService.findSalesSummaryTotal(storeId, startDate, endDate);
 
         // 총 수량 및 총 매출액 구하기
         int totalQuantity = summaryList.stream()
@@ -90,10 +92,10 @@ public class SalesController {
         model.addAttribute("summaryList", summaryList);
         model.addAttribute("salesList", salesList);
         model.addAttribute("storeId", storeId);
-        model.addAttribute("storeList", storeRepository.findAll());
+        model.addAttribute("storeList", storeService.findAll());
         model.addAttribute("startDate", startDate);
         model.addAttribute("endDate", endDate);
-        model.addAttribute("menuList", menuRepository.findMenusWithPrice());
+        model.addAttribute("menuList", menuService.getDistinctMenuListForSaleInput());
         model.addAttribute("totalQuantity", totalQuantity);
         model.addAttribute("totalAmount", totalAmount);
 
@@ -111,14 +113,14 @@ public class SalesController {
             Model model
     ) {
         try {
-            List<Menu> menuItems = menuRepository.findByMenuIdWithPrice(menuId);
+            List<Menu> menuItems = menuService.findByMenuIdWithPrice(menuId);
             if (menuItems.isEmpty()) {
                 throw new IllegalArgumentException("해당 메뉴 ID에 가격이 등록되지 않았습니다.");
             }
 
             for (Menu item : menuItems) {
                 int totalUsed = item.getQuantityUsed() * quantity;
-                Integer currentStockObj = inventoryStoreRepository.findQuantityByStoreIdAndItemCode(storeId, item.getItemCode());
+                Integer currentStockObj = inventoryStoreService.findQuantityByStoreIdAndItemCode(storeId, item.getItemCode());
                 int currentStock = currentStockObj != null ? currentStockObj : 0;
 
                 if (currentStock < totalUsed) {
@@ -130,10 +132,10 @@ public class SalesController {
                     }
                 }
 
-                inventoryStoreRepository.decreaseStock(storeId, item.getItemCode(), totalUsed);
+                inventoryStoreService.decreaseStock(storeId, item.getItemCode(), totalUsed);
             }
 
-            MenuPrice price = menuPriceRepository.findByMenuId(menuId)
+            MenuPrice price = menuService.findByMenuId(menuId)
                     .orElseThrow(() -> new IllegalArgumentException("가격 정보 없음"));
 
             String menuName = menuItems.get(0).getMenuName();
@@ -145,7 +147,9 @@ public class SalesController {
                 field.set(sale, saleTime);
             }
 
-            salesRepository.save(sale);
+            model.addAttribute("menuList", menuService.getDistinctMenuListForSaleInput());
+
+            salesService.save(sale);
             return "redirect:/headOffice/salesList";
 
         } catch (Exception e) {

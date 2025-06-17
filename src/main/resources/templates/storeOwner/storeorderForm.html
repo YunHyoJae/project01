@@ -158,7 +158,7 @@
     async function onItemCodeInput(index) {
         const code = document.getElementById(`itemCode-${index}`).value.trim();
         if (!code) return;
-        const res = await fetch('/storeOwner/storeOrderItemInfo?itemCode=' + encodeURIComponent(code));
+        const res = await fetch('/storeOwner/storeOrder/itemInfo?itemCode=' + encodeURIComponent(code));
         if (!res.ok) return;
         const data = await res.json();
         document.getElementById(`itemName-${index}`).value = data.itemName || '-';

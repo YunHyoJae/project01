@@ -98,4 +98,9 @@ public class StoreOrderService {
                 (String) obj[5]
         )).toList();
     }
+
+    public List<Object[]> findRecentOrderListByStoreId(Integer storeId) {
+        return storeOrderRepository.findRecentOrderListByStoreId(storeId);
+    }
+
 }

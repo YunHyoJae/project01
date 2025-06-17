@@ -31,4 +31,16 @@ public class SalesSummaryDto {
         this.totalAmount = totalAmount == null ? null : new BigDecimal(totalAmount.toString());
         this.saleTime = saleTime;
     }
+
+//    6개짜리 생성자
+    public SalesSummaryDto(Integer storeId, String storeName, String menuId, String menuName,
+                           Number totalQuantity, Number totalAmount) {
+        this.storeId = storeId;
+        this.storeName = storeName;
+        this.menuId = menuId;
+        this.menuName = menuName;
+        this.totalQuantity = totalQuantity == null ? null : new BigDecimal(totalQuantity.toString());
+        this.totalAmount = totalAmount == null ? null : new BigDecimal(totalAmount.toString());
+        this.saleTime = null;
+    }
 }

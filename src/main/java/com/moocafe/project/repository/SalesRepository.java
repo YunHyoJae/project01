@@ -18,27 +18,54 @@ public interface SalesRepository extends JpaRepository<Sales, Long> {
     @Query("SELECT m FROM Menu m JOIN MenuPrice p ON m.menuId = p.menuId WHERE m.menuId = :menuId")
     List<Menu> findByMenuIdWithPrice(@Param("menuId") String menuId);
 
-@Query(value = """
+    // 1. 날짜별 매출 (점주 페이지)
+    @Query(value = """
+        SELECT s.storeId AS storeId,
+               st.name AS storeName,
+               s.menuId AS menuId,
+               s.menuName AS menuName,
+               SUM(s.quantity) AS totalQuantity,
+               SUM(s.quantity * mp.menuPrice) AS totalAmount,
+               TO_CHAR(s.saleTime, 'YYYY-MM-DD') AS saleTime
+          FROM sales s
+         JOIN store st ON s.storeId = st.id
+         JOIN menuprice mp ON s.menuId = mp.menuId
+         WHERE (:storeId IS NULL OR s.storeId = :storeId)
+           AND (:startDate IS NULL OR s.saleTime >= :startDate)
+           AND (:endDate IS NULL OR s.saleTime <= :endDate)
+         GROUP BY s.storeId, st.name, s.menuId, s.menuName, TO_CHAR(s.saleTime, 'YYYY-MM-DD')
+         ORDER BY saleTime
+        """, nativeQuery = true)
+    List<SalesSummaryDto> findSalesSummaryByDate(
+            @Param("storeId") Integer storeId,
+            @Param("startDate") Date startDate,
+            @Param("endDate") Date endDate
+    );
+
+
+    // 2. 매장+메뉴별 합계(날짜 상관없이)
+    @Query(value = """
     SELECT s.storeId AS storeId,
-    st.name AS storeName,
-    s.menuId AS menuId,
-    s.menuName AS menuName,
-    SUM(s.quantity) AS totalQuantity,
-    SUM(s.quantity * mp.menuPrice) AS totalAmount,
-    TO_CHAR(s.saleTime, 'YYYY-MM-DD') AS saleTime
+           st.name AS storeName,
+           s.menuId AS menuId,
+           s.menuName AS menuName,
+           SUM(s.quantity) AS totalQuantity,
+           SUM(s.quantity * mp.menuPrice) AS totalAmount
     FROM sales s
     JOIN store st ON s.storeId = st.id
     JOIN menuprice mp ON s.menuId = mp.menuId
-    WHERE (:storeId IS NULL OR s.storeid = :storeId)
-    AND (:startDate IS NULL OR s.saletime >= :startDate)
-    AND (:endDate IS NULL OR s.saletime <= :endDate)
-    GROUP BY s.storeId, st.name, s.menuId, s.menuName, TO_CHAR(s.saleTime, 'YYYY-MM-DD')
-    ORDER BY saleTime
+    WHERE (:storeId IS NULL OR s.storeId = :storeId)
+      AND (:startDate IS NULL OR s.saleTime >= :startDate)
+      AND (:endDate IS NULL OR s.saleTime <= :endDate)
+    GROUP BY s.storeId, st.name, s.menuId, s.menuName
+    ORDER BY s.storeId, s.menuId
 """, nativeQuery = true)
-List<SalesSummaryDto> findSalesSummary(
-        @Param("storeId") Integer storeId,
-        @Param("startDate") Date startDate,
-        @Param("endDate") Date endDate);
+    List<SalesSummaryDto> findSalesSummaryTotal(
+            @Param("storeId") Integer storeId,
+            @Param("startDate") Date startDate,
+            @Param("endDate") Date endDate
+    );
+
 
     @Query(value = """
 SELECT s.storeId AS storeId,
@@ -74,5 +101,28 @@ ORDER BY saleTime
             @Param("menuId") String menuId,
             @Param("startDate") Date startDate,
             @Param("endDate") Date endDate
+    );
+
+    @Query(value = """
+    SELECT s.storeId AS storeId,
+           st.name AS storeName,
+           s.menuId AS menuId,
+           s.menuName AS menuName,
+           SUM(s.quantity) AS totalQuantity,
+           SUM(s.quantity * mp.menuPrice) AS totalAmount
+      FROM sales s
+     JOIN store st ON s.storeId = st.id
+     JOIN menuprice mp ON s.menuId = mp.menuId
+     WHERE s.storeId = :storeId
+       AND s.saleTime BETWEEN :startDate AND :endDate
+       AND (:menuName IS NULL OR s.menuName LIKE :menuName)
+     GROUP BY s.storeId, st.name, s.menuId, s.menuName
+     ORDER BY s.menuId
+     """, nativeQuery = true)
+    List<SalesSummaryDto> findMenuSummary(
+            @Param("storeId") Integer storeId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("menuName") String menuName
     );
 }

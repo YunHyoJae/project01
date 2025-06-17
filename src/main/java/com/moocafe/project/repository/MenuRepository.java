@@ -55,4 +55,15 @@ public interface MenuRepository extends JpaRepository<Menu, String> {
 """)
     List<Menu> findByItemCode(@Param("itemCode") String itemCode);
 
+    @Query("""
+SELECT new com.moocafe.project.dto.MenuSimpleDto(
+    m.menuId, m.menuName, mp.menuPrice
+)
+FROM Menu m
+JOIN MenuPrice mp ON m.menuId = mp.menuId
+WHERE mp.menuPrice IS NOT NULL
+GROUP BY m.menuId, m.menuName, mp.menuPrice
+""")
+    List<MenuSimpleDto> findDistinctMenuSimpleDtos();
+
 }

@@ -116,4 +116,11 @@ public class MemberStoreService {
         Optional<Store> store=storeDao.findByStoreNumber(sn);
         return store.map(Store::getStoreNumber).orElse(null);
     }
+
+    public List<MemberStore> findByMemberId(Integer memberId) {
+        return memberStoreDao.findByMemberId(memberId);
+    }
+    public List<MemberStore> findByStoreId(Integer storeId) {
+        return memberStoreDao.findByStoreId(storeId);
+    }
 }

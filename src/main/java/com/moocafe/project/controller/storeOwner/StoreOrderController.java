@@ -4,6 +4,7 @@ import com.moocafe.project.dto.*;
 import com.moocafe.project.entity.InventoryItem;
 import com.moocafe.project.repository.InventoryItemRepository;
 import com.moocafe.project.repository.InventoryStoreRepository;
+import com.moocafe.project.service.InventoryStoreService;
 import com.moocafe.project.service.ReturnService;
 import com.moocafe.project.service.StoreOrderService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,16 +35,38 @@ public class StoreOrderController {
     private final InventoryItemRepository inventoryItemRepository;
     private final InventoryStoreRepository inventoryStoreRepository;
     private final ReturnService returnService;
+    private final InventoryStoreService inventoryStoreService;
 
-    @GetMapping("/storeorderForm")
-    public String showOrderForm(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
-        Integer storeId = userDetails.toDto().getStoreId();
 
-        String orderNumber = storeOrderService.generateOrderNumber(storeId);
-        model.addAttribute("orderNumber", orderNumber);
-        model.addAttribute("orderDto", new StoreOrderDto());
-        return "/storeOwner/storeorderForm";
+@GetMapping("/storeorderForm")
+public String showOrderForm(
+        @RequestParam(value = "itemCode", required = false) List<String> itemCodes,
+        @RequestParam(value = "needed", required = false) List<Integer> neededs,
+        Model model,
+        @AuthenticationPrincipal CustomUserDetails userDetails)
+{
+    // 기존 코드
+    Integer storeId = userDetails.toDto().getStoreId();
+    String orderNumber = storeOrderService.generateOrderNumber(storeId);
+    model.addAttribute("orderNumber", orderNumber);
+
+    // 전달된 아이템 정보 DTO로 만들어서 모델에 담기
+    List<OrderItemDto> orderItems = new ArrayList<>();
+    if (itemCodes != null && neededs != null) {
+        for (int i = 0; i < itemCodes.size(); i++) {
+            String code = itemCodes.get(i);
+            Integer needed = neededs.get(i);
+            // 필요하다면 DB에서 itemName, price 조회
+            orderItems.add(new OrderItemDto(code, needed));
+        }
     }
+    model.addAttribute("orderItems", orderItems);
+
+    model.addAttribute("orderDto", new StoreOrderDto());
+    return "/storeOwner/storeorderForm";
+}
+
+
 
     @GetMapping("/storeorderList")
     public String showOrderListPage(
@@ -111,27 +135,6 @@ public class StoreOrderController {
                     );
                 }).toList();
     }
-//    @GetMapping("/storeOrderPopup")
-//    public String showItemPopup(@RequestParam("index") int index, Model model) {
-//        List<ItemSearchDto> items = inventoryStoreRepository.findByStoreId(1)
-//                .stream()
-//                .map(store -> {
-//                    InventoryItem item = inventoryItemRepository.findByItemCode(store.getItemCode())
-//                            .orElseThrow(() -> new IllegalArgumentException("해당 itemCode에 대한 기초 품목 정보가 없습니다: " + store.getItemCode()));
-//                    return new ItemSearchDto(
-//                            item.getItemCode(),
-//                            item.getItemName(),
-//                            item.getItemPrice(),
-//                            store.getCount()
-//                    );
-//                }).toList();
-//
-//        model.addAttribute("items", items);
-//        model.addAttribute("index", index);
-//
-//        return "/storeOwner/storeOrderPopup";
-//    }
-
 
     @PostMapping("/storeOrder")
     @ResponseBody
@@ -149,16 +152,16 @@ public class StoreOrderController {
         return ResponseEntity.ok("주문성공");
     }
 
-    @GetMapping("/storeOrderItemInfo")
+    @GetMapping("/storeOrder/itemInfo")
     @ResponseBody
     public ResponseEntity<ItemSearchDto> getItemInfo(@RequestParam String itemCode) {
-        Optional<InventoryItem> itemOpt = inventoryItemRepository.findByItemCode(itemCode);
+        Optional<InventoryItem> itemOpt = inventoryStoreService.findInventoryItemByItemCode(itemCode);
         if (itemOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
         InventoryItem item = itemOpt.get();
-        int stockQty = inventoryStoreRepository.findQuantityByStoreIdAndItemCode(1, itemCode);
+        int stockQty = inventoryStoreService.findQuantityByStoreIdAndItemCode(1, itemCode);
 
         ItemSearchDto dto = new ItemSearchDto(
                 item.getItemCode(),

@@ -11,6 +11,9 @@ import com.moocafe.project.repository.MemberStoreRepository;
 import com.moocafe.project.repository.MenuRepository;
 import com.moocafe.project.repository.SalesRepository;
 import com.moocafe.project.service.InventorySummaryService;
+import com.moocafe.project.service.MemberStoreService;
+import com.moocafe.project.service.MenuService;
+import com.moocafe.project.service.SalesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -29,9 +32,10 @@ import java.util.stream.Collectors;
 public class StoreOwnerInventoryController {
 
     private final InventorySummaryService inventorySummaryService;
-    private final MemberStoreRepository memberStoreRepository;
-    private final MenuRepository menuRepository;
-    private final SalesRepository salesRepository;
+    private final MemberStoreService memberStoreService;
+    private final MenuService menuService;
+    private final SalesService salesService;
+
 
     @GetMapping("/storeOwner/inventoryStore")
     public String viewStoreOwnerInventory(
@@ -42,7 +46,7 @@ public class StoreOwnerInventoryController {
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Member loginMember = userDetails.getLoggedMember();
-        List<MemberStore> msList = memberStoreRepository.findByMemberId(loginMember.getId());
+        List<MemberStore> msList = memberStoreService.findByMemberId(loginMember.getId());
 
         if (!msList.isEmpty()) {
             Store store = msList.get(0).getStore();
@@ -65,11 +69,11 @@ public class StoreOwnerInventoryController {
                 row.setItemName(dto.getItemName());
                 row.getStoreStockMap().put(dto.getStoreId(), dto.getTotalCount().intValue());
 
-                List<Menu> menus = menuRepository.findByItemCode(dto.getItemCode());
+                List<Menu> menus = menuService.findByItemCode(dto.getItemCode());
                 int totalExpectedUsage = 0;
                 for (Menu menu : menus) {
                     int usedQty = menu.getQuantityUsed();
-                    int soldQty = salesRepository.sumQuantityByStoreIdAndMenuIdAndPeriod(
+                    int soldQty = salesService.sumQuantityByStoreIdAndMenuIdAndPeriod(
                             storeId, menu.getMenuId(), startDate, endDate
                     );
                     totalExpectedUsage += usedQty * soldQty;

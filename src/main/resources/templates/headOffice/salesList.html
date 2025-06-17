@@ -111,7 +111,7 @@
         <option value="" disabled selected>메뉴를 선택하세요</option>
         <option th:each="menu : ${menuList}"
                 th:value="${menu.menuId}"
-                th:text="${menu.menuName + ' (' + menu.menuId + ')'}">
+                th:text="${menu.menuName + ' (' + menu.menuId + ') - ' + #numbers.formatInteger(menu.menuPrice, 0, 'COMMA') + '원'}">
         </option>
       </select>
     </label>

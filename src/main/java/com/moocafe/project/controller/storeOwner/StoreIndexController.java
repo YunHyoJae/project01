@@ -6,7 +6,7 @@ import com.moocafe.project.entity.MemberStore;
 import com.moocafe.project.entity.Menu;
 import com.moocafe.project.entity.Store;
 import com.moocafe.project.repository.*;
-import com.moocafe.project.service.SalesService;
+import com.moocafe.project.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,19 +25,17 @@ import java.util.stream.Collectors;
 @RequestMapping("/storeOwner")
 public class StoreIndexController {
     private final SalesService salesService;
-    private final MemberStoreRepository memberStoreRepository;
-    private final InventoryStoreRepository inventoryStoreRepository;
-    private final MenuRepository menuRepository;
-    private final SalesRepository salesRepository;
-    @Autowired
-    private StoreOrderRepository storeOrderRepository;
+    private final MemberStoreService memberStoreService;
+    private final InventoryStoreService inventoryStoreService;
+    private final MenuService menuService;
+    private final StoreOrderService storeOrderService;
 
     @GetMapping("/index")
     public String index(Model model, @AuthenticationPrincipal CustomUserDetails user) {
         model.addAttribute("user", user.toDto());
 
         Member loginMember = user.getLoggedMember();
-        List<MemberStore> msList = memberStoreRepository.findByMemberId(loginMember.getId());
+        List<MemberStore> msList = memberStoreService.findByMemberId(loginMember.getId());
 
         if (!msList.isEmpty()) {
             Store store = msList.get(0).getStore();
@@ -68,11 +66,16 @@ public class StoreIndexController {
             // 메뉴별 월별 매출 데이터 만들기
             Map<String, List<Integer>> menuSales = new LinkedHashMap<>();
             for (String menu : menuNames) menuSales.put(menu, Arrays.asList(0, 0, 0));
+
+            // ② 합산 방식으로 변경!
             for (int m = 0; m < 3; m++) {
                 for (SalesSummaryDto dto : salesByMonth.get(m)) {
                     String menu = dto.getMenuName();
                     int amount = dto.getTotalAmount() != null ? dto.getTotalAmount().intValue() : 0;
-                    menuSales.get(menu).set(m, amount);
+                    // 기존: menuSales.get(menu).set(m, amount); // 이렇게 하면 마지막 값만 남음
+                    // -> 누적합으로 변경
+                    List<Integer> data = menuSales.get(menu);
+                    data.set(m, data.get(m) + amount); // 기존값에 더함
                 }
             }
             // Chart.js의 datasets 준비 (색상은 예시)
@@ -91,7 +94,7 @@ public class StoreIndexController {
             model.addAttribute("menuDatasets", menuDatasets);
 
             // 2. 부족재고 (기존 방식 유지)
-            List<InventorySummaryDto> rawList = inventoryStoreRepository.getInventorySummary();
+            List<InventorySummaryDto> rawList = inventoryStoreService.getInventorySummary();
             Map<String, InventorySummaryPivotRowDto> pivotMap = new LinkedHashMap<>();
             // pivot 데이터 생성
             LocalDate threeMonthsAgo = LocalDate.now().minusMonths(3);
@@ -105,11 +108,11 @@ public class StoreIndexController {
                 row.setItemName(dto.getItemName());
                 row.getStoreStockMap().put(dto.getStoreId(), dto.getTotalCount().intValue());
                 // 예상 사용량 계산
-                List<Menu> menus = menuRepository.findByItemCode(dto.getItemCode());
+                List<Menu> menus = menuService.findByItemCode(dto.getItemCode());
                 int totalExpectedUsage = 0;
                 for (Menu menu : menus) {
                     int usedQty = menu.getQuantityUsed();
-                    int soldQty = salesRepository.sumQuantityByStoreIdAndMenuIdAndPeriod(
+                    int soldQty = salesService.sumQuantityByStoreIdAndMenuIdAndPeriod(
                             dto.getStoreId(), menu.getMenuId(), startDate, endDate
                     );
                     totalExpectedUsage += usedQty * soldQty;
@@ -130,7 +133,7 @@ public class StoreIndexController {
                 }
             }
 
-            List<Object[]> orderRawList = storeOrderRepository.findRecentOrderListByStoreId(storeId);
+            List<Object[]> orderRawList = storeOrderService.findRecentOrderListByStoreId(storeId);
             List<StoreOrderListResponseDto> orderList = orderRawList.stream()
                     .map(arr -> new StoreOrderListResponseDto(
                             (String) arr[0],

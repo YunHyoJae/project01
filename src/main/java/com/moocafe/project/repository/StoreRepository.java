@@ -37,4 +37,7 @@ public interface StoreRepository extends JpaRepository<Store, Integer> {
        """)
     Page<Store> findByUserTelExcept(int id, @Param("keyword") String keyword, Pageable pageable);
     Optional<Store> findByStoreNumber(String storeNumber);
+
+    @Query("SELECT s.id FROM Store s JOIN s.members ms WHERE ms.member.id = :memberId")
+    Integer findStoreIdByMemberId(@Param("memberId") Integer memberId);
 }

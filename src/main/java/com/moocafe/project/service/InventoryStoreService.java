@@ -1,6 +1,8 @@
 package com.moocafe.project.service;
 
+import com.moocafe.project.dto.InventorySummaryDto;
 import com.moocafe.project.dto.InventorySummaryPivotRowDto;
+import com.moocafe.project.dto.ItemSearchDto;
 import com.moocafe.project.entity.InventoryItem;
 import com.moocafe.project.entity.InventoryStore;
 import com.moocafe.project.entity.Store;
@@ -16,7 +18,6 @@ import java.util.*;
 public class InventoryStoreService {
 
     private final InventoryStoreRepository inventoryStoreRepository;
-
     private final InventoryItemRepository inventoryItemRepository;
     private final StoreRepository storeRepository;
     private final MenuRepository menuRepository;
@@ -35,6 +36,34 @@ public class InventoryStoreService {
         InventoryStore store = inventoryStoreRepository.findById(id).orElseThrow();
         store.updateCount(newCount, new Date());
         inventoryStoreRepository.save(store);
+    }
+
+    /**
+     * 컨트롤러에서 repository 직접 접근하지 않고 사용하도록 추가
+     */
+    public List<ItemSearchDto> getItemListByStoreId(Integer storeId) {
+        List<InventoryStore> storeList = inventoryStoreRepository.findByStoreId(storeId);
+        List<ItemSearchDto> result = new ArrayList<>();
+        for (InventoryStore store : storeList) {
+            InventoryItem item = inventoryItemRepository.findByItemCode(store.getItemCode())
+                    .orElseThrow(() -> new IllegalArgumentException("해당 itemCode에 대한 기초 품목 정보가 없습니다: " + store.getItemCode()));
+            result.add(new ItemSearchDto(
+                    item.getItemCode(),
+                    item.getItemName(),
+                    item.getItemPrice(),
+                    store.getCount()
+            ));
+        }
+        return result;
+    }
+
+    public Optional<InventoryItem> findInventoryItemByItemCode(String itemCode) {
+        return inventoryItemRepository.findByItemCode(itemCode);
+    }
+
+    public int findQuantityByStoreIdAndItemCode(Integer storeId, String itemCode) {
+        Integer qty = inventoryStoreRepository.findQuantityByStoreIdAndItemCode(storeId, itemCode);
+        return (qty != null) ? qty : 0;
     }
 
     public List<InventorySummaryPivotRowDto> generateInventoryPivot() {
@@ -81,6 +110,14 @@ public class InventoryStoreService {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MONTH, -monthsAgo);
         return cal.getTime();
+    }
+
+    public void decreaseStock(Integer storeId, String itemCode, int usedQty) {
+        inventoryStoreRepository.decreaseStock(storeId, itemCode, usedQty);
+    }
+
+    public List<InventorySummaryDto> getInventorySummary() {
+        return inventoryStoreRepository.getInventorySummary();
     }
 
 
