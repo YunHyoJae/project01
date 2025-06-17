@@ -14,8 +14,7 @@ import java.util.List;
 
 @Repository
 public interface StoreOrderDetailRepository extends JpaRepository<StoreOrderDetail, StoreOrderDetailId> {
-    @Query(
-            value = """
+    @Query(value = """
         SELECT o.orderNumber, TO_CHAR(o.orderDate, 'YYYY-MM-DD'), d.itemCode,
                ir.itemName, d.orderedQuantity, d.status
         FROM StoreOrder o
@@ -24,24 +23,37 @@ public interface StoreOrderDetailRepository extends JpaRepository<StoreOrderDeta
         JOIN InventoryRegistration ir ON s.itemCode = ir.itemCode
         WHERE o.storeId = :storeId
         AND TRUNC(o.orderDate) BETWEEN TO_DATE(:startDate, 'YYYY-MM-DD') AND TO_DATE(:endDate, 'YYYY-MM-DD')
-        """,
-            nativeQuery = true
-    )
+        """, nativeQuery = true)
     List<Object[]> findOrderListByStoreAndDate(
             @Param("storeId") Integer storeId,
             @Param("startDate") String startDate,
             @Param("endDate") String endDate
     );
+
+    @Query("""
+    SELECT d FROM StoreOrderDetail d
+    JOIN d.storeOrder o
+    WHERE o.storeId = :storeId
+    AND d.itemCode = :itemCode
+    AND d.orderedQuantity = :quantity
+    ORDER BY o.orderDate ASC
+""")
+    List<StoreOrderDetail> findSpecificOrderForOutBound(
+            @Param("storeId") Integer storeId,
+            @Param("itemCode") String itemCode,
+            @Param("quantity") int quantity,
+            @Param("currentStatus") String currentStatus
+    );
+
     @Modifying(clearAutomatically = true)
     @Transactional
     @Query("""
-    UPDATE StoreOrderDetail d SET d.status = :status
-    WHERE d.orderId IN (
-        SELECT o.id FROM StoreOrder o WHERE o.storeId = :storeId
-    )
-    AND d.itemCode = :itemCode
+        UPDATE StoreOrderDetail d SET d.status = :status
+        WHERE d.orderId = :orderId AND d.itemCode = :itemCode
     """)
-    void updateStatusByStoreAndItem(@Param("storeId") Integer storeId,
-                                    @Param("itemCode") String itemCode,
-                                    @Param("status") String status);
+    void updateStatusByOrderIdAndItemCode(
+            @Param("orderId") Long orderId,
+            @Param("itemCode") String itemCode,
+            @Param("status") String status
+    );
 }

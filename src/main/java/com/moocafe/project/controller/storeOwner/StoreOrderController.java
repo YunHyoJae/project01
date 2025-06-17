@@ -2,6 +2,7 @@ package com.moocafe.project.controller.storeOwner;
 
 import com.moocafe.project.dto.*;
 import com.moocafe.project.entity.InventoryItem;
+import com.moocafe.project.entity.InventoryStore;
 import com.moocafe.project.repository.InventoryItemRepository;
 import com.moocafe.project.repository.InventoryStoreRepository;
 import com.moocafe.project.service.InventoryStoreService;
@@ -9,6 +10,10 @@ import com.moocafe.project.service.ReturnService;
 import com.moocafe.project.service.StoreOrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -45,18 +50,16 @@ public String showOrderForm(
         Model model,
         @AuthenticationPrincipal CustomUserDetails userDetails)
 {
-    // 기존 코드
     Integer storeId = userDetails.toDto().getStoreId();
     String orderNumber = storeOrderService.generateOrderNumber(storeId);
     model.addAttribute("orderNumber", orderNumber);
 
-    // 전달된 아이템 정보 DTO로 만들어서 모델에 담기
+
     List<OrderItemDto> orderItems = new ArrayList<>();
     if (itemCodes != null && neededs != null) {
         for (int i = 0; i < itemCodes.size(); i++) {
             String code = itemCodes.get(i);
             Integer needed = neededs.get(i);
-            // 필요하다면 DB에서 itemName, price 조회
             orderItems.add(new OrderItemDto(code, needed));
         }
     }
@@ -140,6 +143,43 @@ public String showOrderForm(
 
     @GetMapping("/storeOrderItems")
     @ResponseBody
+    public Page<ItemSearchDto> getItemList(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String code) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        List<InventoryStore> storeList = inventoryStoreRepository.findByStoreId(1);
+        List<ItemSearchDto> filtered = new ArrayList<>();
+
+        for (InventoryStore store : storeList) {
+            Optional<InventoryItem> optItem = inventoryItemRepository.findByItemCode(store.getItemCode());
+            if (optItem.isEmpty()) continue;
+            InventoryItem item = optItem.get();
+
+            boolean matchName = name == null || name.isBlank() || item.getItemName().contains(name);
+            boolean matchCode = code == null || code.isBlank() || item.getItemCode().contains(code);
+
+            if (matchName && matchCode) {
+                filtered.add(new ItemSearchDto(
+                        item.getItemCode(),
+                        item.getItemName(),
+                        item.getItemPrice(),
+                        store.getCount()
+                ));
+            }
+        }
+
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), filtered.size());
+        List<ItemSearchDto> content = (start < end) ? filtered.subList(start, end) : List.of();
+
+        return new PageImpl<>(content, pageable, filtered.size());
+    }
+
+
     public List<ItemSearchDto> getItemList() {
         return inventoryStoreRepository.findByStoreId(1)
                 .stream()
