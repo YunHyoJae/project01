@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,24 +26,16 @@ public class ReturnService {
     private final InventoryStoreRepository inventoryStoreRepository;
     private final ReturnRepository returnRepository;
     private final InventoryItemRepository inventoryItemRepository;
-    private final PurchaseRepository purchaseRepository;
-    private final PurchaseItemRepository purchaseItemRepository;
-    private final StoreOrderService storeOrderService;
     private final StoreOrderDao storeOrderDao;
     //@PersistenceContext
     //private EntityManager em;
 
     @Transactional
-    public void saveReturn(ReturnDto returnDto, String itemCode, Integer returnQuantity, int storeId) {
-
-        StoreOrder storeOrder = storeOrderService.findByOrderNumber(returnDto.getOrderNumber());
-        log.info("Store order: {}", storeOrder);
-
+    public void saveReturn(ReturnDto returnDto, int storeId) {
         Return returnEntity = Return.builder()
                 .returnNumber(returnDto.getReturnNumber())
                 .returnNote(returnDto.getReturnNote())
                 .requiredDate(LocalDateTime.now())
-                .orderNumber(storeOrder)
                 .typeReturn("반품")
                 .build();
 
@@ -55,10 +48,8 @@ public class ReturnService {
                 throw new RuntimeException("등록되지 않은 품목코드: " + dto.getItemCode());
             }
 
-            // dto.getItemCode()가 제품코드라면
             InventoryItem invItem = inventoryItemRepository.findByItemCode(dto.getItemCode())
                     .orElseThrow(() -> new RuntimeException("존재하지 않는 품목코드: " + dto.getItemCode()));
-
 
             ReturnItem returnItem = ReturnItem.builder()
                     .item(invItem)
@@ -68,13 +59,12 @@ public class ReturnService {
                     .build();
 
             returnItemDao.saveReturnItem(returnItem);
-//            returnDao.updateReturnStock(itemCode, returnQuantity, storeId);
 
-            inventoryStoreRepository.increaseHeadOfficeStock(itemCode, returnQuantity);
-            inventoryStoreRepository.decreaseStoreStock(itemCode, returnQuantity, storeId);
+            // 여기서도 dto에서 값 가져와야 합니다.
+            inventoryStoreRepository.increaseHeadOfficeStock(dto.getItemCode(), dto.getReturnQuantity());
+            inventoryStoreRepository.decreaseStoreStock(dto.getItemCode(), dto.getReturnQuantity(), storeId);
         }
     }
-
 
     public StoreOrder findByOrderNumber(String orderNumber) {
         return storeOrderDao.findByOrderNumber(orderNumber)
@@ -92,7 +82,37 @@ public class ReturnService {
     }
 
 
-    public List<ReturnItem> findByStoreId(int storeId) {
-        return returnDao.findByStoreId(storeId);
+//    public List<Return> findByStoreId(int storeId) {
+//        return returnDao.findByStoreId(storeId);
+//    }
+
+    public List<ReturnDto> getReturnsByStoreId(Integer storeId) {
+        List<Return> returns = returnDao.findByStoreIdWithItems(storeId);
+
+        return returns.stream().map(r -> {
+            List<ReturnItemDto> itemDtos = r.getItems().stream().map(item -> ReturnItemDto.builder()
+                    .id(item.getId())
+                    .itemCode(item.getItem().getItemCode())
+                    .itemName(item.getItem().getItemName()) // ← 필요시 Join해서 가져오거나 DTO에서 name 처리
+                    .returnQuantity(item.getReturnQuantity())
+                    .status(item.getStatus())
+                    .returnNumber(r.getReturnNumber())
+                    .orderNumber(r.getOrderNumber().getOrderNumber())
+                    .build()
+            ).collect(Collectors.toList());
+
+            return ReturnDto.builder()
+                    .id(r.getId())
+                    .returnNumber(r.getReturnNumber())
+                    .requiredDate(r.getRequiredDate())
+                    .returnNote(r.getReturnNote())
+                    .typeReturn(r.getTypeReturn())
+                    .orderNumber(r.getOrderNumber().getOrderNumber())
+                    .storeId(r.getOrderNumber().getStoreId().toString()) // storeId가 객체일 경우
+                    .items(itemDtos)
+                    .build();
+        }).collect(Collectors.toList());
     }
+
+
 }

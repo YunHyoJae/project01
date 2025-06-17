@@ -11,10 +11,10 @@ import java.util.List;
 
 public interface ReturnItemRepository extends JpaRepository<ReturnItem, Integer> {
 
-    @Query("SELECT ri FROM ReturnItem ri " +
-            "JOIN ri.returnEntity r " +
-            "JOIN r.orderNumber so " +
-            "WHERE so.storeId = :storeId")
-    List<ReturnItem> findByStoreId(@Param("storeId") int storeId);
+//    @Query("SELECT ri FROM ReturnItem ri " +
+//            "JOIN ri.returnEntity r " +
+//            "JOIN r.orderNumber so " +
+//            "WHERE so.storeId = :storeId")
+//    List<ReturnItem> findByStoreId(@Param("storeId") int storeId);
 
 }

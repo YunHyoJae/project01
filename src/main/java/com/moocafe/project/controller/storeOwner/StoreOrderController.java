@@ -119,12 +119,25 @@ public String showOrderForm(
         return "RE" + date + "-" + random;
     }
 
+//    @PostMapping("/storeOrderReturn")
+//    public String submitReturn(@ModelAttribute ReturnDto returnDto, int storeId) {
+//        log.info("submit return: {}", returnDto);
+//        returnService.saveReturn(returnDto, storeId);
+//        return "redirect:/storeOwner/storeorderList";
+//    }
+
+
     @PostMapping("/storeOrderReturn")
-    public String submitReturn(@ModelAttribute ReturnDto returnDto, String itemCode, int returnQuantity, int storeId) {
+    public String submitReturn(@ModelAttribute ReturnDto returnDto, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Integer storeId = userDetails.toDto().getStoreId();  // 이걸로 storeId 확보
         log.info("submit return: {}", returnDto);
-        returnService.saveReturn(returnDto, itemCode, returnQuantity, storeId);
-        return "redirect:/storeOwner/storeorderList";
+
+        returnService.saveReturn(returnDto, storeId);  // itemCode, returnQuantity는 returnDto.items 안에 있음
+
+        return "redirect:/storeOwner/storeOrderList";
     }
+
+
     @GetMapping("/storeOrderItems")
     @ResponseBody
     public List<ItemSearchDto> getItemList() {

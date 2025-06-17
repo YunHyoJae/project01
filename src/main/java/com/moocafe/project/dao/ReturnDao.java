@@ -26,7 +26,12 @@ public class ReturnDao {
         inventoryStoreRepository.decreaseStoreStock(itemCode, returnQuantity, storeId);
     }
 
-    public List<ReturnItem> findByStoreId(int storeId) {
-        return returnItemRepository.findByStoreId(storeId);
+//    public List<Return> findByStoreId(int storeId) {
+//        return returnRepository.findByStoreId(storeId);
+//    }
+
+
+    public List<Return> findByStoreIdWithItems(Integer storeId) {
+        return returnRepository.findByStoreIdWithItems(storeId);
     }
 }

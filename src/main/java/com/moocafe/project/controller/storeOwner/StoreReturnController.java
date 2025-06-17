@@ -1,6 +1,8 @@
 package com.moocafe.project.controller.storeOwner;
 
 import com.moocafe.project.dto.CustomUserDetails;
+import com.moocafe.project.dto.ReturnDto;
+import com.moocafe.project.entity.Return;
 import com.moocafe.project.entity.ReturnItem;
 import com.moocafe.project.repository.ReturnItemRepository;
 import com.moocafe.project.service.ReturnService;
@@ -9,8 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,15 +23,27 @@ public class StoreReturnController {
 
     private final ReturnService returnService;
 
+//    어제한거
+//    @GetMapping("/returnList")
+//    public String returnList(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
+//        int storeId = userDetails.getStoreId(); // 로그인한 유저의 매장 ID
+//        log.info("storeId = " + storeId);
+//
+//        List<Return> returnItems = returnService.findByStoreId(storeId);
+//        log.info("returnItems: " + returnItems);
+//
+//        model.addAttribute("returnList", returnItems);
+//        return "storeOwner/returnList"; // HTML 파일 경로
+//    }
+
     @GetMapping("/returnList")
-    public String returnList(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
-        int storeId = userDetails.getStoreId(); // 로그인한 유저의 매장 ID
-        log.info("storeId = " + storeId);
-
-        List<ReturnItem> returnItems = returnService.findByStoreId(storeId);
-        log.info("returnItems: " + returnItems);
-
-        model.addAttribute("returnList", returnItems);
-        return "storeOwner/returnList"; // HTML 파일 경로
+    public String returnListPage(Model model, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Integer storeId = userDetails.getStoreId();
+        List<ReturnDto> returnList = returnService.getReturnsByStoreId(storeId);
+        model.addAttribute("returnList", returnList);
+        return "storeOwner/returnList"; // ⬅ Thymeleaf 페이지를 보여주고 싶을 때
     }
+
+
+
 }

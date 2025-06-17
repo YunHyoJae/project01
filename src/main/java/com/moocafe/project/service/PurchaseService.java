@@ -46,16 +46,16 @@ public class PurchaseService {
                 .orderedDate(LocalDateTime.now())
                 .typeOrder("발주")
                 .build();
-
         purchaseDao.savePurchase(purchase);
+
 
         purchaseDto.getItems().stream()
                 .filter(itemDto -> itemDto.getItemCode() != null && !itemDto.getItemCode().isBlank())
                 .forEach(itemDto -> {
-                    // InventoryItem 객체 생성 (Entity 변경 없이 연관관계 연결용)
                     InventoryItem inventoryItem = new InventoryItem(
                             itemDto.getItemCode(), null, null, null, null, null, null, null
                     );
+
 
                     Date dueDate = null;
                     Date expirationDate = null;

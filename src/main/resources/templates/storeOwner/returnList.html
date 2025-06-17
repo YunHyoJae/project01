@@ -1,74 +1,83 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{/storeOwner/meta::myHead('반품현황')}">
-  <style>
-    .main-layout {
-      display: flex;
-    }
-    .returnInquiry {
-      flex: 1;
-      padding: 40px;
-    }
-    .returnInquiry h2 {
-      margin-bottom: 20px;
-    }
-    .return_Inquiry_filter_buttons {
-      margin-bottom: 20px;
-    }
-  </style>
+    <style>
+        .main-layout {
+            display: flex;
+        }
+
+        .returnInquiry {
+            flex: 1;
+            padding: 40px;
+        }
+
+        .returnInquiry h2 {
+            margin-bottom: 20px;
+        }
+
+        .return_Inquiry_filter_buttons {
+            margin-bottom: 20px;
+        }
+    </style>
 
 </head>
 <body>
 <header th:replace="~{/storeOwner/tnb}"></header>
 
 <div class="section">
-  <div th:replace="~{/storeOwner/header}"></div>
-  <div class="main-layout">
-    <div th:replace="~{/storeOwner/etcLnb::active('return','returnList')}"></div>
+    <div th:replace="~{/storeOwner/header}"></div>
+    <div class="main-layout">
+        <div th:replace="~{/storeOwner/etcLnb::active('return','returnList')}"></div>
 
-    <div class="returnInquiry" style="width: 80%; padding: 40px; background-color: #f9f9f9;">
-      <h2>반품현황</h2>
+        <div class="returnInquiry" style="width: 80%; padding: 40px; background-color: #f9f9f9;">
+            <h2>반품현황</h2>
 
-      <!-- 필터 버튼 -->
-      <div class="return_Inquiry_filter_buttons" style="margin-top: 40px;">
-        <label class="active" data-status="all" tabindex="0">반품전체</label>
-        <label data-status="pending" tabindex="0">진행중</label>
-        <label data-status="completed" tabindex="0">반품완료</label>
-      </div>
+            <!-- 필터 버튼 -->
+            <div class="return_Inquiry_filter_buttons" style="margin-top: 40px;">
+                <label class="active" data-status="all" tabindex="0">반품전체</label>
+                <label data-status="pending" tabindex="0">진행중</label>
+                <label data-status="completed" tabindex="0">반품완료</label>
+            </div>
 
-      <!-- 테이블 -->
-      <table class="return_Inquiry_table" >
-        <thead>
-        <tr>
-          <th>반품번호</th>
-          <th>반품신청일</th>
-          <th>품목</th>
-          <th>반품수량</th>
-          <th>상태</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="item : ${returnList}">
-          <td th:text="${item.returnEntity.returnNumber}">반품번호</td>
-          <td th:text="${#temporals.format(item.returnEntity.requiredDate, 'yyyy-MM-dd')}">신청일</td>
-          <td th:text="${item.item.itemName}">품목명</td>
-          <td th:text="${item.returnQuantity}">수량</td>
-          <td th:text="${item.status}">상태</td>
-        </tr>
-        </tbody>
-      </table>
-      <!-- 페이징 -->
-      <div class="pagination">
-        <a href="#">&lt;</a>
-        <a href="#">1</a>
-        <a href="#">2</a>
-        <a href="#">3</a>
-        <a href="#">4</a>
-        <a href="#">5</a>
-        <a href="#">&gt;</a>
-      </div>
-    </div> <!-- .returnInquiry -->
-  </div> <!-- .main-layout -->
+            <!-- 테이블 -->
+            <table class="return_Inquiry_table">
+                <thead>
+                <tr>
+                    <th>반품번호</th>
+                    <th>반품신청일</th>
+                    <th>품목</th>
+                    <th>반품수량</th>
+                    <th>상태</th>
+                </tr>
+                </thead>
+                <tbody>
+                <th:block th:each="return : ${returnList}">
+                    <tr th:each="item, iterStat : ${return.items}">
+                        <!-- 반품번호와 신청일은 첫 번째 항목에만 출력 -->
+                        <td th:if="${iterStat.index == 0}" th:rowspan="${#lists.size(return.items)}" th:text="${return.returnNumber}"></td>
+                        <td th:if="${iterStat.index == 0}" th:rowspan="${#lists.size(return.items)}"
+                            th:text="${#temporals.format(return.requiredDate, 'yyyy-MM-dd')}"></td>
+
+                        <!-- 품목명, 수량, 상태는 각 줄마다 -->
+                        <td th:text="${item.itemName}">품목명</td>
+                        <td th:text="${item.returnQuantity}">수량</td>
+                        <td th:text="${item.status}">상태</td>
+                    </tr>
+                </th:block>
+                </tbody>
+            </table>
+            <!-- 페이징 -->
+            <div class="pagination">
+                <a href="#">&lt;</a>
+                <a href="#">1</a>
+                <a href="#">2</a>
+                <a href="#">3</a>
+                <a href="#">4</a>
+                <a href="#">5</a>
+                <a href="#">&gt;</a>
+            </div>
+        </div> <!-- .returnInquiry -->
+    </div> <!-- .main-layout -->
 </div> <!-- .section -->
 </body>
 </html>
