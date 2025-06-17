@@ -7,6 +7,7 @@
   <div th:replace="~{/storeOwner/header}"></div>
   <div class="main-layout">
     <div th:replace="~{/storeOwner/etcLnb::active('order','storeorderList')}"></div>
+    <div class="content">
     <div class="order_wrap">
       <div class="orderList">
         <h2>주문현황</h2>
@@ -51,6 +52,7 @@
         </div>
       </div>
 
+
       <div class="return-wrapper" id="returnSection" style="display: none;">
         <h3 class="return_tit">반품리스트</h3>
         <form method="post" th:action="@{/storeOwner/return}" id="returnForm" th:object="${returnDto}">
@@ -79,6 +81,7 @@
       </div>
     </div>
   </div>
+</div>
 </div>
 
 <script th:inline="javascript">
