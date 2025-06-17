@@ -4,6 +4,7 @@ import com.moocafe.project.dao.InventoryItemDao;
 import com.moocafe.project.dto.InventoryItemDto;
 import com.moocafe.project.entity.InventoryItem;
 import com.moocafe.project.repository.InventoryItemRepository;
+import lombok.Builder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,7 +23,32 @@ public class InventoryItemService {
 
     public boolean registerItem(InventoryItemDto item) {
         System.out.println("▶ insert 시도: " + item.getItemCode());
-        return inventoryItemDao.insertItem(item) > 0;
+        boolean result = inventoryItemDao.insertItem(item) > 0;
+
+        // DTO → Entity 변환 (builder 사용X, 생성자 직접 사용)
+        try {
+            // expirationDate 타입 변환 필요 (String → java.util.Date)
+            java.util.Date parsedDate = new java.text.SimpleDateFormat("yyyy-MM-dd").parse(item.getExpirationDate());
+
+            InventoryItem entity = new InventoryItem(
+                    item.getItemCode(),
+                    item.getItemName(),
+                    item.getItemGroup(),
+                    item.getItemStandard(),
+                    item.getItemQuantity(),
+                    item.getItemPrice(),
+                    item.getItemClass(),
+                    parsedDate
+            );
+
+            inventoryItemRepository.save(entity);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.out.println("InventoryItem 저장 실패: " + ex.getMessage());
+        }
+
+        return result;
     }
 
     // 추가: 모든 아이템 반환

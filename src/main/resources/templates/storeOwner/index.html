@@ -1,322 +1,341 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{/storeOwner/meta::myHead('메인')}">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 페이지</title>
+    <link rel="stylesheet" href="/css/storeOwner.css">
 </head>
-<body>
 <style>
-  .dashboardWrapper {
-    flex: 1 1 60%;
-    min-width: 750px;
-    max-width: 900px;
-  }
-  .salesSection {
-    background: #fff;
-    border-radius: 8px;
-    padding: 24px;
-    margin-bottom: 32px;
-    box-shadow: 0 2px 8px #0001;
-  }
-  .salesHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    font-size: 20px;
-  }
-  .chartCaption {
-    font-size: 13px;
-    margin-top: 8px;
-    color: #888;
-  }
-  .gridSection {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-  }
-  .gridBox {
-    background: #fafbfc; !important;
-    border-radius: 8px;
-    padding: 18px 22px;
-    min-height: 120px;
-    box-shadow: 0 1px 4px #0001;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  .boxHeader {
-    font-weight: 600;
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-  }
-  .boxContent {
-    font-size: 14px;
-    color: #333;
-  }
-  .moreLink {
-    font-size: 13px;
-    color: #0099ff;
-    text-decoration: none;
-  }
-  .shortage-scroll {
-    max-height: 85px;
-    overflow-y: auto;
-    padding-right: 4px;
-  }
-  .shortage-scroll ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .todo-list {
-    margin: 0 0 0 16px;
-    padding: 0;
-    font-size: 14px;
-  }
-  .todo-list li { margin-bottom: 5px; }
-</style>
+    .chartCaption {
+        font-size: 13px;
+        margin-top: 8px;
+        color: #888;
+    }
+    .shortage-scroll {
+        max-height: 85px;
+        overflow-y: auto;
+        padding-right: 4px;
+    }
+    .shortage-scroll ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
 
+    .cont_top {
+        display: flex;
+        align-items: center;
+        position: relative;
+        justify-content: flex-start;
+        gap: 1em;
+        margin-bottom: 0.7em;
+    }
+    .chart-toggle-btn-wrap {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin: 0;
+    }
+    .chart-toggle-btn {
+        background: rgba(75, 192, 192, 0.2);
+        color: #236b75;
+        border: 1px solid rgba(75, 192, 192, 0.8);
+        border-radius: 4px;
+        padding: 3px 10px;
+        font-size: 0.93em;
+        font-weight: bold;
+        margin-right: 0;
+        cursor: pointer;
+        transition: background 0.2s, color 0.2s;
+    }
+    .chart-toggle-btn:hover,
+    .chart-toggle-btn:focus {
+        background: rgba(75, 192, 192, 0.35);
+        color: #155b66;
+    }
+    .chart-toggle-btn[style*="font-weight:bold"] {
+        background: rgba(75, 192, 192, 0.45);
+        color: #155b66;
+        border-color: #35bfc7;
+    }
+
+    .todo_list span {
+        margin-left: 30px; !important;
+    }
+</style>
+<body>
 <header th:replace="~{/storeOwner/tnb}"></header>
 <div class="section">
-  <div th:replace="~{/storeOwner/header}"></div>
-  <div class="mainLayout">
-    <div class="dashboardWrapper">
-      <!-- 상단 월별 매출 그래프 -->
-      <section class="salesSection">
-        <div class="salesHeader">
-          <h3>최근 3개월 매출</h3>
-          <a href="/storeOwner/salesList" class="moreLink">더보기</a>
+    <div th:replace="~{/storeOwner/header}"></div>
+    <div class="mainLayout">
+        <div class="content">
+
+            <div class="storeOwnerMain">
+
+                <div class="contents">
+
+
+                    <!-- 상단 월별 매출 그래프 -->
+                    <div class="sales cont">
+                        <div class="cont_top">
+                            <h4>최근 3개월 매출</h4>
+                            <span><a href="/storeOwner/salesList" class="moreLink">더보기</a></span>
+                        </div>
+
+                        <div class="chart_wrap" style="margin-top: 30px;">
+                            <canvas id="monthlySalesChart" height="80"></canvas>
+                            <div class="chart-toggle-btn-wrap">
+                                <button id="btnMonth" class="chart-toggle-btn" style="font-weight:bold; font-size: 12px;">월별보기</button>
+                                <button id="btnMenu" class="chart-toggle-btn" style="font-size: 12px;">메뉴별보기</button>
+                            </div>
+                        </div>
+
+                        <div class="chartCaption">
+                        </div>
+                    </div>
+
+
+                    <!-- 아래 2x2 그리드 -->
+                    <div class="section_02">
+                        <div class="receiving cont">
+                            <div class="cont_top">
+                                <h4>재고현황</h4>
+                                <span><a href="/storeOwner/inventoryStore" class="moreLink">더보기</a></span>
+                            </div>
+                            <div class="boxContent shortage-scroll">
+                                <ul>
+                                    <li th:each="s : ${shortageList}">
+                                        <span th:text="${s.itemName}"></span>
+                                        <span th:text="'(' + ${s.storeName} + ')'"></span>
+                                        <span th:text="${s.stock}"
+                                              style="color:#fff; background:red; border-radius:4px; padding:2px 7px; font-weight:bold;"></span>
+                                    </li>
+                                </ul>
+                                <span th:if="${#lists.isEmpty(shortageList)}" style="color:#888;">부족재고 없음</span>
+                            </div>
+                        </div>
+
+
+                        <div class="shipping cont">
+                            <div class="cont_top">
+                                <h4>주문내역</h4>
+                                <span><a href="/storeOwner/storeorderList" class="moreLink">더보기</a></span>
+                            </div>
+                            <div class="boxContent">
+                                <ul style="margin:8px 0 0 16px; padding:0; font-size:14px;">
+                                    <li th:each="o : ${orderList}">
+                                        <span th:text="${o.orderNumber}"></span>
+                                        <span th:if="${o.itemName != null}" th:text="' | ' + ${o.itemName}"></span>
+                                        <span th:if="${o.orderedQuantity != null}"
+                                              th:text="' / ' + ${o.orderedQuantity}"></span>
+                                        <span th:if="${o.orderDate != null}" th:text="' | ' + ${o.orderDate}"></span>
+                                        <span th:if="${o.status != null}" th:text="' | ' + ${o.status}"></span>
+                                    </li>
+                                </ul>
+                                <span th:if="${#lists.isEmpty(orderList)}">주문 내역 없음</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section_03">
+                        <div class="inventory cont">
+                            <div class="cont_top">
+                                <h4>반품현황</h4>
+                                <span><a href="/storeOwner/returnList" class="moreLink">더보기</a></span>
+                            </div>
+                            <div class="boxContent">
+                                <ul style="margin:8px 0 0 16px; padding:0; font-size:14px;">
+                                    <li th:each="r : ${returnList}"><span th:text="${r.menuName}"></span> <span
+                                            th:text="${r.quantity}"></span>개
+                                    </li>
+                                </ul>
+                                <span th:if="${#lists.isEmpty(returnList)}">반품 내역 없음</span>
+                            </div>
+                        </div>
+
+
+                        <div class="notice cont">
+                            <div class="cont_top">
+                                <h4>오늘의 할 일</h4>
+                            </div>
+
+                            <div class="todo_wrap">
+                                <ul class="todo_list">
+                                    <li th:each="t : ${todoList}" th:text="${t}">할 일 예시</li>
+                                </ul>
+                                <span style="display:block; text-align:center; margin:40px 0;" th:if="${#lists.isEmpty(todoList)}">오늘의 할 일이 없습니다.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div style="margin-bottom: 1em;">
-          <button id="btnMonth" class="chart-toggle-btn" style="font-weight:bold;">월별보기</button>
-          <button id="btnMenu" class="chart-toggle-btn">메뉴별보기</button>
-        </div>
-        <canvas id="salesChart" height="80"></canvas>
-        <div class="chartCaption"></div>
-      </section>
-      <!-- 아래 2x2 그리드 -->
-      <div class="gridSection">
-        <section class="gridBox">
-          <div class="boxHeader">
-            <span>재고현황</span>
-            <a href="/storeOwner/inventoryStore" class="moreLink">더보기</a>
-          </div>
-          <div class="boxContent shortage-scroll">
-            <ul>
-              <li th:each="s : ${shortageList}">
-                <span th:text="${s.itemName}"></span>
-                <span th:text="'(' + ${s.storeName} + ')'"></span>
-                <span th:text="${s.stock}"
-                      style="color:#fff; background:red; border-radius:4px; padding:2px 7px; font-weight:bold;"></span>
-              </li>
-            </ul>
-            <span th:if="${#lists.isEmpty(shortageList)}" style="color:#888;">부족재고 없음</span>
-          </div>
-        </section>
-
-
-        <section class="gridBox">
-          <div class="boxHeader">
-            <span>주문내역</span>
-            <a href="/storeOwner/storeorderList" class="moreLink">더보기</a>
-          </div>
-          <div class="boxContent">
-            <ul style="margin:8px 0 0 16px; padding:0; font-size:14px;">
-              <li th:each="o : ${orderList}">
-                <span th:text="${o.orderNumber}"></span>
-                <span th:if="${o.itemName != null}" th:text="' | ' + ${o.itemName}"></span>
-                <span th:if="${o.orderedQuantity != null}" th:text="' / ' + ${o.orderedQuantity}"></span>
-                <span th:if="${o.orderDate != null}" th:text="' | ' + ${o.orderDate}"></span>
-                <span th:if="${o.status != null}" th:text="' | ' + ${o.status}"></span>
-              </li>
-            </ul>
-            <span th:if="${#lists.isEmpty(orderList)}">주문 내역 없음</span>
-          </div>
-        </section>
-
-        <section class="gridBox">
-          <div class="boxHeader">
-            <span>반품현황</span>
-            <a href="/storeOwner/returnList" class="moreLink">더보기</a>
-          </div>
-          <div class="boxContent">
-            <span>최근 반품 3건</span>
-            <ul style="margin:8px 0 0 16px; padding:0; font-size:14px;">
-              <li th:each="r : ${returnList}"><span th:text="${r.menuName}"></span> <span th:text="${r.quantity}"></span>개</li>
-            </ul>
-            <span th:if="${#lists.isEmpty(returnList)}">반품 내역 없음</span>
-          </div>
-        </section>
-        <section class="gridBox">
-          <div class="boxHeader">
-            <span>오늘의 할 일</span>
-            <a href="/storeOwner/todoList" class="moreLink">더보기</a>
-          </div>
-          <div class="boxContent">
-            <ul class="todo-list">
-              <li th:each="t : ${todoList}" th:text="${t}">할 일 예시</li>
-            </ul>
-            <span th:if="${#lists.isEmpty(todoList)}">오늘의 할 일이 없습니다.</span>
-          </div>
-        </section>
-      </div>
     </div>
-  </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 <script th:inline="javascript">
-  /*<![CDATA[*/
-  let chartLabels = /*[[${chartLabels}]]*/ [];
-  let menuDatasets = /*[[${menuDatasets}]]*/ [];
+    /*<![CDATA[*/
+    let chartLabels = /*[[${chartLabels}]]*/ [];
+    let menuDatasets = /*[[${menuDatasets}]]*/ [];
 
-  // 블루톤 파레트 설정함요
-  const blueColors = [
-    'rgba(25,77,115,0.8)',
-    'rgba(39,96,136,0.8)',
-    'rgba(67,116,152,0.8)',
-    'rgba(101,146,175,0.8)',
-    'rgba(123,170,205,0.8)',
-    'rgba(147,186,214,0.8)',
-    'rgba(168,198,220,0.8)',
-    'rgba(189,209,223,0.8)',
-  ];
+    // 블루톤 파레트 설정함요
+    // const blueColors = [
+    //     'rgba(54, 162, 235, 0.8)',
+    //     'rgba(255, 99, 132, 0.8)',
+    //     'rgba(255, 223, 195, 0.8)',
+    //     'rgba(255, 205, 86, 0.8)',
+    //     'rgba(54, 162, 235, 0.8)',
+    //     'rgba(255, 99, 132, 0.8)',
+    //     'rgba(255, 223, 195, 0.8)',
+    //     'rgba(255, 205, 86, 0.8)',
+    // ];
 
-  // [1] 월별 데이터(기존)
-  chartLabels = chartLabels.slice().reverse();
-  menuDatasets = menuDatasets.map((ds, i) => ({
-    ...ds,
-    data: ds.data.slice().reverse(),
-    backgroundColor: blueColors[i % blueColors.length]
-  }));
-
-  // [2] 메뉴별 데이터(동적으로 변환)
-  function getMenuViewData(labels, datasets) {
-    // labels: 월 배열, datasets: [{label: 메뉴, data:[월별매출]}]
-    // 메뉴명 추출
-    const menuNames = datasets.map(ds => ds.label);
-    // 월별 데이터셋 수 만큼, 각 월의 매출을 메뉴별로 추출
-    // labels: 메뉴명 배열, datasets: [{ label: 월, data: [각 메뉴별 매출]}]
-    const newDatasets = labels.map((month, idx) => ({
-      label: month,
-      backgroundColor: `rgba(54, 162, 235, ${0.2 + 0.5 * (idx / labels.length)})`,
-      borderColor: `rgba(54, 162, 235, 1)`,
-      borderWidth: 1,
-      data: datasets.map(ds => ds.data[idx] || 0)
+    // [1] 월별 데이터(기존)
+    chartLabels = chartLabels.slice().reverse();
+    menuDatasets = menuDatasets.map((ds, i) => ({
+        ...ds,
+        data: ds.data.slice().reverse(),
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderColor: `rgba(75, 192, 192, 1)`,
+        borderWidth: 1,
+        fill: true,
+        pointBorderColor: 'rgba(75, 192, 192, 1)',
     }));
-    return {
-      labels: menuNames,
-      datasets: newDatasets
-    };
-  }
 
-  // [3] 차트 객체 전역 변수
-  let salesChart = null;
-  let isMonthView = true;
-
-  // [4] 차트 그리기 함수
-  function drawChart(viewType) {
-    const ctx = document.getElementById('salesChart').getContext('2d');
-    let chartData;
-    if (viewType === "menu") {
-      chartData = getMenuViewData(chartLabels, menuDatasets);
-    } else {
-      chartData = {
-        labels: chartLabels,
-        datasets: menuDatasets
-      };
+    // [2] 메뉴별 데이터(동적으로 변환)
+    function getMenuViewData(labels, datasets) {
+        // labels: 월 배열, datasets: [{label: 메뉴, data:[월별매출]}]
+        // 메뉴명 추출
+        const menuNames = datasets.map(ds => ds.label);
+        // 월별 데이터셋 수 만큼, 각 월의 매출을 메뉴별로 추출
+        // labels: 메뉴명 배열, datasets: [{ label: 월, data: [각 메뉴별 매출]}]
+        const newDatasets = labels.map((month, idx) => ({
+            label: month,
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: `rgba(75, 192, 192, 1)`,
+            borderWidth: 1,
+            fill: true,
+            pointBorderColor: 'rgba(75, 192, 192, 1)',
+            data: datasets.map(ds => ds.data[idx] || 0)
+        }));
+        return {
+            labels: menuNames,
+            datasets: newDatasets
+        };
     }
-    if (salesChart) salesChart.destroy();
-    salesChart = new Chart(ctx, {
-      type: 'bar',
-      data: chartData,
-      options: {
-        plugins: {
-          legend: { display: true },
-          datalabels: {
-            display: function(context) {
-              return context.datasetIndex === context.chart.data.datasets.length - 1;
-            },
-            anchor: 'end',
-            align: 'end',
-            offset: 40,
-            font: { weight: 'bold', size: 14 },
-            color: '#333',
-            clip: false,
-            formatter: function(value, context) {
-              const idx = context.dataIndex;
-              let sum = 0;
-              context.chart.data.datasets.forEach(ds => {
-                sum += ds.data[idx] || 0;
-              });
-              return sum ? sum.toLocaleString() + '원' : '';
-            }
-          },
-          tooltip: {
-            callbacks: {
-              label: function(context) {
-                let value = context.raw || 0;
-                return context.dataset.label + ": " + value.toLocaleString() + "원";
-              }
-            }
-          }
-        },
-        responsive: true,
-        layout: { padding: { bottom: 20 } },
-        scales: {
-          x: {
-            stacked: true,
-            ticks: { font: { size: 12 }, padding: 1 }
-          },
-          y: {
-            stacked: true,
-            beginAtZero: true,
-            ticks: { callback: v => v.toLocaleString() + '원' }
-          }
-        }
-      },
-      plugins: [
-        {
-          id: 'customTotalLabelBelowTick',
-          afterDraw: (chart) => {
-            const { ctx, chartArea, scales } = chart;
-            ctx.save();
-            ctx.font = 'bold 14px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillStyle = '#222';
-            const xAxis = scales.x;
-            const yAxis = scales.y;
-            chart.data.labels.forEach((label, i) => {
-              let sum = 0;
-              chart.data.datasets.forEach(ds => { sum += ds.data[i] || 0; });
-              const x = xAxis.getPixelForValue(i);
-              const yTick = chartArea.bottom + 38;
-              ctx.fillText(sum.toLocaleString() + '원', x, yTick);
-            });
-            ctx.restore();
-          }
-        }
-      ]
-    });
-  }
 
-  // [5] 버튼 이벤트
-  document.addEventListener('DOMContentLoaded', function() {
-    drawChart("month");
-    document.getElementById('btnMonth').onclick = function() {
-      isMonthView = true;
-      this.style.fontWeight = 'bold';
-      document.getElementById('btnMenu').style.fontWeight = 'normal';
-      drawChart("month");
-    };
-    document.getElementById('btnMenu').onclick = function() {
-      isMonthView = false;
-      this.style.fontWeight = 'bold';
-      document.getElementById('btnMonth').style.fontWeight = 'normal';
-      drawChart("menu");
-    };
-  });
-  /*]]>*/
+    // [3] 차트 객체 전역 변수
+    let monthlySalesChart = null;
+    let isMonthView = true;
+
+    // [4] 차트 그리기 함수
+    function drawChart(viewType) {
+        const ctx = document.getElementById('monthlySalesChart').getContext('2d');
+        let chartData;
+        if (viewType === "menu") {
+            chartData = getMenuViewData(chartLabels, menuDatasets);
+        } else {
+            chartData = {
+                labels: chartLabels,
+                datasets: menuDatasets
+            };
+        }
+        if (monthlySalesChart) monthlySalesChart.destroy();
+        monthlySalesChart = new Chart(ctx, {
+            type: 'bar',
+            data: chartData,
+            options: {
+                plugins: {
+                    legend: {display: true},
+                    datalabels: {
+                        display: function (context) {
+                            return context.datasetIndex === context.chart.data.datasets.length - 1;
+                        },
+                        anchor: 'end',
+                        align: 'end',
+                        offset: 40,
+                        font: {weight: 'bold', size: 14},
+                        color: '#333',
+                        clip: false,
+                        formatter: function (value, context) {
+                            const idx = context.dataIndex;
+                            let sum = 0;
+                            context.chart.data.datasets.forEach(ds => {
+                                sum += ds.data[idx] || 0;
+                            });
+                            return sum ? sum.toLocaleString() + '원' : '';
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                let value = context.raw || 0;
+                                return context.dataset.label + ": " + value.toLocaleString() + "원";
+                            }
+                        }
+                    }
+                },
+                responsive: true,
+                layout: {padding: {bottom: 20}},
+                scales: {
+                    x: {
+                        stacked: true,
+                        ticks: {font: {size: 12}, padding: 1}
+                    },
+                    y: {
+                        stacked: true,
+                        beginAtZero: true,
+                        ticks: {callback: v => v.toLocaleString() + '원'}
+                    }
+                }
+            },
+            plugins: [
+                {
+                    id: 'customTotalLabelBelowTick',
+                    afterDraw: (chart) => {
+                        const {ctx, chartArea, scales} = chart;
+                        ctx.save();
+                        ctx.font = 'bold 14px sans-serif';
+                        ctx.textAlign = 'center';
+                        ctx.fillStyle = '#222';
+                        const xAxis = scales.x;
+                        const yAxis = scales.y;
+                        chart.data.labels.forEach((label, i) => {
+                            let sum = 0;
+                            chart.data.datasets.forEach(ds => {
+                                sum += ds.data[i] || 0;
+                            });
+                            const x = xAxis.getPixelForValue(i);
+                            const yTick = chartArea.bottom + 38;
+                            ctx.fillText(sum.toLocaleString() + '원', x, yTick);
+                        });
+                        ctx.restore();
+                    }
+                }
+            ]
+        });
+    }
+
+    // [5] 버튼 이벤트
+    document.addEventListener('DOMContentLoaded', function () {
+        drawChart("month");
+        document.getElementById('btnMonth').onclick = function () {
+            isMonthView = true;
+            this.style.fontWeight = 'bold';
+            document.getElementById('btnMenu').style.fontWeight = 'normal';
+            drawChart("month");
+        };
+        document.getElementById('btnMenu').onclick = function () {
+            isMonthView = false;
+            this.style.fontWeight = 'bold';
+            document.getElementById('btnMonth').style.fontWeight = 'normal';
+            drawChart("menu");
+        };
+    });
+    /*]]>*/
 </script>
 </body>
 </html>

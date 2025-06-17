@@ -1,78 +1,153 @@
-<!-- headOffice/inventoryStore.html 수정 -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8">
-  <title>매장별 재고현황</title>
-  <style>
-    .low-stock {
-      background-color: red;
-      color: white;
-      font-weight: bold;
-    }
-    table {
-      border-collapse: collapse;
-    }
-    td, th {
-      padding: 8px;
-      border: 1px solid #ccc;
-      text-align: center;
-    }
-  </style>
+<head th:replace="~{/headOffice/meta::myHead('재고')}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>매장 재고현황</title>
+    <link rel="stylesheet" href="/css/storeOwner.css">
 </head>
-<body>
-<h2>매장별 재고현황</h2>
 
-<form th:action="@{/headOffice/inventoryStore}" method="get" oninput="updateSearchTarget()">
-  <label>
-    <select id="searchType" name="searchType" onchange="updateSearchTarget()">
-      <option value="itemName" th:selected="${searchType == 'itemName'}">품목명</option>
-      <option value="storeName" th:selected="${searchType == 'storeName'}">매장명</option>
-    </select>
-  </label>
-
-  <input type="text" id="searchInput" name="itemName" th:value="${itemName}" placeholder="검색어 입력">
-
-  <button type="submit">검색</button>
-</form>
-
-<script>
-  function updateSearchTarget() {
-    const type = document.getElementById("searchType").value;
-    const input = document.getElementById("searchInput");
-    if (type === 'itemName') {
-      input.name = 'itemName';
-    } else {
-      input.name = 'storeName';
+<style>
+    .low-stock {
+        background-color: red;
+        color: white;
+        font-weight: bold;
     }
-  }
-  document.addEventListener("DOMContentLoaded", updateSearchTarget);
-</script>
+
+    table {
+        border-collapse: collapse;
+    }
+
+    td, th {
+        padding: 8px;
+        border: 1px solid #ccc;
+        text-align: center;
+    }
+
+    .table-viewport {
+        width: 100%;
+        overflow-x: auto;
+        /* 원하는 고정 높이도 추가 가능 */
+        max-height: 480px;
+        overflow-y: auto;
+        /* 아래는 보기 좋게, 필요시 조정 */
+        border-radius: 10px;
+        background: #fff;
+        padding-bottom: 6px;
+    }
+
+    /* 테이블 너비를 넉넉하게 */
+    .stock-table {
+        min-width: 900px; /* 매장 수에 따라 1200px, 1600px 등 넉넉하게 */
+        width: max-content;
+        border-collapse: collapse;
+    }
+
+    /* sticky 헤더 */
+    .stock-table th {
+        position: sticky;
+        top: 0;
+        background: #f8f8f8;
+        z-index: 2;
+    }
 
 
-<!-- 🔽 테이블 -->
-<table>
-  <thead>
-  <tr>
-    <th>품목코드</th>
-    <th>품목명</th>
-    <!-- 각 매장명을 반복적으로 열로 출력 -->
-    <th th:each="store : ${storeList}">
-      <span th:text="${store.name}">매장명</span>
-    </th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr th:each="row : ${pivotList}">
-    <td th:text="${row.itemCode}"></td>
-    <td th:text="${row.itemName}"></td>
-    <!-- 각 매장에 대한 재고 수량 출력 -->
-    <td th:each="store : ${storeList}"
-        th:text="${row.getStockByStoreId(store.id)}"
-        th:class="${row.getStockCssClass(store.id)}">
-    </td>
-  </tr>
-  </tbody>
-</table>
+    /* 헤더 고정 */
+    .stock-table th {
+        position: sticky;
+        top: 0;
+        background: #f8f8f8;
+        z-index: 2;
+    }
+
+    /* 첫 번째(품목코드) 고정 */
+    .stock-table th:first-child,
+    .stock-table td:first-child {
+        position: sticky;
+        left: 0;
+        background: #fff;
+        z-index: 3;
+    }
+
+    /* 두 번째(품목명) 고정: 첫 번째 셀 너비만큼 left를 설정 */
+    .stock-table th:nth-child(2),
+    .stock-table td:nth-child(2) {
+        position: sticky;
+        left: 90px; /* 첫 번째 컬럼의 실제 너비(px)에 맞게 조정 */
+        background: #fff;
+        z-index: 3;
+    }
+</style>
+<body>
+<header th:replace="~{/headOffice/tnb}"></header>
+<div class="section">
+    <div th:replace="~{/headOffice/header}"></div>
+    <div class="main-layout">
+        <div th:replace="~{/headOffice/etcLnb::active('inventory','inventoryStore')}"></div>
+        <div class="content">
+
+            <div class="inventoryStatus">
+                <h2>매장별 재고현황</h2>
+                <div class="search-bar">
+                    <form th:action="@{/headOffice/inventoryStore}" method="get" oninput="updateSearchTarget()">
+                        <label>
+                            <select id="searchType" name="searchType" onchange="updateSearchTarget()">
+                                <option value="itemName" th:selected="${searchType == 'itemName'}">품목명</option>
+                                <option value="storeName" th:selected="${searchType == 'storeName'}">매장명</option>
+                            </select>
+                        </label>
+
+                        <input type="text" id="searchInput" name="itemName" th:value="${itemName}" placeholder="검색어 입력">
+
+                        <button type="submit">검색</button>
+                    </form>
+                </div>
+
+                <script>
+                    function updateSearchTarget() {
+                        const type = document.getElementById("searchType").value;
+                        const input = document.getElementById("searchInput");
+                        if (type === 'itemName') {
+                            input.name = 'itemName';
+                        } else {
+                            input.name = 'storeName';
+                        }
+                    }
+
+                    document.addEventListener("DOMContentLoaded", updateSearchTarget);
+                </script>
+
+
+                <!-- 🔽 테이블 -->
+
+                <div class="table-viewport">
+                    <table class="stock-table">
+                        <thead>
+                        <tr>
+                            <th>품목코드</th>
+                            <th>품목명</th>
+                            <!-- 각 매장명을 반복적으로 열로 출력 -->
+                            <th th:each="store : ${storeList}">
+                                <span th:text="${store.name}">매장명</span>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="row : ${pivotList}">
+                            <td th:text="${row.itemCode}"></td>
+                            <td th:text="${row.itemName}"></td>
+                            <!-- 각 매장에 대한 재고 수량 출력 -->
+                            <td th:each="store : ${storeList}"
+                                th:text="${row.getStockByStoreId(store.id)}"
+                                th:class="${row.getStockCssClass(store.id)}">
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
