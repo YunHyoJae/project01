@@ -11,7 +11,7 @@
     <div th:replace="~{/storeOwner/etcLnb::active('etc',${ownerState})}"></div>
 
     <!-- 본문 컨텐츠 -->
-    <div class="content storeStatus">
+    <div class="content storeStatus" style="padding-bottom:100px;">
       <h2 th:text="${ownerState=='owner' ?'내 문의글':'문의 게시판'}">고객센터</h2>
       <div class="search_box typePark">
         <form th:action="${ownerState == 'owner' ? '/storeOwner/faqList/owner' : '/storeOwner/faqList'}"
@@ -48,8 +48,10 @@
           </thead>
           <tbody>
           <th:block th:each="item:${list}">
-            <tr th:onclick="'handleClick(\''+${item.id}+'\')'">
-              <td>[[${itemStat.count}]]</td><td>[[${item.category01}]]</td><td>[[${item.title}]]</td><td>[[${item.memberName}]]</td><td>[[${item.regDate}]]</td><td th:text="${#lists.isEmpty(item.faqReplyList) ? '문의' : '답변완료'}"></td>
+            <tr th:onclick="${#strings.equals(item.state,'비공개') AND !#strings.equals(LoginDto.userId,item.memberId)} ? 'alert(\'비공개 글입니다.\')' : 'handleClick(\''+${item.id}+'\')'">
+              <td>[[${itemStat.count}]]</td><td>[[${item.category01}]]</td>
+              <td>[[${item.title}]] <img src="/images/secureswitch.gif" alt="secure_switch" class="vault-locked" th:if="${#strings.equals(item.state,'비공개')}"></td>
+              <td>[[${item.memberName}]]</td><td>[[${item.regDate}]]</td><td th:text="${#lists.isEmpty(item.faqReplyList) ? '문의' : '답변완료'}"></td>
             </tr>
           </th:block>
           </tbody>

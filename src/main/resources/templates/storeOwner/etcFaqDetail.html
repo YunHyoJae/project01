@@ -12,32 +12,37 @@
 
     <!-- 본문 컨텐츠 -->
     <div class="content">
-      <h2>고객센터 <span th:text="${ownerState=='owner' ?'내 문의글':'문의 게시판'}"></span></h2>
-      <div class="question-box">
-        <div class="question-header">
-          <strong class="question-title">[[${content.title}]]</strong>
-          <span class="question-date"><strong>문의 날짜 :</strong> [[${content.regDate}]]</span>
-          <span class="question-date"><strong>유형 :</strong> [[${content.category01}]]</span>
+      <div class="helpDetail">
+        <h2><span th:text="${ownerState=='owner' ?'내 문의글':'문의 게시판'}"></span> 상세 내용 보기</h2>
+
+        <div class="question-box">
+          <div class="question-header">
+            <span class="question-date"><strong>유형 :</strong> [[${content.category01}]]</span>
+            <strong class="question-title">[[${content.title}]]
+              <img src="/images/secureswitch.gif" alt="secure_switch" class="vault-locked" th:if="${#strings.equals(content.state,'비공개')}">
+            </strong>
+            <span class="question-date"><strong>문의 날짜 :</strong> [[${content.regDate}]]</span>
+          </div>
+          <div class="question-info">
+            <span><strong>아이디 :</strong> [[${content.memberName}]]</span>
+          </div>
+          <div class="question-body">
+            [[${content.content}]]
+          </div>
         </div>
-        <div class="question-info">
-          <span><strong>작성자 :</strong> [[${content.memberName}]]</span>
-        </div>
-        <div class="question-body">
-          [[${content.content}]]
-        </div>
+        <th:block th:unless="${#lists.isEmpty(content.faqReplyList)}">
+          <div class="answer-box" th:each="answer : ${content.faqReplyList}">
+            <div class="answer-header">
+              <strong>답변 내용</strong>
+              <span class="answer-date">답변 날짜 : [[${answer.regDate}]]</span>
+            </div>
+            <div class="answer-body">
+              [[${answer.content}]]
+            </div>
+          </div>
+        </th:block>
+        <button class="ask-btn" onclick="window.history.back()">목록으로</button>
       </div>
-      <th:block th:unless="${#lists.isEmpty(content.faqReplyList)}">
-      <div class="answer-box" th:each="answer : ${content.faqReplyList}">
-        <div class="answer-header">
-          <strong>답변 내용</strong>
-          <span class="answer-date">답변 날짜 : [[${answer.regDate}]]</span>
-        </div>
-        <div class="answer-body">
-          [[${answer.content}]]
-        </div>
-      </div>
-      </th:block>
-      <button class="ask-btn" onclick="window.history.back()">목록으로</button>
     </div>
   </div>
 </div>

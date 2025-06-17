@@ -250,10 +250,12 @@ body {
   font-size: 18px;
   margin-bottom: 10px;
   color: #000000;
+  gap:10px;
 }
 
 .helpDetail .question-title {
   font-weight: 600;
+  flex:1;
 }
 
 .helpDetail .question-date {
@@ -284,6 +286,7 @@ body {
   line-height: 1.6;
   margin-bottom: 30px;
 }
+.helpDetail .answer-box textarea{border:none;width:100%;min-height:100px;}
 
 .helpDetail .answer-header {
   display: flex;
@@ -318,13 +321,28 @@ body {
   cursor: pointer;
   float: right;
 }
-
 .helpDetail .ask-btn:hover {
   background: #030186;
+}
+.helpDetail .return-btn {
+  background: #cacaca;
+  border: none;
+  color: #fff;
+  padding: 10px 24px;
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  float: right;
+  margin-right:10px;
+}
+.helpDetail .return-btn:hover {
+  background: #919191;
 }
 
 .vault-locked{
   margin-left: 10px;
+  vertical-align: baseline;
 }
 
 /* select_box */
