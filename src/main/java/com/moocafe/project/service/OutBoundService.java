@@ -59,7 +59,6 @@ public class OutBoundService {
                 dueDate,
                 status
         );
-        outBoundDao.save(updated);
 
         String newOrderStatus = status.equals("출고완료") ? "출고완료" : "출고준비";
         String requiredOldStatus = status.equals("출고완료") ? "출고준비" : "출고요청";
@@ -107,6 +106,7 @@ public class OutBoundService {
                 inventoryStoreRepository.save(storeInventory);
             }
         }
+        outBoundDao.save(updated);
     }
 
     public Page<OutBoundListResponseDto> getOutBoundListWithConditions(
