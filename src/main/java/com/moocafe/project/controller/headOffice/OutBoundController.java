@@ -64,7 +64,7 @@ public class OutBoundController {
         try {
             for (Integer id : dto.getOutBoundIds()) {
                 if ("승인".equals(status)) {
-                    outBoundService.completeOutBound(id, "출고준비중");
+                    outBoundService.completeOutBound(id, "출고준비");
                 } else if ("출고완료".equals(status)) {
                     outBoundService.completeOutBound(id, "출고완료");
                 } else {

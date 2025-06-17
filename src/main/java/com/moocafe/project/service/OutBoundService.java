@@ -40,7 +40,7 @@ public class OutBoundService {
         Date approvedDate = origin.getApprovedDate();
         Date dueDate = origin.getDueDate();
 
-        if ("출고준비중".equals(status)) {
+        if ("출고준비".equals(status)) {
             requiredDate = now;
             approvedDate = now;
             dueDate = null;
@@ -61,8 +61,8 @@ public class OutBoundService {
         );
         outBoundDao.save(updated);
 
-        String newOrderStatus = status.equals("출고완료") ? "출고완료" : "출고준비중";
-        String requiredOldStatus = status.equals("출고완료") ? "출고준비중" : "출고요청";
+        String newOrderStatus = status.equals("출고완료") ? "출고완료" : "출고준비";
+        String requiredOldStatus = status.equals("출고완료") ? "출고준비" : "출고요청";
 
         List<OutBoundItem> items = outBoundItemDao.findByOutBoundId(outBoundId);
         for (OutBoundItem item : items) {
