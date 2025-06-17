@@ -43,7 +43,7 @@
               <td th:text="${order.status}"></td>
               <td>
                 <button type="button"
-                        th:if="${order.status == '출고요청'}"
+                        th:if="${order.status == '출고완료'}"
                         onclick="addToReturnList(this)" class="return-btn">반품</button>
               </td>
             </tr>
