@@ -77,6 +77,12 @@ public String showOrderForm(
     ) {
         Integer storeId = userDetails.toDto().getStoreId();
 
+        if (startDate == null || endDate == null) {
+            LocalDate now = LocalDate.now();
+            startDate = now.minusYears(1).toString();
+            endDate = now.toString();
+        }
+
         List<StoreOrderListResponseDto> orderList = storeOrderService.getOrderList(storeId, startDate, endDate);
 
         List<ReturnItemDto> items = IntStream.range(0, 3)
@@ -117,7 +123,7 @@ public String showOrderForm(
     public String submitReturn(@ModelAttribute ReturnDto returnDto, String itemCode, int returnQuantity, int storeId) {
         log.info("submit return: {}", returnDto);
         returnService.saveReturn(returnDto, itemCode, returnQuantity, storeId);
-        return "redirect:/storeOwner/storeOrderList";
+        return "redirect:/storeOwner/storeorderList";
     }
     @GetMapping("/storeOrderItems")
     @ResponseBody

@@ -7,6 +7,7 @@
   <div th:replace="~{/storeOwner/header}"></div>
   <div class="main-layout">
     <div th:replace="~{/storeOwner/etcLnb::active('order','storeorderList')}"></div>
+    <div class="content">
     <div class="order_wrap">
       <div class="orderList">
         <h2>주문현황</h2>
@@ -42,7 +43,7 @@
               <td th:text="${order.status}"></td>
               <td>
                 <button type="button"
-                        th:if="${order.status == '출고요청'}"
+                        th:if="${order.status == '출고완료'}"
                         onclick="addToReturnList(this)" class="return-btn">반품</button>
               </td>
             </tr>
@@ -50,6 +51,7 @@
           </table>
         </div>
       </div>
+
 
       <div class="return-wrapper" id="returnSection" style="display: none;">
         <h3 class="return_tit">반품리스트</h3>
@@ -79,6 +81,7 @@
       </div>
     </div>
   </div>
+</div>
 </div>
 
 <script th:inline="javascript">
