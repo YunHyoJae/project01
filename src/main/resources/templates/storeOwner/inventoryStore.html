@@ -1,103 +1,123 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8">
-  <title>매장 재고현황</title>
-  <style>
-    .low-stock {
-      background-color: red;
-      color: white;
-      font-weight: bold;
-    }
-    table {
-      border-collapse: collapse;
-    }
-    td, th {
-      padding: 8px;
-      border: 1px solid #ccc;
-      text-align: center;
-    }
-  </style>
+<head th:replace="~{/storeOwner/meta::myHead('매장 재고현황')}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>매장 재고현황</title>
+    <link rel="stylesheet" href="/css/storeOwner.css">
 </head>
+<style>
+    .low-stock {
+        background-color: red;
+        color: white;
+        font-weight: bold;
+    }
+
+    .salesInventory {
+        margin-left: 30px;
+        margin-top: 30px;
+        background-color: #fff;
+
+    }
+    .main-layout{
+        background-color: #fff;
+    }
+
+</style>
 <body>
+<header th:replace="~{/storeOwner/tnb}"></header>
 
-<h2 th:text="'[' + ${store.name} + '] 매장 재고현황'"></h2>
+<div class="section">
+    <div th:replace="~{/storeOwner/header}"></div>
 
-<form th:action="@{/storeOwner/inventoryStore}" method="get" oninput="updateSearchTarget()">
-  <label>
-    <select id="searchType" name="searchType" onchange="updateSearchTarget()">
-      <option value="itemName" th:selected="${searchType == 'itemName'}">품목명</option>
-      <option value="itemCode" th:selected="${searchType == 'itemCode'}">품목코드</option>
-    </select>
-  </label>
+    <div class="main-layout">
+        <div th:replace="storeOwner/etcLnb :: active('inventory', 'inventoryStore')"></div>
 
-  <input type="text" id="searchInput" name="itemName" th:value="${itemName}" placeholder="검색어 입력">
 
-  <button type="submit">검색</button>
-</form>
+        <div class="salesInventory">
+            <h2 th:text="'[' + ${store.name} + '] 매장 재고현황'"></h2>
 
-<script>
-  function updateSearchTarget() {
-    const type = document.getElementById("searchType").value;
-    const input = document.getElementById("searchInput");
-    if (type === 'itemName') {
-      input.name = 'itemName';
-    } else {
-      input.name = 'itemCode';
-    }
-  }
-  document.addEventListener("DOMContentLoaded", updateSearchTarget);
-</script>
+            <div class="search-bar">
+                <form th:action="@{/storeOwner/inventoryStore}" method="get" oninput="updateSearchTarget()">
+                    <label>
+                        <select id="searchType" name="searchType" onchange="updateSearchTarget()">
+                            <option value="itemName" th:selected="${searchType == 'itemName'}">품목명</option>
+                            <option value="itemCode" th:selected="${searchType == 'itemCode'}">품목코드</option>
+                        </select>
+                    </label>
 
-<script>
-  function orderSelected() {
-    const checked = document.querySelectorAll('.order-checkbox:checked');
-    if (checked.length === 0) {
-      alert('주문할 품목을 선택하세요!');
-      return;
-    }
-    const params = [];
-    checked.forEach(cb => {
-      params.push('itemCode=' + encodeURIComponent(cb.dataset.itemCode));
-      params.push('needed=' + encodeURIComponent(cb.dataset.needed));
-    });
-    window.location.href = '/storeOwner/storeorderForm?' + params.join('&');
-  }
-</script>
+                    <input type="text" id="searchInput" name="itemName" th:value="${itemName}" placeholder="검색어 입력">
 
-<form id="orderForm">
-  <table>
-    <thead>
-    <tr>
-      <th></th> <!-- 체크박스용 -->
-      <th>품목코드</th>
-      <th>품목명</th>
-      <th th:text="${store.name}">매장명</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="row : ${pivotList}">
-      <td>
-        <input type="checkbox"
-               class="order-checkbox"
-               th:attr="data-item-code=${row.itemCode},
+                    <button type="submit">검색</button>
+                </form>
+            </div>
+
+            <script>
+                function updateSearchTarget() {
+                    const type = document.getElementById("searchType").value;
+                    const input = document.getElementById("searchInput");
+                    if (type === 'itemName') {
+                        input.name = 'itemName';
+                    } else {
+                        input.name = 'itemCode';
+                    }
+                }
+
+                document.addEventListener("DOMContentLoaded", updateSearchTarget);
+            </script>
+
+            <script>
+                function orderSelected() {
+                    const checked = document.querySelectorAll('.order-checkbox:checked');
+                    if (checked.length === 0) {
+                        alert('주문할 품목을 선택하세요!');
+                        return;
+                    }
+                    const params = [];
+                    checked.forEach(cb => {
+                        params.push('itemCode=' + encodeURIComponent(cb.dataset.itemCode));
+                        params.push('needed=' + encodeURIComponent(cb.dataset.needed));
+                    });
+                    window.location.href = '/storeOwner/storeorderForm?' + params.join('&');
+                }
+            </script>
+
+            <form id="orderForm">
+                <table class="stock-table">
+                    <thead>
+                    <tr>
+                        <th></th> <!-- 체크박스용 -->
+                        <th>품목코드</th>
+                        <th>품목명</th>
+                        <th th:text="${store.name}">매장명</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="row : ${pivotList}">
+                        <td>
+                            <input type="checkbox"
+                                   class="order-checkbox"
+                                   th:attr="data-item-code=${row.itemCode},
                 data-needed=${(row.getNeededRoundedByStoreId(store.id) - row.getStockByStoreId(store.id)) > 0
                               ? (row.getNeededRoundedByStoreId(store.id) - row.getStockByStoreId(store.id))
                               : 0}">
-      </td>
-      <td th:text="${row.itemCode}">품목코드</td>
-      <td th:text="${row.itemName}">품목명</td>
-      <td th:text="${row.getStockByStoreId(store.id)} + ' / 필요:' + ${row.getNeededRoundedByStoreId(store.id)}"
-          th:class="'stock-cell ' + ${row.getStockCssClass(store.id)}"
-          th:attr="data-item-code=${row.itemCode},
+                        </td>
+                        <td th:text="${row.itemCode}">품목코드</td>
+                        <td th:text="${row.itemName}">품목명</td>
+                        <td th:text="${row.getStockByStoreId(store.id)} + ' / 필요:' + ${row.getNeededRoundedByStoreId(store.id)}"
+                            th:class="'stock-cell ' + ${row.getStockCssClass(store.id)}"
+                            th:attr="data-item-code=${row.itemCode},
                data-needed=${(row.getNeededRoundedByStoreId(store.id) - row.getStockByStoreId(store.id)) > 0
                              ? (row.getNeededRoundedByStoreId(store.id) - row.getStockByStoreId(store.id))
                              : 0}">
-      </td>
-    </tr>
-    </tbody>
-  </table>
-  <button type="button" onclick="orderSelected()">주문</button>
-</form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <button type="button" style="margin-top: 30px;" onclick="orderSelected()">주문</button>
+            </form>
+        </div>
+    </div>
+</div>
 </body>
 </html>
