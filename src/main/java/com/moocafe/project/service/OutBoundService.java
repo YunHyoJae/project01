@@ -6,6 +6,7 @@ import com.moocafe.project.dto.OutBoundListResponseDto;
 import com.moocafe.project.entity.InventoryStore;
 import com.moocafe.project.entity.OutBound;
 import com.moocafe.project.entity.OutBoundItem;
+import com.moocafe.project.entity.StoreOrderDetail;
 import com.moocafe.project.repository.InventoryStoreRepository;
 import com.moocafe.project.repository.OutBoundRepository;
 import com.moocafe.project.repository.StoreOrderDetailRepository;
@@ -39,7 +40,7 @@ public class OutBoundService {
         Date approvedDate = origin.getApprovedDate();
         Date dueDate = origin.getDueDate();
 
-        if ("준비중".equals(status)) {
+        if ("출고준비중".equals(status)) {
             requiredDate = now;
             approvedDate = now;
             dueDate = null;
@@ -60,18 +61,29 @@ public class OutBoundService {
         );
         outBoundDao.save(updated);
 
-        String newOrderStatus = status.equals("출고완료") ? "출고완료" : "준비중";
+        String newOrderStatus = status.equals("출고완료") ? "출고완료" : "출고준비중";
+        String requiredOldStatus = status.equals("출고완료") ? "출고준비중" : "출고요청";
 
         List<OutBoundItem> items = outBoundItemDao.findByOutBoundId(outBoundId);
         for (OutBoundItem item : items) {
             String itemCode = item.getItemCode();
             int qty = item.getReceivedQuantity();
 
-            storeOrderDetailRepository.updateStatusByStoreAndItem(
+            List<StoreOrderDetail> match = storeOrderDetailRepository.findSpecificOrderForOutBound(
                     origin.getStoreId(),
                     itemCode,
-                    newOrderStatus
+                    qty,
+                    requiredOldStatus
             );
+
+            if (!match.isEmpty()) {
+                StoreOrderDetail target = match.get(0);
+                storeOrderDetailRepository.updateStatusByOrderIdAndItemCode(
+                        target.getOrderId(),
+                        target.getItemCode(),
+                        newOrderStatus
+                );
+            }
 
             if ("출고완료".equals(status)) {
                 inventoryStoreRepository.decreaseStock(1, itemCode, qty);
@@ -97,20 +109,6 @@ public class OutBoundService {
         }
     }
 
-//    public List<OutBoundListResponseDto> getOutBoundList() {
-//        List<Object[]> results = outBoundRepository.findAllOutBoundDtosNative();
-//        return results.stream().map(obj -> new OutBoundListResponseDto(
-//                (Integer) obj[0],
-//                (String) obj[1],
-//                (String) obj[2],
-//                (String) obj[3],
-//                (Integer) obj[4],
-//                (String) obj[5],
-//                (String) obj[6],
-//                (String) obj[7]
-//        )).collect(Collectors.toList());
-//    }
-
     public Page<OutBoundListResponseDto> getOutBoundListWithConditions(
             String startDate, String endDate, String storeName, Pageable pageable) {
 
@@ -128,5 +126,18 @@ public class OutBoundService {
         ));
     }
 }
+//    public List<OutBoundListResponseDto> getOutBoundList() {
+//        List<Object[]> results = outBoundRepository.findAllOutBoundDtosNative();
+//        return results.stream().map(obj -> new OutBoundListResponseDto(
+//                (Integer) obj[0],
+//                (String) obj[1],
+//                (String) obj[2],
+//                (String) obj[3],
+//                (Integer) obj[4],
+//                (String) obj[5],
+//                (String) obj[6],
+//                (String) obj[7]
+//        )).collect(Collectors.toList());
+//    }
 
 

@@ -3,12 +3,19 @@ package com.moocafe.project.service;
 import com.moocafe.project.dao.StoreDao;
 import com.moocafe.project.dao.StoreOrderDao;
 import com.moocafe.project.dao.StoreOrderDetailDao;
+import com.moocafe.project.dto.ItemSearchDto;
 import com.moocafe.project.dto.StoreOrderDetailDto;
 import com.moocafe.project.dto.StoreOrderDto;
 import com.moocafe.project.dto.StoreOrderListResponseDto;
 import com.moocafe.project.entity.*;
 import com.moocafe.project.repository.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +36,33 @@ public class StoreOrderService {
     private final OutBoundRepository outBoundRepository;
     private final OutBoundItemRepository outBoundItemRepository;
     private final InventoryStoreRepository inventoryStoreRepository;
-    private final InventoryItemRepository inventoryItemRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public Page<ItemSearchDto> getItemSearchList(Pageable pageable) {
+        String jpql = """
+            SELECT new com.moocafe.project.dto.ItemSearchDto(
+                i.itemCode,
+                i.itemName,
+                i.itemPrice,
+                COALESCE(s.count, 0)
+            )
+            FROM InventoryItem i
+            LEFT JOIN InventoryStore s ON i.itemCode = s.itemCode AND s.storeId = 1
+            ORDER BY i.itemCode ASC
+        """;
+
+        TypedQuery<ItemSearchDto> query = entityManager.createQuery(jpql, ItemSearchDto.class);
+        query.setFirstResult((int) pageable.getOffset());
+        query.setMaxResults(pageable.getPageSize());
+        List<ItemSearchDto> results = query.getResultList();
+
+        String countJpql = "SELECT COUNT(i) FROM InventoryItem i";
+        Long total = entityManager.createQuery(countJpql, Long.class).getSingleResult();
+
+        return new PageImpl<>(results, pageable, total);
+    }
 
     @Transactional
     public void createOrder(StoreOrderDto orderDto) {
@@ -102,10 +135,9 @@ public class StoreOrderService {
     public List<Object[]> findRecentOrderListByStoreId(Integer storeId) {
         return storeOrderRepository.findRecentOrderListByStoreId(storeId);
     }
-    
+
     public StoreOrder findByOrderNumber(String orderNumber) {
         return storeOrderDao.findByOrderNumber(orderNumber)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 주문번호: " + orderNumber));
     }
-
 }
