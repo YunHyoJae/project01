@@ -5,6 +5,7 @@ import com.moocafe.project.repository.StoreOrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+
 import java.util.List;
 import java.util.Optional;
 
@@ -28,5 +29,9 @@ public class StoreOrderDao {
 
     public void delete(StoreOrder storeOrder) {
         storeOrderRepository.delete(storeOrder);
+    }
+
+    public Optional<StoreOrder> findByOrderNumber(String orderNumber) {
+        return storeOrderRepository.findByOrderNumber(orderNumber);
     }
 }

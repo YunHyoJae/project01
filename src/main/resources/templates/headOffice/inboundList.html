@@ -1,211 +1,288 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8">
-  <title>본사 입고관리 - 입고현황</title>
-  <style>
-    body {font-family: 'Malgun Gothic', sans-serif; background: #f9f9f9;}
-    .container {width: 1000px; margin: 40px auto; background: #fff; padding: 32px; border-radius: 10px; box-shadow: 0 2px 8px #eee;}
-    h2 {margin-bottom: 18px;}
-    .tabs {display: flex; gap: 8px; margin-bottom: 20px;}
-    .tab-btn {padding: 8px 18px; border: none; background: #f3f3f3; border-radius: 5px 5px 0 0; cursor: pointer; font-weight: bold;}
-    .tab-btn.active {background: #ff9900; color: #fff;}
-    table {width: 100%; border-collapse: collapse; margin-bottom: 16px;}
-    th, td {border: 1px solid #e0e0e0; padding: 8px 10px; text-align: center;}
-    th {background: #faf7f2;}
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{/headOffice/meta::myHead('입고현황')}"></head>
+<style>
+    body {
+        font-family: 'Malgun Gothic', sans-serif;
+        background: #f9f9f9;
+    }
+
+    .container {
+        width: 1000px;
+        margin: 40px auto;
+        background: #fff;
+        padding: 32px;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px #eee;
+    }
+
+    h2 {
+        margin-bottom: 18px;
+    }
+
+    .tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 20px;
+    }
+
+    .tab-btn {
+        padding: 8px 18px;
+        border: none;
+        background: #e0eaff;
+        border-radius: 5px 5px 0 0;
+        cursor: pointer;
+        font-weight: bold;
+        color: #0033cc;
+    }
+
+    .tab-btn.active {
+        background: #0033cc;
+        color: #fff;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 16px;
+        table-layout: fixed;
+    }
+
+    th, td {
+        border: 1px solid #e0e0e0;
+        padding: 12px 10px;
+        text-align: center;
+        word-wrap: break-word;
+    }
+
+    th {
+        background: #eaf0ff;
+        font-weight: 600;
+    }
+
+    .complete-btn {
+        padding: 6px 10px;
+        background-color: #0033cc;
+        border: none;
+        border-radius: 4px;
+        color: white;
+        cursor: pointer;
+    }
+
+    .complete-btn:disabled {
+        background-color: #aaa;
+        cursor: not-allowed;
+    }
+
+    .open-detail-btn {
+        padding: 6px 10px;
+        background-color: #e0eaff;
+        border-radius: 4px;
+        text-decoration: none;
+        color: #0033cc;
+        font-size: 0.9rem;
+    }
 
     /* 모달 스타일 */
     .receiving_modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0, 0, 0, 0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
     }
 
     #purchase-detail-modal-toggle:checked + .receiving_modal {
-      display: flex;
+        display: flex;
     }
 
     .receiving_modal_content {
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      width: 900px;
-      max-height: 90vh;
-      overflow-y: auto;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-      position: relative;
+        background: #fff;
+        padding: 20px;
+        border-radius: 12px;
+        width: 900px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        position: relative;
     }
 
     .close-btn {
-      display: inline-block;
-      margin-top: 12px;
-      padding: 8px 16px;
-      background: #ff9900;
-      color: #fff;
-      border-radius: 6px;
-      cursor: pointer;
-      text-align: center;
+        display: inline-block;
+        margin-top: 12px;
+        padding: 8px 16px;
+        background: #0033cc;
+        color: #fff;
+        border-radius: 6px;
+        cursor: pointer;
+        text-align: center;
     }
-  </style>
-
-  <script th:inline="javascript">
-    function setTab(status) {
-      const url = new URL(window.location.href);
-      url.searchParams.set('status', status);
-      window.location.href = url.toString();
-    }
-    document.addEventListener("DOMContentLoaded", function() {
-      const params = new URL(window.location.href).searchParams;
-      const status = params.get("status") || "ALL";
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        if (btn.dataset.status === status) btn.classList.add("active");
-        else btn.classList.remove("active");
-      });
-      document.querySelectorAll('.tab-table').forEach(table => {
-        if (status === "ALL" || table.dataset.status === status) table.style.display = "";
-        else table.style.display = "none";
-      });
-    });
-  </script>
-</head>
+</style>
 <body>
-<div class="container">
-  <h2>본사입고관리 - 입고현황</h2>
-  <div class="tabs">
-    <button type="button" class="tab-btn" data-status="ALL" onclick="setTab('ALL')">주문전체</button>
-    <button type="button" class="tab-btn" data-status="ING" onclick="setTab('ING')">진행중</button>
-    <button type="button" class="tab-btn" data-status="ORDER" onclick="setTab('ORDER')">발주조회</button>
-    <button type="button" class="tab-btn" data-status="RETURN" onclick="setTab('RETURN')">매장반품조회</button>
-  </div>
+<header th:replace="~{/headOffice/tnb}"></header>
 
-  <!-- 발주현황 테이블 -->
-  <table class="tab-table" data-status="ORDER">
-    <thead>
-    <tr>
-      <th>번호</th>
-      <th>발주번호</th>
-      <th>발주일자</th>
-      <th>발주유형</th>
-      <th>상세</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="purchase, stat : ${purchaseList}">
-      <td th:text="${stat.index + 1}">1</td>
-      <td th:text="${purchase.purchaseNumber}">PO20250613-XXXX</td>
-      <td th:text="${#temporals.format(purchase.orderedDate, 'yyyy-MM-dd HH:mm')}">2025-06-13 12:34</td>
-      <td th:text="${purchase.typeOrder}">발주</td>
-      <td>
-        <a href="#" class="open-detail-btn"
-           th:attr="onclick=|openOrderDetailModal('${purchase.purchaseNumber}')|">
-          상세보기
-        </a>
-      </td>
-    </tr>
-    <tr th:if="${purchaseList == null or #lists.isEmpty(purchaseList)}">
-      <td colspan="5">조회된 주문 내역이 없습니다.</td>
-    </tr>
-    </tbody>
-  </table>
+<div class="section">
+    <div th:replace="~{/headOffice/header}"></div>
 
-  <!-- 반품현황 테이블 -->
-  <table class="tab-table" data-status="RETURN">
-    <thead>
-    <tr>
-      <th>반품번호</th>
-      <th>반품일자</th>
-      <th>반품유형</th>
-      <th>반품사유</th>
-      <th>품목코드</th>
-      <th>품목명</th>
-      <th>반품수량</th>
-      <th>상태</th>
-    </tr>
-    </thead>
-    <tbody>
-    <th:block th:each="returnDto : ${returnList}">
-      <tr th:if="${returnDto.items != null and !#lists.isEmpty(returnDto.items)}">
-        <td th:rowspan="${#lists.size(returnDto.items)}" th:text="${returnDto.returnNumber}"></td>
-        <td th:rowspan="${#lists.size(returnDto.items)}" th:text="${#temporals.format(returnDto.requiredDate, 'yyyy-MM-dd HH:mm')}"></td>
-        <td th:rowspan="${#lists.size(returnDto.items)}" th:text="${returnDto.typeReturn}"></td>
-        <td th:rowspan="${#lists.size(returnDto.items)}" th:text="${returnDto.returnNote}"></td>
-        <td th:text="${returnDto.items[0].itemCode}"></td>
-        <td th:text="${returnDto.items[0].itemName}"></td>
-        <td th:text="${returnDto.items[0].returnQuantity}"></td>
-        <td th:text="${returnDto.items[0].status}"></td>
-      </tr>
-      <tr th:each="item,iterStat : ${returnDto.items}" th:if="${iterStat.index > 0}">
-        <td th:text="${item.itemCode}"></td>
-        <td th:text="${item.itemName}"></td>
-        <td th:text="${item.returnQuantity}"></td>
-        <td th:text="${item.status}"></td>
-      </tr>
-    </th:block>
-    <tr th:if="${returnList == null or #lists.isEmpty(returnList)}">
-      <td colspan="8">조회된 반품 내역이 없습니다.</td>
-    </tr>
-    </tbody>
-  </table>
+    <div class="main-layout">
+        <div th:replace="~{/headOffice/etcLnb::active('receiving','inboundList')}"></div>
 
-  <!-- 모달: 팝업처럼 작동 -->
-  <input type="checkbox" id="purchase-detail-modal-toggle" style="display:none;" />
-  <label class="receiving_modal" for="purchase-detail-modal-toggle">
-    <div class="receiving_modal_content" onclick="event.stopPropagation()">
-      <h2 class="receiving_modal_title">발주 상세내역</h2>
-      <div class="receiving_status_order_check_table_wrap">
-        <table class="receiving_status_order_check_table">
-          <thead>
-          <tr>
-            <th>발주번호</th>
-            <th>품목코드</th>
-            <th>품목명</th>
-            <th>거래처</th>
-            <th>신청수량</th>
-            <th>납기일</th>
-            <th>유통기한</th>
-            <th>상태</th>
-          </tr>
-          </thead>
-          <tbody id="purchaseDetailBody">
-          <!-- JS로 동적 삽입 -->
-          </tbody>
-        </table>
-      </div>
-      <div class="receiving_modal-footer">
-        <label for="purchase-detail-modal-toggle" class="close-btn">닫기</label>
-      </div>
-    </div>
-  </label>
-</div>
+        <div class="container">
+            <h2>본사입고관리 - 입고현황</h2>
+            <div class="tabs">
+                <!--                <button type="button" class="tab-btn" data-status="ALL" onclick="setTab('ALL')">주문전체</button>-->
+                <!--                <button type="button" class="tab-btn" data-status="ING" onclick="setTab('ING')">진행중</button>-->
+                <button type="button" class="tab-btn active" data-status="ORDER" onclick="setTab('ORDER')">발주조회</button>
+                <button type="button" class="tab-btn" data-status="RETURN" onclick="setTab('RETURN')">매장반품조회</button>
+            </div>
 
-<script>
-  function openOrderDetailModal(purchaseNumber) {
-    document.getElementById("purchase-detail-modal-toggle").checked = true;
-    fetch(`/headOffice/order-detail?purchaseNumber=${purchaseNumber}`)
-            .then(res => res.json())
-            .then(data => renderOrderDetail(data))
-            .catch(err => console.error("상세보기 오류", err));
-  }
+            <table class="tab-table" data-status="ORDER">
+                <thead>
+                <tr>
+                    <th>번호</th>
+                    <th>발주번호</th>
+                    <th>발주일자</th>
+                    <th>발주유형</th>
+                    <th>상세</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="purchase, stat : ${purchaseList}">
+                    <td th:text="${stat.index + 1}">1</td>
+                    <td th:text="${purchase.purchaseNumber}">PO20250613-XXXX</td>
+                    <td th:text="${#temporals.format(purchase.orderedDate, 'yyyy-MM-dd HH:mm')}">2025-06-13 12:34</td>
+                    <td th:text="${purchase.typeOrder}">발주</td>
+                    <td>
+                        <a href="#" class="open-detail-btn"
+                           th:attr="onclick=|openOrderDetailModal('${purchase.purchaseNumber}')|">
+                            상세보기
+                        </a>
+                    </td>
+                </tr>
+                <tr th:if="${purchaseList == null or #lists.isEmpty(purchaseList)}">
+                    <td colspan="5">조회된 주문 내역이 없습니다.</td>
+                </tr>
+                </tbody>
+            </table>
 
-  function renderOrderDetail(items) {
-    const tbody = document.getElementById("purchaseDetailBody");
-    tbody.innerHTML = "";
+            <table class="tab-table" data-status="RETURN">
+                <thead>
+                <tr>
+                    <th>반품번호</th>
+                    <th>반품일자</th>
+                    <th>반품유형</th>
+                    <th>반품사유</th>
+                    <th>품목코드</th>
+                    <th>품목명</th>
+                    <th>반품수량</th>
+                    <th>상태</th>
+                </tr>
+                </thead>
+                <tbody>
+                <th:block th:each="returnDto : ${returnList}">
+                    <tr th:if="${returnDto.items != null and !#lists.isEmpty(returnDto.items)}">
+                        <td th:rowspan="${#lists.size(returnDto.items)}" th:text="${returnDto.returnNumber}"></td>
+                        <td th:rowspan="${#lists.size(returnDto.items)}"
+                            th:text="${#temporals.format(returnDto.requiredDate, 'yyyy-MM-dd HH:mm')}"></td>
+                        <td th:rowspan="${#lists.size(returnDto.items)}" th:text="${returnDto.typeReturn}"></td>
+                        <td th:rowspan="${#lists.size(returnDto.items)}" th:text="${returnDto.returnNote}"></td>
+                        <td th:text="${returnDto.items[0].itemCode}"></td>
+                        <td th:text="${returnDto.items[0].itemName}"></td>
+                        <td th:text="${returnDto.items[0].returnQuantity}"></td>
+                        <td th:text="${returnDto.items[0].status}"></td>
+                    </tr>
+                    <tr th:each="item,iterStat : ${returnDto.items}" th:if="${iterStat.index > 0}">
+                        <td th:text="${item.itemCode}"></td>
+                        <td th:text="${item.itemName}"></td>
+                        <td th:text="${item.returnQuantity}"></td>
+                        <td th:text="${item.status}"></td>
+                    </tr>
+                </th:block>
+                <tr th:if="${returnList == null or #lists.isEmpty(returnList)}">
+                    <td colspan="8">조회된 반품 내역이 없습니다.</td>
+                </tr>
+                </tbody>
+            </table>
 
-    if (!items || items.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="8">조회된 항목이 없습니다.</td></tr>';
-      return;
-    }
+            <input type="checkbox" id="purchase-detail-modal-toggle" style="display:none;"/>
+            <label class="receiving_modal" for="purchase-detail-modal-toggle">
+                <div class="receiving_modal_content" onclick="event.stopPropagation()">
+                    <h2 class="receiving_modal_title">발주 상세내역</h2>
+                    <div class="receiving_status_order_check_table_wrap">
+                        <table class="receiving_status_order_check_table">
+                            <thead>
+                            <tr>
+                                <th>발주번호</th>
+                                <th>품목코드</th>
+                                <th>품목명</th>
+                                <th>거래처</th>
+                                <th>신청수량</th>
+                                <th>납기일</th>
+                                <th>유통기한</th>
+                                <th>상태</th>
+                            </tr>
+                            </thead>
+                            <tbody id="purchaseDetailBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="receiving_modal-footer">
+                        <label for="purchase-detail-modal-toggle" class="close-btn">닫기</label>
+                    </div>
+                </div>
+            </label>
+        </div>
 
-    items.forEach(item => {
-      const row = document.createElement("tr");
-      row.innerHTML = `
+        <script>
+            function setTab(status) {
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.classList.toggle("active", btn.dataset.status === status);
+                });
+                document.querySelectorAll('.tab-table').forEach(table => {
+                    table.style.display = table.dataset.status === status ? "" : "none";
+                });
+            }
+
+            document.addEventListener("DOMContentLoaded", function () {
+                const params = new URL(window.location.href).searchParams;
+                const status = params.get("status") || "ORDER"; // 기본값을 ORDER로 설정
+                setTab(status);
+            });
+
+
+            document.addEventListener("DOMContentLoaded", function () {
+                const params = new URL(window.location.href).searchParams;
+                const status = params.get("status") || "ALL";
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.classList.toggle("active", btn.dataset.status === status);
+                });
+                document.querySelectorAll('.tab-table').forEach(table => {
+                    table.style.display = (status === "ALL" || table.dataset.status === status) ? "" : "none";
+                });
+            });
+
+            function openOrderDetailModal(purchaseNumber) {
+                document.getElementById("purchase-detail-modal-toggle").checked = true;
+                fetch(`/headOffice/order-detail?purchaseNumber=${purchaseNumber}`)
+                    .then(res => res.json())
+                    .then(data => renderOrderDetail(data))
+                    .catch(err => console.error("상세보기 오류", err));
+            }
+
+            function renderOrderDetail(items) {
+                const tbody = document.getElementById("purchaseDetailBody");
+                tbody.innerHTML = "";
+                if (!items || items.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8">조회된 항목이 없습니다.</td></tr>';
+                    return;
+                }
+                items.forEach(item => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
         <td>${item.purchaseNumber}</td>
         <td>${item.itemCode}</td>
         <td>${item.itemName}</td>
@@ -213,42 +290,39 @@
         <td>${item.receivedQuantity}</td>
         <td>${item.dueDate}</td>
         <td>${item.expirationDate}</td>
-            <td>
-      <span class="status-text">${item.status}</span>
-      <button class="complete-btn" onclick="markAsCompleted(this)">입고완료</button>
-    </td>
+        <td>
+          <span class="status-text">${item.status}</span>
+          <button class="complete-btn" onclick="markAsCompleted(this)">입고완료</button>
+        </td>
       `;
-      tbody.appendChild(row);
-    });
-  }
+                    tbody.appendChild(row);
+                });
+            }
 
-  function markAsCompleted(button) {
-    const row = button.closest('tr');
-    const purchaseNumber = row.children[0].textContent.trim(); // 1번째 <td>: 발주번호
-    const itemCode = row.children[1].textContent.trim();       // 2번째 <td>: 품목코드
+            function markAsCompleted(button) {
+                const row = button.closest('tr');
+                const purchaseNumber = row.children[0].textContent.trim();
+                const itemCode = row.children[1].textContent.trim();
 
-    fetch('/headOffice/mark-complete', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ purchaseNumber, itemCode })
-    })
-            .then(response => {
-              if (!response.ok) throw new Error("업데이트 실패");
-              return response.text();
-            })
-            .then(() => {
-              row.querySelector('.status-text').textContent = '완료';
-              button.disabled = true;
-              button.textContent = '완료됨';
-            })
-            .catch(err => {
-              alert('입고완료 처리 중 오류 발생');
-              console.error(err);
-            });
-  }
-
-</script>
+                fetch('/headOffice/mark-complete', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({purchaseNumber, itemCode})
+                })
+                    .then(response => {
+                        if (!response.ok) throw new Error("업데이트 실패");
+                        return response.text();
+                    })
+                    .then(() => {
+                        row.querySelector('.status-text').textContent = '완료';
+                        button.disabled = true;
+                        button.textContent = '완료됨';
+                    })
+                    .catch(err => {
+                        alert('입고완료 처리 중 오류 발생');
+                        console.error(err);
+                    });
+            }
+        </script>
 </body>
 </html>

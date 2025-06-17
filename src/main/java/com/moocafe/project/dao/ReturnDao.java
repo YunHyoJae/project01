@@ -1,6 +1,7 @@
 package com.moocafe.project.dao;
 
 import com.moocafe.project.entity.Return;
+import com.moocafe.project.entity.ReturnItem;
 import com.moocafe.project.repository.InventoryStoreRepository;
 import com.moocafe.project.repository.ReturnItemRepository;
 import com.moocafe.project.repository.ReturnRepository;
@@ -23,5 +24,9 @@ public class ReturnDao {
     public void updateReturnStock(String itemCode, int returnQuantity, int storeId) {
         inventoryStoreRepository.increaseHeadOfficeStock(itemCode, returnQuantity);
         inventoryStoreRepository.decreaseStoreStock(itemCode, returnQuantity, storeId);
+    }
+
+    public List<ReturnItem> findByStoreId(int storeId) {
+        return returnItemRepository.findByStoreId(storeId);
     }
 }

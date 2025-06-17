@@ -102,5 +102,10 @@ public class StoreOrderService {
     public List<Object[]> findRecentOrderListByStoreId(Integer storeId) {
         return storeOrderRepository.findRecentOrderListByStoreId(storeId);
     }
+    
+    public StoreOrder findByOrderNumber(String orderNumber) {
+        return storeOrderDao.findByOrderNumber(orderNumber)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 주문번호: " + orderNumber));
+    }
 
 }
