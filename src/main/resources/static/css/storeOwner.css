@@ -743,10 +743,12 @@ body {
   font-size: 18px;
   margin-bottom: 10px;
   color: #000000;
+  gap:10px;
 }
 
 .helpDetail .question-title {
   font-weight: 600;
+  flex:1;
 }
 
 .helpDetail .question-date {
@@ -777,6 +779,7 @@ body {
   line-height: 1.6;
   margin-bottom: 30px;
 }
+.helpDetail .answer-box textarea{border:none;width:100%;min-height:100px;}
 
 .helpDetail .answer-header {
   display: flex;
@@ -818,6 +821,7 @@ body {
 
 .vault-locked{
   margin-left: 10px;
+  vertical-align: baseline;
 }
 
 /*   고객문의 (질문하기)   */

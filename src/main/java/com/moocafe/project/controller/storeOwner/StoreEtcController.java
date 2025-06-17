@@ -51,8 +51,12 @@ public class StoreEtcController {
         return "storeOwner/etcFaqList";
     }
     @GetMapping({"/faqDetail/{id}","/faqDetail/owner/{id}"})
-    public String etcFaqDetail(@PathVariable("id") Integer id, Model model,HttpServletRequest request) {
-        model.addAttribute("content",fs.get(id));
+    public String etcFaqDetail(@PathVariable("id") Integer id, Model model,@AuthenticationPrincipal CustomUserDetails user, HttpServletRequest request) {
+        FaqBoardDto faq = fs.get(id);
+        if (faq.getState().equals("비공개") && !faq.getMemberId().equals(user.getUsername())) {
+            return "redirect:" + request.getHeader("Referer");
+        }
+        model.addAttribute("content",faq);
         String uri = request.getRequestURI();
         boolean isOwner = uri.contains("/owner");
         if (isOwner) {
