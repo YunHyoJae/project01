@@ -115,4 +115,12 @@ public class ReturnService {
     }
 
 
+    @Transactional
+    public void markAsCompleted(Integer id) {
+        ReturnItem returnItem = returnItemDao.findById(id)
+                .orElseThrow(() -> new RuntimeException("해당 반품 항목이 없습니다: " + id));
+        returnItem.setStatus("반품완료");
+        returnItemDao.save(returnItem);
+    }
+
 }
