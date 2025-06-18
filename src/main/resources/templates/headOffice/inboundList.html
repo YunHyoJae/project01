@@ -133,7 +133,7 @@
         <div th:replace="~{/headOffice/etcLnb::active('receiving','inboundList')}"></div>
 
         <div class="container">
-            <h2>본사입고관리 - 입고현황</h2>
+            <h2>입고현황</h2>
             <div class="tabs">
                 <!--                <button type="button" class="tab-btn" data-status="ALL" onclick="setTab('ALL')">주문전체</button>-->
                 <!--                <button type="button" class="tab-btn" data-status="ING" onclick="setTab('ING')">진행중</button>-->
@@ -175,69 +175,76 @@
                 <tr>
                     <th>반품번호</th>
                     <th>반품일자</th>
-                    <th>반품유형</th>
                     <th>반품사유</th>
                     <th>품목코드</th>
                     <th>품목명</th>
                     <th>반품수량</th>
                     <th>상태</th>
+                    <th>완료처리</th>
                 </tr>
                 </thead>
                 <tbody>
                 <th:block th:each="returnDto : ${returnList}">
-                    <tr th:if="${returnDto.items != null and !#lists.isEmpty(returnDto.items)}">
-                        <td th:rowspan="${#lists.size(returnDto.items)}" th:text="${returnDto.returnNumber}"></td>
-                        <td th:rowspan="${#lists.size(returnDto.items)}"
-                            th:text="${#temporals.format(returnDto.requiredDate, 'yyyy-MM-dd HH:mm')}"></td>
-                        <td th:rowspan="${#lists.size(returnDto.items)}" th:text="${returnDto.typeReturn}"></td>
-                        <td th:rowspan="${#lists.size(returnDto.items)}" th:text="${returnDto.returnNote}"></td>
-                        <td th:text="${returnDto.items[0].itemCode}"></td>
-                        <td th:text="${returnDto.items[0].itemName}"></td>
-                        <td th:text="${returnDto.items[0].returnQuantity}"></td>
-                        <td th:text="${returnDto.items[0].status}"></td>
-                    </tr>
-                    <tr th:each="item,iterStat : ${returnDto.items}" th:if="${iterStat.index > 0}">
+                    <tr th:each="item : ${returnDto.items}">
+                        <td th:text="${returnDto.returnNumber}"></td>
+                        <td th:text="${#temporals.format(returnDto.requiredDate, 'yyyy-MM-dd HH:mm')}"></td>
+                        <td th:text="${returnDto.returnNote}"></td>
                         <td th:text="${item.itemCode}"></td>
                         <td th:text="${item.itemName}"></td>
                         <td th:text="${item.returnQuantity}"></td>
                         <td th:text="${item.status}"></td>
+                        <td>
+                            <button type="button"
+                                    th:if="${item.status == '진행중'}"
+                                    th:data-return-number="${returnDto.returnNumber}"
+                                    th:data-item-code="${item.itemCode}"
+                                    class="btn-send">완료처리
+                            </button>
+
+                            <button type="button"
+                                    th:if="${item.status == '반품완료'}"
+                                    class="btn-send" disabled>완료됨
+                            </button>
+
+                        </td>
                     </tr>
                 </th:block>
-                <tr th:if="${returnList == null or #lists.isEmpty(returnList)}">
-                    <td colspan="8">조회된 반품 내역이 없습니다.</td>
-                </tr>
                 </tbody>
-            </table>
-
-            <input type="checkbox" id="purchase-detail-modal-toggle" style="display:none;"/>
-            <label class="receiving_modal" for="purchase-detail-modal-toggle">
-                <div class="receiving_modal_content" onclick="event.stopPropagation()">
-                    <h2 class="receiving_modal_title">발주 상세내역</h2>
-                    <div class="receiving_status_order_check_table_wrap">
-                        <table class="receiving_status_order_check_table">
-                            <thead>
-                            <tr>
-                                <th>발주번호</th>
-                                <th>품목코드</th>
-                                <th>품목명</th>
-                                <th>거래처</th>
-                                <th>신청수량</th>
-                                <th>납기일</th>
-                                <th>유통기한</th>
-                                <th>상태</th>
-                            </tr>
-                            </thead>
-                            <tbody id="purchaseDetailBody"></tbody>
-                        </table>
-                    </div>
-                    <div class="receiving_modal-footer">
-                        <label for="purchase-detail-modal-toggle" class="close-btn">닫기</label>
-                    </div>
-                </div>
-            </label>
         </div>
 
         <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                // 탭 상태 설정
+                const params = new URL(window.location.href).searchParams;
+                const status = params.get("status") || "ORDER";
+
+                setTab(status);
+
+                // 반품 완료 버튼 클릭 이벤트
+                document.querySelectorAll('.btn-send').forEach(btn => {
+                    btn.addEventListener("click", function () {
+                        const returnNumber = this.dataset.returnNumber;
+                        const itemCode = this.dataset.itemCode;
+
+                        fetch('/headOffice/returnComplete', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({returnNumber, itemCode})
+                        })
+                            .then(res => {
+                                if (!res.ok) throw new Error("처리 실패");
+                                return res.text();
+                            })
+                            .then(() => location.reload()) // 새로고침
+                            .catch(err => {
+                                alert("처리 중 오류 발생");
+                                console.error(err);
+                            });
+                    });
+                });
+            });
+
+            // 탭 상태 전환 함수
             function setTab(status) {
                 document.querySelectorAll('.tab-btn').forEach(btn => {
                     btn.classList.toggle("active", btn.dataset.status === status);
@@ -247,24 +254,7 @@
                 });
             }
 
-            document.addEventListener("DOMContentLoaded", function () {
-                const params = new URL(window.location.href).searchParams;
-                const status = params.get("status") || "ORDER"; // 기본값을 ORDER로 설정
-                setTab(status);
-            });
-
-
-            document.addEventListener("DOMContentLoaded", function () {
-                const params = new URL(window.location.href).searchParams;
-                const status = params.get("status") || "ALL";
-                document.querySelectorAll('.tab-btn').forEach(btn => {
-                    btn.classList.toggle("active", btn.dataset.status === status);
-                });
-                document.querySelectorAll('.tab-table').forEach(table => {
-                    table.style.display = (status === "ALL" || table.dataset.status === status) ? "" : "none";
-                });
-            });
-
+            // 발주 상세 보기 모달 열기
             function openOrderDetailModal(purchaseNumber) {
                 document.getElementById("purchase-detail-modal-toggle").checked = true;
                 fetch(`/headOffice/order-detail?purchaseNumber=${purchaseNumber}`)
@@ -273,32 +263,36 @@
                     .catch(err => console.error("상세보기 오류", err));
             }
 
+            // 발주 상세 테이블 그리기
             function renderOrderDetail(items) {
                 const tbody = document.getElementById("purchaseDetailBody");
                 tbody.innerHTML = "";
+
                 if (!items || items.length === 0) {
                     tbody.innerHTML = '<tr><td colspan="8">조회된 항목이 없습니다.</td></tr>';
                     return;
                 }
+
                 items.forEach(item => {
                     const row = document.createElement("tr");
                     row.innerHTML = `
-        <td>${item.purchaseNumber}</td>
-        <td>${item.itemCode}</td>
-        <td>${item.itemName}</td>
-        <td>${item.supplier}</td>
-        <td>${item.receivedQuantity}</td>
-        <td>${item.dueDate}</td>
-        <td>${item.expirationDate}</td>
-        <td>
-          <span class="status-text">${item.status}</span>
-          <button class="complete-btn" onclick="markAsCompleted(this)">입고완료</button>
-        </td>
-      `;
+            <td>${item.purchaseNumber}</td>
+            <td>${item.itemCode}</td>
+            <td>${item.itemName}</td>
+            <td>${item.supplier}</td>
+            <td>${item.receivedQuantity}</td>
+            <td>${item.dueDate}</td>
+            <td>${item.expirationDate}</td>
+            <td>
+                <span class="status-text">${item.status}</span>
+                <button class="complete-btn" onclick="markAsCompleted(this)">입고완료</button>
+            </td>
+        `;
                     tbody.appendChild(row);
                 });
             }
 
+            // 입고완료 처리
             function markAsCompleted(button) {
                 const row = button.closest('tr');
                 const purchaseNumber = row.children[0].textContent.trim();
@@ -323,6 +317,7 @@
                         console.error(err);
                     });
             }
+
         </script>
 </body>
 </html>

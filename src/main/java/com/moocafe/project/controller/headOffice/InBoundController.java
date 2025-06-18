@@ -125,4 +125,19 @@ public class InBoundController {
         return ResponseEntity.ok("OK");
     }
 
+
+    @PostMapping("/returnComplete")
+    @ResponseBody
+    public String completeReturn(@RequestBody Map<String, String> payload) {
+        String returnNumber = payload.get("returnNumber");
+        String itemCode = payload.get("itemCode");
+
+        if (returnNumber == null || itemCode == null) {
+            throw new IllegalArgumentException("반품번호 또는 품목코드 누락");
+        }
+
+        returnService.completeItem(returnNumber, itemCode);
+        return "ok";
+    }
+
 }

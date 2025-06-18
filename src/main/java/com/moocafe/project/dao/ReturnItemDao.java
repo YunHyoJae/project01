@@ -13,15 +13,12 @@ public class ReturnItemDao {
     private final ReturnItemRepository returnItemRepository;
 
     public void saveReturnItem(ReturnItem returnItem) {
-        returnItemRepository.save(returnItem);
+         returnItemRepository.save(returnItem);
     }
 
-    public Optional<ReturnItem> findById(Integer id) {
-        return returnItemRepository.findById(id);
+    // ReturnItemDao
+    public Optional<ReturnItem> findByReturnNumberAndItemCode(String returnNumber, String itemCode) {
+        return returnItemRepository.findByReturnEntity_ReturnNumberAndItem_ItemCode(returnNumber, itemCode);
     }
 
-    public void save(ReturnItem item) {
-        returnItemRepository.save(item);
-
-    }
 }

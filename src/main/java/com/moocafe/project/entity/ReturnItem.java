@@ -1,3 +1,4 @@
+
 package com.moocafe.project.entity;
 
 import jakarta.persistence.*;

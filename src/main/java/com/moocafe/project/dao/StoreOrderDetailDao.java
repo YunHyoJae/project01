@@ -1,6 +1,7 @@
 package com.moocafe.project.dao;
 
 import com.moocafe.project.dto.StoreOrderListResponseDto;
+import com.moocafe.project.entity.Return;
 import com.moocafe.project.entity.StoreOrderDetail;
 import com.moocafe.project.entity.StoreOrderDetailId;
 import com.moocafe.project.repository.StoreOrderDetailRepository;
@@ -34,5 +35,9 @@ public class StoreOrderDetailDao {
 
     public List<Object[]> findOrderListByStoreAndDate(Integer storeId, String startDate, String endDate) {
         return storeOrderDetailRepository.findOrderListByStoreAndDate(storeId, startDate, endDate);
+    }
+
+    public Optional<StoreOrderDetail> findByStoreOrder_idAndItemCode(Long id, String itemCode) {
+        return storeOrderDetailRepository.findByStoreOrder_idAndItemCode(id, itemCode);
     }
 }
