@@ -175,7 +175,6 @@
                 <tr>
                     <th>반품번호</th>
                     <th>반품일자</th>
-                    <th>반품유형</th>
                     <th>반품사유</th>
                     <th>품목코드</th>
                     <th>품목명</th>
@@ -189,7 +188,6 @@
                     <tr th:each="item : ${returnDto.items}">
                         <td th:text="${returnDto.returnNumber}"></td>
                         <td th:text="${#temporals.format(returnDto.requiredDate, 'yyyy-MM-dd HH:mm')}"></td>
-                        <td th:text="${returnDto.typeReturn}"></td>
                         <td th:text="${returnDto.returnNote}"></td>
                         <td th:text="${item.itemCode}"></td>
                         <td th:text="${item.itemName}"></td>
@@ -200,43 +198,45 @@
                                     th:if="${item.status == '진행중'}"
                                     th:data-return-number="${returnDto.returnNumber}"
                                     th:data-item-code="${item.itemCode}"
-                                    class="btn-send">완료처리</button>
+                                    class="btn-send">완료처리
+                            </button>
 
                             <button type="button"
                                     th:if="${item.status == '반품완료'}"
-                                    class="btn-send" disabled>완료됨</button>
+                                    class="btn-send" disabled>완료됨
+                            </button>
                         </td>
                     </tr>
                 </th:block>
+                </tbody>
 
 
-
-                <input type="checkbox" id="purchase-detail-modal-toggle" style="display:none;"/>
-            <label class="receiving_modal" for="purchase-detail-modal-toggle">
-                <div class="receiving_modal_content" onclick="event.stopPropagation()">
-                    <h2 class="receiving_modal_title">발주 상세내역</h2>
-                    <div class="receiving_status_order_check_table_wrap">
-                        <table class="receiving_status_order_check_table">
-                            <thead>
-                            <tr>
-                                <th>발주번호</th>
-                                <th>품목코드</th>
-                                <th>품목명</th>
-                                <th>거래처</th>
-                                <th>신청수량</th>
-                                <th>납기일</th>
-                                <th>유통기한</th>
-                                <th>상태</th>
-                            </tr>
-                            </thead>
-                            <tbody id="purchaseDetailBody"></tbody>
-                        </table>
-                    </div>
-                    <div class="receiving_modal-footer">
-                        <label for="purchase-detail-modal-toggle" class="close-btn">닫기</label>
-                    </div>
-                </div>
-            </label>
+<!--                <input type="checkbox" id="purchase-detail-modal-toggle" style="display:none;"/>-->
+<!--                <label class="receiving_modal" for="purchase-detail-modal-toggle">-->
+<!--                    <div class="receiving_modal_content" onclick="event.stopPropagation()">-->
+<!--                        <h2 class="receiving_modal_title">발주 상세내역</h2>-->
+<!--                        <div class="receiving_status_order_check_table_wrap">-->
+<!--                            <table class="receiving_status_order_check_table">-->
+<!--                                <thead>-->
+<!--                                <tr>-->
+<!--                                    <th>발주번호</th>-->
+<!--                                    <th>품목코드</th>-->
+<!--                                    <th>품목명</th>-->
+<!--                                    <th>거래처</th>-->
+<!--                                    <th>신청수량</th>-->
+<!--                                    <th>납기일</th>-->
+<!--                                    <th>유통기한</th>-->
+<!--                                    <th>상태</th>-->
+<!--                                </tr>-->
+<!--                                </thead>-->
+<!--                                <tbody id="purchaseDetailBody"></tbody>-->
+<!--                            </table>-->
+<!--                        </div>-->
+<!--                        <div class="receiving_modal-footer">-->
+<!--                            <label for="purchase-detail-modal-toggle" class="close-btn">닫기</label>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </label>-->
         </div>
 
         <script>
@@ -334,8 +334,8 @@
 
                         fetch('/headOffice/returnComplete', {
                             method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ returnNumber, itemCode })
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({returnNumber, itemCode})
                         })
                             .then(res => {
                                 if (!res.ok) throw new Error("처리 실패");

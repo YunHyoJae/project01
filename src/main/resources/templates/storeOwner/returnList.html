@@ -54,42 +54,8 @@
                     </th:block>
                     </tbody>
                 </table>
-
                 <button type="submit">반품신청</button>
             </form>
-
-
-
-
-
-
-            <!-- 테이블 -->
-<!--            <table class="return_Inquiry_table">-->
-<!--                <thead>-->
-<!--                <tr>-->
-<!--                    <th>반품번호</th>-->
-<!--                    <th>반품신청일</th>-->
-<!--                    <th>품목</th>-->
-<!--                    <th>반품수량</th>-->
-<!--                    <th>상태</th>-->
-<!--                </tr>-->
-<!--                </thead>-->
-<!--                <tbody>-->
-<!--                <th:block th:each="return : ${returnList}">-->
-<!--                    <th:block th:each="item : ${return.items}">-->
-<!--                        <tr th:attr="data-status=${item.status}">-->
-<!--                            <td th:text="${return.returnNumber}">반품번호</td>-->
-<!--                            <td th:text="${#temporals.format(return.requiredDate, 'yyyy-MM-dd')}">반품신청일</td>-->
-<!--                            <td th:text="${item.itemName}">품목</td>-->
-<!--                            <td th:text="${item.returnQuantity}">반품수량</td>-->
-<!--                            <td th:text="${item.status}">상태</td>-->
-<!--                        </tr>-->
-<!--                    </th:block>-->
-<!--                </th:block>-->
-<!--                </tbody>-->
-
-
-
 
                 <!-- 페이징 -->
                 <div class="pagination">

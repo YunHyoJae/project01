@@ -70,7 +70,7 @@ StoreReturnController {
 
         log.info("반품 완료 처리 요청 - returnNumber: {}, itemCode: {}", returnNumber, itemCode);
 
-        returnService.completeItem(returnNumber, itemCode);  // 서비스 호출
+        returnService.completeItem(returnNumber, itemCode);
 
         return "ok";
     }

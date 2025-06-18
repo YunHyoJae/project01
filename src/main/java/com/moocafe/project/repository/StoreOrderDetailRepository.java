@@ -56,4 +56,6 @@ public interface StoreOrderDetailRepository extends JpaRepository<StoreOrderDeta
             @Param("itemCode") String itemCode,
             @Param("status") String status
     );
+
+
 }
