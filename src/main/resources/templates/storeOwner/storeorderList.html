@@ -1,6 +1,58 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{/storeOwner/meta::myHead('주문현황')}"></head>
+<style>
+  .btn-return,
+  .btn-remove{
+    background-color: #e6f0ff;   /* 옅은 파랑 */
+    color: #004a99;              /* 짙은 파랑 텍스트 */
+    border: 1px solid #b3d1ff;   /* 파란 테두리 */
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s, box-shadow 0.2s;
+  }
+
+  .btn-return:hover,
+  .btn-remove:hover:hover {
+    background-color: #cce0ff;   /* 살짝 더 진한 파랑 */
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  }
+  .submit-return-btn {
+    background-color: #0055ff;     /* 진한 파랑 */
+    color: #fff;                   /* 흰 글씨 */
+    border: none;
+    padding: 7px 16px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s, box-shadow 0.2s;
+  }
+  .submit-return-btn:hover {
+    background-color: #0041cc;     /* hover 시 살짝 더 진하게 */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  }
+  textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    font-family: 'Malgun Gothic', sans-serif;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+    resize: none; /* ✅ 크기 고정 (화살표 제거됨) */
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  textarea:focus {
+    border-color: #0055ff;
+    box-shadow: 0 0 4px rgba(0, 85, 255, 0.2);
+    outline: none;
+    background-color: #fff;
+  }
+</style>
 <body>
 <header th:replace="~{/storeOwner/tnb}"></header>
 <div class="section">
@@ -44,7 +96,7 @@
               <td>
                 <button type="button"
                         th:if="${order.status == '출고완료'}"
-                        onclick="addToReturnList(this)" class="return-btn">반품</button>
+                        onclick="addToReturnList(this)" class="btn-return">반품</button>
               </td>
             </tr>
             </tbody>
@@ -126,7 +178,7 @@
       <td>
         <input type="number" name="items[${returnIndex}].returnQuantity" value="${quantity}" min="1" max="${quantity}" />
       </td>
-      <td><button type="button" onclick="removeRow(this)">삭제</button></td>
+      <td><button class="btn-remove" type="button" onclick="removeRow(this)">삭제</button></td>
     `;
     returnIndex++;
   }
