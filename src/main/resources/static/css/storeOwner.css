@@ -25,6 +25,7 @@ body {
   align-items: center;
   border-radius: 20px 20px 0 0;
   height: 50px;
+  min-width:1240px;
 }
 
 .left {
@@ -99,6 +100,7 @@ body {
   border: 0.5px solid rgb(201, 201, 201);
   border-radius: 0 0 20px 20px;
   overflow: hidden;
+  min-width:1278px;
 }
 
 /*    전체 레이아웃     */
@@ -167,6 +169,7 @@ body {
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   position: relative;
+  flex:1;
 }
 
 .content h2 {

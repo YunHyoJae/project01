@@ -91,7 +91,7 @@
                             <h4>전체 매출</h4>
                             <span><a href="/headOffice/salesList" class="moreLink">더보기</a></span>
                         </div>
-                        <div style="margin-bottom:1em;">
+                        <div class="btnsWrap">
                             <button id="btnYear" class="chart-toggle-btn" style="font-weight:bold;">금년</button>
                             <button id="btnThisMonth" class="chart-toggle-btn">금월</button>
                             <button id="btnPrevMonth" class="chart-toggle-btn">전월</button>
@@ -111,8 +111,8 @@
                                 <span><a href="/headOffice/inboundList" class="moreLink">더보기</a></span>
                             </div>
 
-                            <div class="boxContent outbound-scroll">
-                                <ul>
+                            <div class="notice_wrap">
+                                <ul class="franchise_notice">
                                     <li th:each="item : ${recentPurchaseItems}">
                                         <!--                <span th:text="${item.itemCode}"></span>-->
                                         <span th:text="${item.itemName}"></span>
@@ -132,8 +132,8 @@
                                 <h4>출고현황</h4>
                                 <span><a href="/headOffice/outboundManagement" class="moreLink">더보기</a></span>
                             </div>
-                            <div class="boxContent outbound-scroll">
-                                <ul>
+                            <div class="notice_wrap">
+                                <ul class="franchise_notice">
                                     <li th:each="o : ${recentOutbounds}">
                                         <span th:text="${o.storeName}"></span>
                                         <span th:if="${o.itemName != null}" th:text="' | ' + ${o.itemName}"></span>

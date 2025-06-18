@@ -1,6 +1,7 @@
 package com.moocafe.project.service;
 
 import com.moocafe.project.dao.OutBoundDao;
+import com.moocafe.project.dao.OutBoundInventoryStoreDao;
 import com.moocafe.project.dao.OutBoundItemDao;
 import com.moocafe.project.dto.OutBoundListResponseDto;
 import com.moocafe.project.entity.InventoryStore;
@@ -28,6 +29,7 @@ public class OutBoundService {
     private final OutBoundRepository outBoundRepository;
     private final StoreOrderDetailRepository storeOrderDetailRepository;
     private final InventoryStoreRepository inventoryStoreRepository;
+    private final OutBoundInventoryStoreDao oInventoryStoreDao;
 
     @Transactional
     public void completeOutBound(Integer outBoundId, String status) {
@@ -85,7 +87,8 @@ public class OutBoundService {
             }
 
             if ("출고완료".equals(status)) {
-                inventoryStoreRepository.decreaseStock(1, itemCode, qty);
+                //inventoryStoreRepository.decreaseStock(1, itemCode, qty);
+                oInventoryStoreDao.decreaseStock(itemCode, outBoundId);
 
                 List<InventoryStore> storeStockList = inventoryStoreRepository
                         .findByItemCodeAndStoreId(itemCode, origin.getStoreId());
@@ -103,7 +106,8 @@ public class OutBoundService {
                     storeInventory.updateCount(storeInventory.getCount() + qty, now);
                 }
 
-                inventoryStoreRepository.save(storeInventory);
+                //inventoryStoreRepository.save(storeInventory);
+                oInventoryStoreDao.save(storeInventory);
             }
         }
         outBoundDao.save(updated);
