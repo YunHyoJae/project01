@@ -22,6 +22,7 @@ body {
   align-items: center;
   border-radius: 20px 20px 0 0;
   height: 50px;
+  min-width:1240px;
 }
 
 .left {
@@ -97,6 +98,7 @@ body {
   border: 0.5px solid rgb(201, 201, 201);
   border-radius: 0 0 20px 20px;
   overflow: hidden;
+  min-width:1278px;
 }
 
 /* 전체 레이아웃 */
@@ -167,6 +169,7 @@ body {
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   position: relative;
+  flex:1;
 }
 
 .content h2 {
@@ -1135,7 +1138,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  position: absolute; top: 10px;
+  position: absolute; top: 18px;
 }
 .headOfficeMain .sales .cont_top {
   width: 95%;
@@ -1153,9 +1156,10 @@ body {
   overflow: hidden;
 }
 .headOfficeMain .notice_wrap {
-  width: 100%; height: 75%;
-  margin-top: 40px;
-  overflow-y: scroll;
+  width: 100%; height: 70%;
+  margin-top: 50px;
+  overflow-y: auto;
+  overflow-x:hidden;
 }
 .headOfficeMain .stock_notice {
   list-style: disc;
@@ -1194,9 +1198,13 @@ body {
 
 /* 전체매출 */
 .headOfficeMain .chart_wrap {
-  width: 80%; height: 95%;
+  width: 80%; height: 80%;
   margin: 0 auto;
 }
+.headOfficeMain .chart_wrap canvas{
+  width: 100%;
+}
+.headOfficeMain .btnsWrap{position:absolute;top:50px;left:20px;}
 
 /* 공통 css */
 .headOfficeMain input {

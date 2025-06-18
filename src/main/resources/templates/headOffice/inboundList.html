@@ -132,8 +132,8 @@
     <div class="main-layout">
         <div th:replace="~{/headOffice/etcLnb::active('receiving','inboundList')}"></div>
 
-        <div class="container">
-            <h2>본사입고관리 - 입고현황</h2>
+        <div class="content">
+            <h2>입고현황</h2>
             <div class="tabs">
                 <!--                <button type="button" class="tab-btn" data-status="ALL" onclick="setTab('ALL')">주문전체</button>-->
                 <!--                <button type="button" class="tab-btn" data-status="ING" onclick="setTab('ING')">진행중</button>-->
@@ -224,7 +224,7 @@
                                 <th>신청수량</th>
                                 <th>납기일</th>
                                 <th>유통기한</th>
-                                <th>상태</th>
+                                <!--th>상태</th-->
                             </tr>
                             </thead>
                             <tbody id="purchaseDetailBody"></tbody>
@@ -290,11 +290,11 @@
         <td>${item.receivedQuantity}</td>
         <td>${item.dueDate}</td>
         <td>${item.expirationDate}</td>
-        <td>
+      `;
+        /*<td>
           <span class="status-text">${item.status}</span>
           <button class="complete-btn" onclick="markAsCompleted(this)">입고완료</button>
-        </td>
-      `;
+        </td>*/
                     tbody.appendChild(row);
                 });
             }
