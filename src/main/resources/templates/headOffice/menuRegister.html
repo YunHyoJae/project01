@@ -1,26 +1,29 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <title>메뉴 등록</title>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{/headOffice/meta::myHead('메뉴등록')}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>메뉴등록</title>
+    <link rel="stylesheet" href="/css/headOffice.css">
+</head>
 
 
-  <script th:inline="javascript">
+<script th:inline="javascript">
     const itemList = /*[[${itemList}]]*/ [];
-  </script>
+</script>
 
-  <script>
+<script>
     function addItemRow() {
-      const container = document.getElementById("itemContainer");
-      const newRow = document.createElement("div");
-      const index = container.children.length;
+        const container = document.getElementById("itemContainer");
+        const newRow = document.createElement("div");
+        const index = container.children.length;
 
-      let options = '<option value="">-- 선택 --</option>';
-      for (const item of itemList) {
-        options += `<option value="${item.itemCode}">${item.itemCode} - ${item.itemName}</option>`;
-      }
+        let options = '<option value="">-- 선택 --</option>';
+        for (const item of itemList) {
+            options += `<option value="${item.itemCode}">${item.itemCode} - ${item.itemName}</option>`;
+        }
 
-      newRow.innerHTML = `
+        newRow.innerHTML = `
       <div style="margin-bottom: 10px;">
         <label>품목:</label>
         <select name="menuItems[${index}].itemCode" required>
@@ -31,72 +34,91 @@
         <button type="button" onclick="this.parentElement.remove()">삭제</button>
       </div>
     `;
-      container.appendChild(newRow);
+        container.appendChild(newRow);
     }
-  </script>
+</script>
 
-  <script>
+<script>
     function checkMenuId() {
-      const menuIdInput = document.querySelector('input[name="menuId"]');
-      const menuId = menuIdInput.value.trim();
-      if (!menuId) {
-        alert("메뉴 ID를 입력하세요.");
-        return;
-      }
+        const menuIdInput = document.querySelector('input[name="menuId"]');
+        const menuId = menuIdInput.value.trim();
+        if (!menuId) {
+            alert("메뉴 ID를 입력하세요.");
+            return;
+        }
 
-      fetch(`/headOffice/checkMenuId?menuId=${encodeURIComponent(menuId)}`)
-              .then(response => response.text())
-              .then(result => {
+        fetch(`/headOffice/checkMenuId?menuId=${encodeURIComponent(menuId)}`)
+            .then(response => response.text())
+            .then(result => {
                 if (result === "available") {
-                  alert("사용 가능한 메뉴 ID입니다.");
-                  isMenuIdChecked = true;
+                    alert("사용 가능한 메뉴 ID입니다.");
+                    isMenuIdChecked = true;
                 } else {
-                  alert("이미 사용 중인 메뉴 ID입니다.");
-                  menuIdInput.focus();
+                    alert("이미 사용 중인 메뉴 ID입니다.");
+                    menuIdInput.focus();
                 }
-              })
-              .catch(error => {
+            })
+            .catch(error => {
                 console.error("중복 확인 오류:", error);
                 alert("오류가 발생했습니다.");
-              });
+            });
     }
 
     function validateForm() {
-      if (!isMenuIdChecked) {
-        alert("메뉴 ID 중복 체크를 해주세요.");
-        return false;
-      }
-      return true;
+        if (!isMenuIdChecked) {
+            alert("메뉴 ID 중복 체크를 해주세요.");
+            return false;
+        }
+        return true;
     }
-  </script>
-</head>
+</script>
 <body>
-<h2>메뉴 등록</h2>
 
-<form th:action="@{/headOffice/menuRegister}" th:object="${menuWrapper}" method="post" onsubmit="return validateForm()">
-  <div>
-    <label>메뉴 ID:</label>
-    <input type="text" name="menuId" th:field="*{menuId}" required />
-    <button type="button" onclick="checkMenuId()">중복 체크</button>
-  </div>
-  <div>
-    <label>메뉴 이름:</label>
-    <input type="text" th:field="*{menuName}" required />
-  </div>
-  <div>
-    <label>메뉴 가격:</label>
-    <input type="number" th:field="*{menuPrice}" required />
-  </div>
+<header th:replace="~{/headOffice/tnb}"></header>
+<div class="section">
+    <div th:replace="~{/headOffice/header}"></div>
+    <div class="main-layout">
+        <div th:replace="~{/headOffice/etcLnb::active('inventory','menuRegister')}"></div>
+        <div class="content">
 
-  <hr/>
-  <h3>사용 품목 추가</h3>
-  <div id="itemContainer">
-    <!-- 동적 품목 행 -->
-  </div>
-  <button type="button" onclick="addItemRow()">+ 품목 추가</button>
 
-  <br/><br/>
-  <button type="submit">등록</button>
-</form>
+            <div class="newMenu">
+                <h2>메뉴 등록</h2>
+
+                <form class="menu-form" th:action="@{/headOffice/menuRegister}" th:object="${menuWrapper}" method="post"
+                      onsubmit="return validateForm()">
+                    <div class="form-row">
+                        <label>메뉴 ID:</label>
+                        <input type="text" name="menuId" th:field="*{menuId}" required/>
+                        <button type="button" onclick="checkMenuId()">중복확인</button>
+                    </div>
+
+                    <div class="form-row">
+                        <label>메뉴 이름:</label>
+                        <input type="text" th:field="*{menuName}" required/>
+                    </div>
+
+                    <div class="form-row">
+                        <label>메뉴 가격:</label>
+                        <input type="number" th:field="*{menuPrice}" required/>
+                    </div>
+
+                    <!-- 품목코드와 사용량 입력 필드가 추가될 item-container -->
+                    <div class="item-container">
+                        <div class="form-row item-row">
+                            <h2>사용 품목 추가</h2>
+                            <div id="itemContainer" style="margin-top: 10px">
+                            </div>
+                            <button type="button" onclick="addItemRow()">+ 품목 추가</button>
+                            <br/><br/>
+                            <button type="submit">등록</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

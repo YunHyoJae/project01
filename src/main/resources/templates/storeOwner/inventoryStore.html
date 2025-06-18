@@ -90,6 +90,7 @@
                         <th>품목코드</th>
                         <th>품목명</th>
                         <th th:text="${store.name}">매장명</th>
+                        <th>한달필요재고</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -104,13 +105,14 @@
                         </td>
                         <td th:text="${row.itemCode}">품목코드</td>
                         <td th:text="${row.itemName}">품목명</td>
-                        <td th:text="${row.getStockByStoreId(store.id)} + ' / 필요:' + ${row.getNeededRoundedByStoreId(store.id)}"
+                        <td th:text="${row.getStockByStoreId(store.id)}"
                             th:class="'stock-cell ' + ${row.getStockCssClass(store.id)}"
                             th:attr="data-item-code=${row.itemCode},
                data-needed=${(row.getNeededRoundedByStoreId(store.id) - row.getStockByStoreId(store.id)) > 0
                              ? (row.getNeededRoundedByStoreId(store.id) - row.getStockByStoreId(store.id))
                              : 0}">
                         </td>
+                        <td th:text="${row.getNeededRoundedByStoreId(store.id)}">필요재고</td>
                     </tr>
                     </tbody>
                 </table>

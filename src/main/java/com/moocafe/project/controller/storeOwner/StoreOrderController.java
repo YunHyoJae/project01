@@ -211,24 +211,32 @@ public String showOrderForm(
         return ResponseEntity.ok("주문성공");
     }
 
+    //강동현 추가부분
     @GetMapping("/storeOrder/itemInfo")
     @ResponseBody
     public ResponseEntity<ItemSearchDto> getItemInfo(@RequestParam String itemCode) {
+        log.info("Fetching item info for itemCode: {}", itemCode);
+
         Optional<InventoryItem> itemOpt = inventoryStoreService.findInventoryItemByItemCode(itemCode);
         if (itemOpt.isEmpty()) {
+            log.warn("No item found for itemCode: {}", itemCode);
             return ResponseEntity.notFound().build();
         }
 
         InventoryItem item = itemOpt.get();
         int stockQty = inventoryStoreService.findQuantityByStoreIdAndItemCode(1, itemCode);
 
+        log.info("Item found: {}, stockQty: {}", item, stockQty);
+
         ItemSearchDto dto = new ItemSearchDto(
                 item.getItemCode(),
                 item.getItemName(),
                 item.getItemPrice(),
-                stockQty);
+                stockQty
+        );
         return ResponseEntity.ok(dto);
     }
+    //강동현 추가부분
 
 //    @GetMapping("/storeOrderList")
 //    @ResponseBody
