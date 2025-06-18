@@ -24,10 +24,10 @@
         text-align: center;
     }
 
-    .table-viewport {
+    .table-viewport2 {
         width: 100%;
         max-height: 480px; /* 필요에 따라 높이 조정 */
-        overflow-x: auto; /* 가로 스크롤 허용 */
+        overflow-x: scroll;
         overflow-y: auto; /* 세로 스크롤 허용 */
         border-radius: 10px;
         display: block;
@@ -39,40 +39,74 @@
         min-width: 1200px; /* 테이블 최소 너비 설정 */
         max-width: none; /* 최대 너비 제한 해제 */
         table-layout: fixed; /* 테이블 너비 고정 */
+        margin-bottom: 0;
     }
 
     .stock-table2 thead th {
         position: sticky;
-        top: 0;
-        z-index: 100;
         background-color: #F0F0F0;
         white-space: nowrap; /* 매장명이 줄바꿈되지 않도록 */
     }
 
     .stock-table2 th, .stock-table2 td {
-        min-width: 100px; /* 각 셀의 최소 너비 설정 */
-        max-width: 200px; /* 각 셀의 최대 너비 설정 */
+        min-width: 150px;
+        max-width: 200px;
         text-align: center;
+        padding: 8px;
     }
 
+    .stock-table2 thead th {
+        position: sticky !important; /* 우선순위 강화 */
+        top: 0 !important;
+        z-index: 100 !important;
+        background-color: #F0F0F0 !important;
+        white-space: nowrap !important; /* 텍스트 줄바꿈 방지 */
+    }
 
     .stock-table2 th:first-child,
     .stock-table2 td:first-child {
         position: sticky;
-        left: 0;
-        z-index: 11; /* 헤더 위에 있어야 해서 더 높게 */
     }
+
     .stock-table2 th:nth-child(2),
     .stock-table2 td:nth-child(2) {
         position: sticky;
-        left: 80px;
-        z-index: 11;
     }
+
     .stock-table2 th:nth-child(3),
     .stock-table2 td:nth-child(3) {
         position: sticky;
-        left: 200px;
-        z-index: 11;
+    }
+
+    .table-wrapper {
+        display: flex;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .fixed-table {
+        flex: 0 0 300px;
+        background-color: #f9f9f9;
+        border-right: 1px solid #ccc;
+    }
+
+    .scrollable-table {
+        overflow-x: auto;
+        width: 100%;
+    }
+
+    .fixed-table table,
+    .scrollable-table table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    th, td {
+        padding: 8px;
+        border: 1px solid #ccc;
+        text-align: center;
+        white-space: nowrap;
     }
 
 
@@ -120,32 +154,75 @@
 
                 <!-- 🔽 테이블 -->
 
-                <div class="table-viewport">
-                    <table class="stock-table2">
-                        <thead>
-                        <tr>
-                            <th>품목코드</th>
-                            <th>품목명</th>
-                            <!-- 각 매장명을 반복적으로 열로 출력 -->
-                            <th th:each="store : ${storeList}" th:text="${store.name}">매장명</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="row : ${pivotList}">
-                            <td th:text="${row.itemCode}"></td>
-                            <td th:text="${row.itemName}"></td>
-                            <!-- 각 매장에 대한 재고 수량 출력 -->
-                            <td th:each="store : ${storeList}"
-                                th:text="${row.getStockByStoreId(store.id)}"
-                                th:class="${row.getStockCssClass(store.id)}">
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
+                <!--                <div class="table-viewport2">-->
+                <!--                    <table class="stock-table2">-->
+                <!--                        <thead>-->
+                <!--                        <tr>-->
+                <!--                            <th>품목코드</th>-->
+                <!--                            <th>품목명</th>-->
+                <!--                            &lt;!&ndash; 각 매장명을 반복적으로 열로 출력 &ndash;&gt;-->
+                <!--                            <th th:each="store : ${storeList}" th:text="${store.name}">매장명</th>-->
+                <!--                        </tr>-->
+                <!--                        </thead>-->
+
+                <!--                        <tbody>-->
+                <!--                        <tr th:each="row : ${pivotList}">-->
+                <!--                            <td th:text="${row.itemCode}"></td>-->
+                <!--                            <td th:text="${row.itemName}"></td>-->
+                <!--                            &lt;!&ndash; 각 매장에 대한 재고 수량 출력 &ndash;&gt;-->
+                <!--                            <td th:each="store : ${storeList}"-->
+                <!--                                th:text="${row.getStockByStoreId(store.id)}"-->
+                <!--                                th:class="${row.getStockCssClass(store.id)}">-->
+                <!--                            </td>-->
+                <!--                        </tr>-->
+                <!--                        </tbody>-->
+                <!--                    </table>-->
+                <div class="table-wrapper">
+                    <!-- 왼쪽 고정 열 -->
+                    <div class="fixed-table">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>품목코드</th>
+                                <th>품목명</th>
+                                <th>본사</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="row : ${pivotList}">
+                                <td th:text="${row.itemCode}"></td>
+                                <td th:text="${row.itemName}"></td>
+                                <td th:text="${row.getStockByStoreId(1)}"></td> <!-- 101 = 본사 -->
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- 오른쪽 가변 열 (매장별 재고) -->
+                    <div class="scrollable-table">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th th:each="store : ${storeList}" th:if="${store.id != 1}"
+                                    th:text="${store.name}"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="row : ${pivotList}">
+                                <td th:each="store : ${storeList}" th:if="${store.id != 1}"
+                                    th:text="${row.getStockByStoreId(store.id)}"
+                                    th:class="${row.getStockCssClass(store.id)}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+
+
             </div>
         </div>
     </div>
+</div>
 </div>
 </body>
 </html>
