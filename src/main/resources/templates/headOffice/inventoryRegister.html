@@ -1,81 +1,137 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <title>기초 품목 등록</title>
-  <script>
-    function checkDuplicateCode() {
-      const code = document.getElementById('itemCode').value;
-      if (!code) return;
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{/headOffice/meta::myHead('기초품목등록')}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>기초품목등록</title>
+    <link rel="stylesheet" href="/css/headOffice.css">
+</head>
 
-      fetch(`/headOffice/check-code?itemCode=${code}`)
-              .then(response => response.json())
-              .then(data => {
+<script>
+    function checkDuplicateCode() {
+        const code = document.getElementById('itemCode').value;
+        if (!code) return;
+
+        fetch(`/headOffice/check-code?itemCode=${code}`)
+            .then(response => response.json())
+            .then(data => {
                 const result = document.getElementById('duplicateResult');
                 const submitBtn = document.getElementById('submitBtn');
                 if (data.exists) {
-                  result.innerText = "이미 사용 중인 코드입니다.";
-                  result.style.color = "red";
-                  submitBtn.disabled = true;
+                    result.innerText = "이미 사용 중인 코드입니다.";
+                    result.style.color = "red";
+                    submitBtn.disabled = true;
                 } else {
-                  result.innerText = "사용 가능한 코드입니다.";
-                  result.style.color = "green";
-                  submitBtn.disabled = false;
+                    result.innerText = "사용 가능한 코드입니다.";
+                    result.style.color = "green";
+                    submitBtn.disabled = false;
                 }
-              })
-              .catch(() => alert('서버 오류가 발생했습니다.'));
+            })
+            .catch(() => alert('서버 오류가 발생했습니다.'));
     }
-  </script>
-</head>
+
+    function toggleCustomUnit() {
+        const select = document.getElementById("unitSelect");
+        const customInput = document.getElementById("itemStandardInput");
+        if (select.value === "custom") {
+            customInput.readOnly = false;
+            customInput.value = ""; // 선택시 자동으로 비움(원하는 동작에 따라)
+            customInput.placeholder = "단위를 직접 입력하세요";
+            customInput.focus();
+        } else {
+            customInput.readOnly = true;
+            customInput.value = select.value; // 선택값을 입력란에 자동반영
+            customInput.placeholder = "";
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const select = document.getElementById("unitSelect");
+        toggleCustomUnit(); // 초기상태 반영
+        select.addEventListener("change", toggleCustomUnit);
+    });
+</script>
+
+
 <body>
-<div class="container">
-  <h2>기초 품목 등록</h2>
-  <form th:action="@{/headOffice/inventoryRegister}" method="post" th:object="${inventoryItem}">
-    <div>
-      <label>품목코드</label>
-      <input type="text" th:field="*{itemCode}" id="itemCode" required>
-      <button type="button" onclick="checkDuplicateCode()">중복확인</button>
-      <div id="duplicateResult"></div>
-    </div>
 
-    <div>
-      <label>품목명</label>
-      <input type="text" th:field="*{itemName}" required>
-    </div>
+<header th:replace="~{/headOffice/tnb}"></header>
+<div class="section">
+    <div th:replace="~{/headOffice/header}"></div>
+    <div class="main-layout">
+        <div th:replace="~{/headOffice/etcLnb::active('inventory','inventoryRegister')}"></div>
+        <div class="content">
 
-    <div>
-      <label>품목그룹</label>
-      <label><input type="radio" th:field="*{itemGroup}" value="본사관리"> 본사관리</label>
-      <label><input type="radio" th:field="*{itemGroup}" value="매장관리"> 매장관리</label>
-      <label><input type="radio" th:field="*{itemGroup}" value="관리"> 관리</label>
-    </div>
 
-    <div>
-      <label>단위</label>
-      <input type="text" th:field="*{itemStandard}">
-    </div>
+            <div class="newProduct">
+                <h2>기초 품목 등록</h2>
+                <form th:action="@{/headOffice/inventoryRegister}" method="post" th:object="${inventoryItem}">
 
-    <div>
-      <label>단가</label>
-      <input type="number" th:field="*{itemPrice}">
-    </div>
 
-    <div>
-      <label>품목구분</label>
-      <label><input type="radio" th:field="*{itemClass}" value="원재료"> 원재료</label>
-      <label><input type="radio" th:field="*{itemClass}" value="부재료"> 부재료</label>
-      <label><input type="radio" th:field="*{itemClass}" value="자재"> 자재</label>
-    </div>
+                    <div class="row">
+                        <label>품목코드</label>
+                        <input type="text" th:field="*{itemCode}" id="itemCode" required>
+                        <button type="button" onclick="checkDuplicateCode()">중복확인</button>
+                        <div id="duplicateResult"></div>
+                    </div>
 
-    <div>
-      <label>유통기한</label>
-      <input type="date" th:field="*{expirationDate}">
-    </div>
+                    <div class="row">
+                        <label class="label-itemName">품목명
+                            <input type="text" th:field="*{itemName}" required>
+                        </label>
+                    </div>
 
-    <div>
-      <button type="submit" id="submitBtn" disabled>등록</button>
+                    <div class="group-row">
+                        <span class="group-label">품목그룹</span>
+                        <label><input type="radio" th:field="*{itemGroup}" value="본사관리"> 본사관리</label>
+                        <label><input type="radio" th:field="*{itemGroup}" value="매장관리"> 매장관리</label>
+                        <label><input type="radio" th:field="*{itemGroup}" value="관리"> 관리</label>
+                    </div>
+
+                    <div class="unit-form">
+                        <label for="unitSelect">단위
+                            <select id="unitSelect" name="unit">
+                                <option value="">-- 단위를 선택하세요 --</option>
+                                <option value="EA">EA</option>
+                                <option value="박스">박스</option>
+                                <option value="kg">kg</option>
+                                <option value="g">g</option>
+                                <option value="L">L</option>
+                                <option value="ml">ml</option>
+                                <option value="봉지">봉지</option>
+                                <option value="묶음">묶음</option>
+                                <option value="custom">직접 입력</option>
+                            </select>
+                            <input type="text" th:field="*{itemStandard}" id="itemStandardInput" readonly>
+                        </label>
+                    </div>
+
+                    <div>
+                        <label class="label-gap">단가
+                        <input type="number" th:field="*{itemPrice}">
+                        </label>
+                    </div>
+
+                    <div class="type-row">
+                        <label>품목구분</label>
+                        <label><input type="radio" th:field="*{itemClass}" value="원재료"> 원재료</label>
+                        <label><input type="radio" th:field="*{itemClass}" value="부재료"> 부재료</label>
+                        <label><input type="radio" th:field="*{itemClass}" value="자재"> 자재</label>
+                    </div>
+                    <br>
+                    <div>
+                        <label>유통기한</label>
+                        <input type="date" th:field="*{expirationDate}">
+                    </div>
+                    <br>
+
+                    <div style="text-align: left;">
+                        <button type="submit" id="submitBtn" disabled>등록</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-  </form>
 </div>
 </body>
 </html>

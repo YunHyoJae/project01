@@ -91,23 +91,48 @@
         debounce(() => loadItems(0));
     }
 
-    function addRow() {
+    // function addRow() {
+    //     const table = document.getElementById("order-items");
+    //     const index = table.rows.length;
+    //     const orderNumber = document.getElementById("orderNumber")?.textContent || "";
+
+    //     const row = table.insertRow();
+    //     row.innerHTML = `
+    //   <td><input type="checkbox"/></td>
+    //   <td><input type="text" class="order_no" value="${orderNumber}" readonly></td>
+    //   <td><input type="text" class="pd_code" id="itemCode-${index}" onblur="onItemCodeInput(${index})" name="itemCode"></td>
+    //   <td><input type="text" class="pd_name" id="itemName-${index}" readonly></td>
+    //   <td class="search_td"><button class="default_btn" onclick="openItemModal(${index})">검색</button></td>
+    //   <td><input type="number" name="orderedQuantity" value="0" min="0" oninput="updateTotal()"></td>
+    //   <td><input type="text" id="stock-${index}" value="" readonly></td>
+    //   <td><input type="text" id="price-${index}" value="0" readonly></td>
+    //   <td><button onclick="deleteRow(this)" class="del_rowBtn">❌</button></td>
+    // `;
+
+    //강동현 추가
+    function addRow(itemCode = "", needed = "") {
         const table = document.getElementById("order-items");
         const index = table.rows.length;
         const orderNumber = document.getElementById("orderNumber")?.textContent || "";
 
-        const row = table.insertRow();
-        row.innerHTML = `
+        table.insertRow().innerHTML = `
       <td><input type="checkbox"/></td>
       <td><input type="text" class="order_no" value="${orderNumber}" readonly></td>
-      <td><input type="text" class="pd_code" id="itemCode-${index}" onblur="onItemCodeInput(${index})" name="itemCode"></td>
+      <td><input type="text" class="pd_code" id="itemCode-${index}" onblur="onItemCodeInput(${index})" name="itemCode" value="${itemCode}"></td>
       <td><input type="text" class="pd_name" id="itemName-${index}" readonly></td>
       <td class="search_td"><button class="default_btn" onclick="openItemModal(${index})">검색</button></td>
-      <td><input type="number" name="orderedQuantity" value="0" min="0" oninput="updateTotal()"></td>
+      <td><input type="number" name="orderedQuantity" value="${needed}" min="0" oninput="updateTotal()"></td>
       <td><input type="text" id="stock-${index}" value="" readonly></td>
       <td><input type="text" id="price-${index}" value="0" readonly></td>
       <td><button onclick="deleteRow(this)" class="del_rowBtn">❌</button></td>
     `;
+
+        // itemCode가 설정된 후, 강제로 onItemCodeInput 호출
+        if (itemCode) {
+            onItemCodeInput(index);
+        }
+        //강동현 추가
+
     }
 
     function updateTotal() {
@@ -194,17 +219,46 @@
         hideModal();
     }
 
+    // async function onItemCodeInput(index) {
+    //     const code = document.getElementById(`itemCode-${index}`).value.trim();
+    //     if (!code) return;
+    //     const res = await fetch('/storeOwner/storeOrder/itemInfo?itemCode=' + encodeURIComponent(code));
+    //     if (!res.ok) return;
+    //     const data = await res.json();
+    //     document.getElementById(`itemName-${index}`).value = data.itemName || '-';
+    //     document.getElementById(`price-${index}`).value = data.itemPrice || 0;
+    //     document.getElementById(`stock-${index}`).value = data.stockQuantity ?? "-";
+    //     updateTotal();
+    // }
+
+    //강동현 추가부분
     async function onItemCodeInput(index) {
         const code = document.getElementById(`itemCode-${index}`).value.trim();
         if (!code) return;
-        const res = await fetch('/storeOwner/storeOrder/itemInfo?itemCode=' + encodeURIComponent(code));
-        if (!res.ok) return;
-        const data = await res.json();
-        document.getElementById(`itemName-${index}`).value = data.itemName || '-';
-        document.getElementById(`price-${index}`).value = data.itemPrice || 0;
-        document.getElementById(`stock-${index}`).value = data.stockQuantity ?? "-";
-        updateTotal();
+
+        console.log(`Fetching item info for itemCode: ${code}`);
+
+        try {
+            const res = await fetch(`/storeOwner/storeOrder/itemInfo?itemCode=${encodeURIComponent(code)}`);
+            if (!res.ok) {
+                console.error(`Failed to fetch item info for ${code}. Status: ${res.status}`);
+                return;
+            }
+
+            const data = await res.json();
+            console.log(`Item info received:`, data);
+
+            // 데이터가 정상적으로 받아졌는지 확인 후 DOM 업데이트
+            document.getElementById(`itemName-${index}`).value = data.itemName || '-';
+            document.getElementById(`price-${index}`).value = data.itemPrice || 0;
+            document.getElementById(`stock-${index}`).value = data.stockQuantity ?? "-";
+            updateTotal();
+        } catch (error) {
+            console.error(`Error fetching item info: ${error}`);
+        }
     }
+    //강동현 추가부분
+
 
     async function submitOrder() {
         const itemCodes = document.getElementsByName("itemCode");
@@ -233,9 +287,39 @@
         }
     }
 
+    // window.onload = () => {
+    //     for (let i = 0; i < 3; i++) addRow();
+    // };
+
+    //강동현 수정 부분
     window.onload = () => {
-        for (let i = 0; i < 3; i++) addRow();
+        console.log("Window loaded, adding rows.");
+
+        // URLSearchParams로 쿼리 파라미터 읽기
+        const params = new URLSearchParams(window.location.search);
+        const itemCodes = params.getAll('itemCode'); // 중복된 itemCode 모두 가져오기
+        const neededs = params.getAll('needed');    // 중복된 needed 모두 가져오기
+
+        console.log(`ItemCodes: ${itemCodes}, Neededs: ${neededs}`);
+
+        if (itemCodes.length > 0 && neededs.length > 0) {
+            // itemCode와 needed 배열을 기반으로 행 추가
+            for (let i = 0; i < itemCodes.length; i++) {
+                const itemCode = itemCodes[i];
+                const needed = neededs[i];
+                addRow(itemCode, needed); // 각각의 값으로 행 추가
+            }
+        } else {
+            // URL 쿼리 파라미터가 없을 경우 기본적으로 3개의 빈 행 추가
+            for (let i = 0; i < 3; i++) {
+                addRow(); // 빈 값으로 행 추가
+            }
+        }
     };
+    //강동현 수정 부분
+
+
+
 </script>
 </body>
 </html>
