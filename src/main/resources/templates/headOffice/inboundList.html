@@ -181,35 +181,37 @@
                     <th>품목명</th>
                     <th>반품수량</th>
                     <th>상태</th>
+                    <th>완료처리</th>
                 </tr>
                 </thead>
                 <tbody>
                 <th:block th:each="returnDto : ${returnList}">
-                    <tr th:if="${returnDto.items != null and !#lists.isEmpty(returnDto.items)}">
-                        <td th:rowspan="${#lists.size(returnDto.items)}" th:text="${returnDto.returnNumber}"></td>
-                        <td th:rowspan="${#lists.size(returnDto.items)}"
-                            th:text="${#temporals.format(returnDto.requiredDate, 'yyyy-MM-dd HH:mm')}"></td>
-                        <td th:rowspan="${#lists.size(returnDto.items)}" th:text="${returnDto.typeReturn}"></td>
-                        <td th:rowspan="${#lists.size(returnDto.items)}" th:text="${returnDto.returnNote}"></td>
-                        <td th:text="${returnDto.items[0].itemCode}"></td>
-                        <td th:text="${returnDto.items[0].itemName}"></td>
-                        <td th:text="${returnDto.items[0].returnQuantity}"></td>
-                        <td th:text="${returnDto.items[0].status}"></td>
-                    </tr>
-                    <tr th:each="item,iterStat : ${returnDto.items}" th:if="${iterStat.index > 0}">
+                    <tr th:each="item : ${returnDto.items}">
+                        <td th:text="${returnDto.returnNumber}"></td>
+                        <td th:text="${#temporals.format(returnDto.requiredDate, 'yyyy-MM-dd HH:mm')}"></td>
+                        <td th:text="${returnDto.typeReturn}"></td>
+                        <td th:text="${returnDto.returnNote}"></td>
                         <td th:text="${item.itemCode}"></td>
                         <td th:text="${item.itemName}"></td>
                         <td th:text="${item.returnQuantity}"></td>
                         <td th:text="${item.status}"></td>
+                        <td>
+                            <button type="button"
+                                    th:if="${item.status == '진행중'}"
+                                    th:data-return-number="${returnDto.returnNumber}"
+                                    th:data-item-code="${item.itemCode}"
+                                    class="btn-send">완료처리</button>
+
+                            <button type="button"
+                                    th:if="${item.status == '반품완료'}"
+                                    class="btn-send" disabled>완료됨</button>
+                        </td>
                     </tr>
                 </th:block>
-                <tr th:if="${returnList == null or #lists.isEmpty(returnList)}">
-                    <td colspan="8">조회된 반품 내역이 없습니다.</td>
-                </tr>
-                </tbody>
-            </table>
 
-            <input type="checkbox" id="purchase-detail-modal-toggle" style="display:none;"/>
+
+
+                <input type="checkbox" id="purchase-detail-modal-toggle" style="display:none;"/>
             <label class="receiving_modal" for="purchase-detail-modal-toggle">
                 <div class="receiving_modal_content" onclick="event.stopPropagation()">
                     <h2 class="receiving_modal_title">발주 상세내역</h2>
@@ -323,6 +325,32 @@
                         console.error(err);
                     });
             }
+
+            document.addEventListener("DOMContentLoaded", function () {
+                document.querySelectorAll('.btn-send').forEach(btn => {
+                    btn.addEventListener("click", function () {
+                        const returnNumber = this.dataset.returnNumber;
+                        const itemCode = this.dataset.itemCode;
+
+                        fetch('/headOffice/returnComplete', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ returnNumber, itemCode })
+                        })
+                            .then(res => {
+                                if (!res.ok) throw new Error("처리 실패");
+                                return res.text();
+                            })
+                            .then(() => location.reload()) // 새로고침으로 상태 반영
+                            .catch(err => {
+                                alert("처리 중 오류 발생");
+                                console.error(err);
+                            });
+                    });
+                });
+            });
+
+
         </script>
 </body>
 </html>

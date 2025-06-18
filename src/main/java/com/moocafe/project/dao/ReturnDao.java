@@ -21,10 +21,10 @@ public class ReturnDao {
         return returnRepository.save(returnEntity);
     }
 
-    public void updateReturnStock(String itemCode, int returnQuantity, int storeId) {
-        inventoryStoreRepository.increaseHeadOfficeStock(itemCode, returnQuantity);
-        inventoryStoreRepository.decreaseStoreStock(itemCode, returnQuantity, storeId);
-    }
+//    public void updateReturnStock(String itemCode, int returnQuantity, int storeId) {
+//        inventoryStoreRepository.increaseHeadOfficeStock(itemCode, returnQuantity);
+//        inventoryStoreRepository.decreaseStoreStock(itemCode, returnQuantity, storeId);
+//    }
 
 //    public List<Return> findByStoreId(int storeId) {
 //        return returnRepository.findByStoreId(storeId);
@@ -34,4 +34,8 @@ public class ReturnDao {
     public List<Return> findByStoreIdWithItems(Integer storeId) {
         return returnRepository.findByStoreIdWithItems(storeId);
     }
+
+
+
+
 }

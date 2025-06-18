@@ -102,7 +102,7 @@ public String showOrderForm(
         model.addAttribute("orderList", orderList);
         model.addAttribute("startDate", startDate);
         model.addAttribute("endDate", endDate);
-
+//        returnService.processReturn(returnDto.getReturnNumber());
         return "/storeOwner/storeorderList";
     }
 
@@ -130,14 +130,10 @@ public String showOrderForm(
 //    }
 
 
-    @PostMapping("/storeOrderReturn")
-    public String submitReturn(@ModelAttribute ReturnDto returnDto, @AuthenticationPrincipal CustomUserDetails userDetails) {
-        Integer storeId = userDetails.toDto().getStoreId();  // 이걸로 storeId 확보
-        log.info("submit return: {}", returnDto);
-
-        returnService.saveReturn(returnDto, storeId);  // itemCode, returnQuantity는 returnDto.items 안에 있음
-
-        return "redirect:/storeOwner/storeOrderList";
+    @PostMapping("/return")
+    public String saveReturn(@ModelAttribute ReturnDto returnDto, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        returnService.saveReturn(returnDto);
+        return "redirect:/storeOwner/storeorderList";
     }
 
 

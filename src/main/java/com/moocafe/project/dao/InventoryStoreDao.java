@@ -1,14 +1,19 @@
 package com.moocafe.project.dao;
 
 import com.moocafe.project.dto.InventorySummaryDto;
+import com.moocafe.project.repository.InventoryStoreRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
+@RequiredArgsConstructor
 public class InventoryStoreDao {
+
+    private final InventoryStoreRepository inventoryStoreRepository;
 
     @PersistenceContext
     private EntityManager em;
@@ -24,4 +29,19 @@ public class InventoryStoreDao {
 
         return em.createNativeQuery(sql, "InventorySummaryMapping").getResultList();
     }
+
+//    public void decreaseStoreStockAllByReturnNumber(String returnNumber) {
+//        inventoryStoreRepository.decreaseStoreStockAllByReturnNumber(returnNumber);
+//    }
+
+    // 매장 재고 감소
+    public void decreaseStoreStockByReturnNumber(String returnNumber) {
+        inventoryStoreRepository.decreaseStoreStockByReturnNumber(returnNumber);
+    };
+
+    // 본사 재고 증가
+    public void increaseHQStock(String itemCode, int quantity) {
+        inventoryStoreRepository.increaseHQStock(itemCode, quantity);
+    }; // storeId = 1로 고정 처리
+
 }

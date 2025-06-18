@@ -2,24 +2,11 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{/storeOwner/meta::myHead('반품현황')}">
     <style>
-        .main-layout {
-            display: flex;
-        }
-
-        .returnInquiry {
-            flex: 1;
-            padding: 40px;
-        }
-
-        .returnInquiry h2 {
-            margin-bottom: 20px;
-        }
-
-        .return_Inquiry_filter_buttons {
-            margin-bottom: 20px;
-        }
+        .main-layout {display: flex;}
+        .returnInquiry {flex: 1; padding: 40px;}
+        .returnInquiry h2 {margin-bottom: 20px;}
+        .return_Inquiry_filter_buttons {margin-bottom: 20px;}
     </style>
-
 </head>
 <body>
 <header th:replace="~{/storeOwner/tnb}"></header>
@@ -34,50 +21,153 @@
 
             <!-- 필터 버튼 -->
             <div class="return_Inquiry_filter_buttons" style="margin-top: 40px;">
-                <label class="active" data-status="all" tabindex="0">반품전체</label>
-                <label data-status="pending" tabindex="0">진행중</label>
-                <label data-status="completed" tabindex="0">반품완료</label>
+                <label class="active" data-status="전체" tabindex="0">반품전체</label>
+                <label data-status="진행중" tabindex="0">진행중</label>
+                <label data-status="반품완료" tabindex="0">반품완료</label>
+
             </div>
+
+            <form th:action="@{/storeOwner/return}" method="post">
+                <table class="return_Inquiry_table">
+                    <thead>
+                    <tr>
+                        <th>반품번호</th>
+                        <th>반품신청일</th>
+                        <th>품목</th>
+                        <th>반품수량</th>
+                        <th>상태</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <th:block th:each="return : ${returnList}">
+                        <input type="hidden" th:name="'returnNumber'" th:value="${return.returnNumber}" id="returnNumberField" />
+
+                        <th:block th:each="item : ${return.items}">
+                            <tr th:attr="data-status=${item.status}">
+                                <td th:text="${return.returnNumber}">반품번호</td>
+                                <td th:text="${#temporals.format(return.requiredDate, 'yyyy-MM-dd')}">반품신청일</td>
+                                <td th:text="${item.itemName}">품목</td>
+                                <td th:text="${item.returnQuantity}">반품수량</td>
+                                <td th:text="${item.status}">상태</td>
+                            </tr>
+                        </th:block>
+                    </th:block>
+                    </tbody>
+                </table>
+
+                <button type="submit">반품신청</button>
+            </form>
+
+
+
+
+
 
             <!-- 테이블 -->
-            <table class="return_Inquiry_table">
-                <thead>
-                <tr>
-                    <th>반품번호</th>
-                    <th>반품신청일</th>
-                    <th>품목</th>
-                    <th>반품수량</th>
-                    <th>상태</th>
-                </tr>
-                </thead>
-                <tbody>
-                <th:block th:each="return : ${returnList}">
-                    <tr th:each="item, iterStat : ${return.items}">
-                        <!-- 반품번호와 신청일은 첫 번째 항목에만 출력 -->
-                        <td th:if="${iterStat.index == 0}" th:rowspan="${#lists.size(return.items)}" th:text="${return.returnNumber}"></td>
-                        <td th:if="${iterStat.index == 0}" th:rowspan="${#lists.size(return.items)}"
-                            th:text="${#temporals.format(return.requiredDate, 'yyyy-MM-dd')}"></td>
+<!--            <table class="return_Inquiry_table">-->
+<!--                <thead>-->
+<!--                <tr>-->
+<!--                    <th>반품번호</th>-->
+<!--                    <th>반품신청일</th>-->
+<!--                    <th>품목</th>-->
+<!--                    <th>반품수량</th>-->
+<!--                    <th>상태</th>-->
+<!--                </tr>-->
+<!--                </thead>-->
+<!--                <tbody>-->
+<!--                <th:block th:each="return : ${returnList}">-->
+<!--                    <th:block th:each="item : ${return.items}">-->
+<!--                        <tr th:attr="data-status=${item.status}">-->
+<!--                            <td th:text="${return.returnNumber}">반품번호</td>-->
+<!--                            <td th:text="${#temporals.format(return.requiredDate, 'yyyy-MM-dd')}">반품신청일</td>-->
+<!--                            <td th:text="${item.itemName}">품목</td>-->
+<!--                            <td th:text="${item.returnQuantity}">반품수량</td>-->
+<!--                            <td th:text="${item.status}">상태</td>-->
+<!--                        </tr>-->
+<!--                    </th:block>-->
+<!--                </th:block>-->
+<!--                </tbody>-->
 
-                        <!-- 품목명, 수량, 상태는 각 줄마다 -->
-                        <td th:text="${item.itemName}">품목명</td>
-                        <td th:text="${item.returnQuantity}">수량</td>
-                        <td th:text="${item.status}">상태</td>
-                    </tr>
-                </th:block>
-                </tbody>
-            </table>
-            <!-- 페이징 -->
-            <div class="pagination">
-                <a href="#">&lt;</a>
-                <a href="#">1</a>
-                <a href="#">2</a>
-                <a href="#">3</a>
-                <a href="#">4</a>
-                <a href="#">5</a>
-                <a href="#">&gt;</a>
-            </div>
+
+
+
+                <!-- 페이징 -->
+                <div class="pagination">
+                    <a href="#">&lt;</a>
+                    <a href="#">1</a>
+                    <a href="#">2</a>
+                    <a href="#">3</a>
+                    <a href="#">4</a>
+                    <a href="#">5</a>
+                    <a href="#">&gt;</a>
+                </div>
         </div> <!-- .returnInquiry -->
     </div> <!-- .main-layout -->
 </div> <!-- .section -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const filterButtons = document.querySelectorAll(".return_Inquiry_filter_buttons label");
+        const allRows = document.querySelectorAll(".return_Inquiry_table tbody tr");
+
+        filterButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                const selectedStatus = this.getAttribute("data-status");
+
+                filterButtons.forEach(btn => btn.classList.remove("active"));
+                this.classList.add("active");
+
+                let group = [];
+
+                allRows.forEach(row => {
+                    const isGroupStart = row.hasAttribute("data-status");
+
+                    if (isGroupStart) {
+                        if (group.length > 0) {
+                            const status = group[0].getAttribute("data-status")?.trim();
+                            const shouldShow = selectedStatus === "전체" || selectedStatus === status;
+                            group.forEach(r => r.style.display = shouldShow ? "" : "none");
+                        }
+                        group = [row];
+                    } else {
+                        group.push(row);
+                    }
+                });
+
+                if (group.length > 0) {
+                    const status = group[0].getAttribute("data-status")?.trim();
+                    const shouldShow = selectedStatus === "전체" || selectedStatus === status;
+                    group.forEach(r => r.style.display = shouldShow ? "" : "none");
+                }
+            });
+        });
+    });
+
+
+    const btnSendList = document.querySelectorAll(".btn-send");
+    btnSendList.forEach(btn => {
+        btn.addEventListener("click", function (e) {
+            const _this = e.currentTarget;
+            const returnNumber = _this.dataset.returnNumber;
+            const itemCode = _this.dataset.itemCode;
+
+            markAsCompleted(returnNumber, itemCode);
+        })
+    })
+
+    function markAsCompleted(returnNumber, itemCode) {
+        fetch('/storeOwner/returnComplete', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({returnNumber, itemCode})
+        })
+            .then(res => {
+                if (!res.ok) throw new Error("업데이트 실패");
+                return res.text();
+            })
+            .then(() => location.reload())
+            .catch(err => alert('처리 중 오류 발생'));
+
+    }
+</script>
 </body>
 </html>

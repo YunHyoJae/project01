@@ -19,6 +19,7 @@ public class Return {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "return_seq_gen", sequenceName = "RETURN_SEQ", allocationSize = 1)
     private Integer id;
 
     @Column(unique = true, nullable = false)

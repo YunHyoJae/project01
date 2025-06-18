@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 
 public interface ReturnItemRepository extends JpaRepository<ReturnItem, Integer> {
@@ -16,5 +17,9 @@ public interface ReturnItemRepository extends JpaRepository<ReturnItem, Integer>
 //            "JOIN r.orderNumber so " +
 //            "WHERE so.storeId = :storeId")
 //    List<ReturnItem> findByStoreId(@Param("storeId") int storeId);
+
+    // ReturnItemDao
+    Optional<ReturnItem> findByReturnEntity_ReturnNumberAndItem_ItemCode(String returnNumber, String itemCode);
+
 
 }

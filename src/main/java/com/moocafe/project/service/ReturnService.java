@@ -24,23 +24,33 @@ public class ReturnService {
     private final ReturnDao returnDao;
     private final ReturnItemDao returnItemDao;
     private final InventoryStoreRepository inventoryStoreRepository;
+    private final InventoryStoreDao inventoryStoreDao;
     private final ReturnRepository returnRepository;
     private final InventoryItemRepository inventoryItemRepository;
     private final StoreOrderDao storeOrderDao;
-    //@PersistenceContext
-    //private EntityManager em;
+
+    @PersistenceContext
+    private EntityManager em;
 
     @Transactional
-    public void saveReturn(ReturnDto returnDto, int storeId) {
+    public void saveReturn(ReturnDto returnDto) {
+        String orderNumber = returnDto.getItems().get(0).getOrderNumber();
+        StoreOrder storeOrder = storeOrderDao.findByOrderNumber(orderNumber)
+                .orElseThrow(() -> new RuntimeException("해당 주문번호 없음"));
+
+
+        // 1. Return 저장
         Return returnEntity = Return.builder()
                 .returnNumber(returnDto.getReturnNumber())
                 .returnNote(returnDto.getReturnNote())
                 .requiredDate(LocalDateTime.now())
+                .orderNumber(storeOrder)  // 연관관계 저장
                 .typeReturn("반품")
                 .build();
 
         returnDao.saveReturn(returnEntity);
 
+        // 2. ReturnItem 저장 + 검증
         for (ReturnItemDto dto : returnDto.getItems()) {
             List<InventoryStore> itemList = inventoryStoreRepository.findByItemCode(dto.getItemCode());
 
@@ -59,17 +69,15 @@ public class ReturnService {
                     .build();
 
             returnItemDao.saveReturnItem(returnItem);
-
-            // 여기서도 dto에서 값 가져와야 합니다.
-            inventoryStoreRepository.increaseHeadOfficeStock(dto.getItemCode(), dto.getReturnQuantity());
-            inventoryStoreRepository.decreaseStoreStock(dto.getItemCode(), dto.getReturnQuantity(), storeId);
         }
+
     }
 
-    public StoreOrder findByOrderNumber(String orderNumber) {
-        return storeOrderDao.findByOrderNumber(orderNumber)
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 주문번호: " + orderNumber));
-    }
+
+//    public StoreOrder findByOrderNumber(String orderNumber) {
+//        return storeOrderDao.findByOrderNumber(orderNumber)
+//                .orElseThrow(() -> new RuntimeException("존재하지 않는 주문번호: " + orderNumber));
+//    }
 
     @Transactional(readOnly = true)
     public List<Return> findAllWithItems() {
@@ -113,6 +121,65 @@ public class ReturnService {
                     .build();
         }).collect(Collectors.toList());
     }
+
+    @Transactional
+    public void processReturn(String returnNumber) {
+        // 1. 해당 반품 조회
+        Return returnEntity = returnRepository.findByReturnNumber(returnNumber)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 반품번호: " + returnNumber));
+
+
+        List<ReturnItem> items = returnEntity.getItems();
+        if (items == null || items.isEmpty()) {
+            throw new RuntimeException("반품 항목이 없습니다.");
+        }
+
+        for (ReturnItem item : items) {
+            if (!"진행중".equals(item.getStatus())) {
+                continue; // 이미 처리된 항목은 skip
+            }
+
+            String itemCode = item.getItem().getItemCode();
+            int quantity = item.getReturnQuantity();
+
+            // 2. 매장 재고 감소
+            inventoryStoreDao.decreaseStoreStockByReturnNumber(returnNumber);
+
+            // 3. 본사 재고 증가
+            inventoryStoreDao.increaseHQStock(itemCode, quantity);
+
+            // 4. 상태 변경
+            item.setStatus("반품완료");
+            returnItemDao.saveReturnItem(item);
+        }
+
+        // 5. DB 반영 + 캐시 비움
+        em.flush();
+        em.clear();
+    }
+
+
+    @Transactional
+    public void completeItem(String returnNumber, String itemCode) {
+        // 1. ReturnItem 찾기
+        ReturnItem item = returnItemDao.findByReturnNumberAndItemCode(returnNumber, itemCode)
+                .orElseThrow(() -> new RuntimeException("해당 반품 항목이 없습니다."));
+
+        if ("반품완료".equals(item.getStatus())) return;
+
+        int quantity = item.getReturnQuantity();
+
+        // 2. 매장 재고 감소
+        inventoryStoreDao.decreaseStoreStockByReturnNumber(returnNumber);
+
+        // 3. 본사 재고 증가
+        inventoryStoreDao.increaseHQStock(itemCode, quantity);
+
+        // 4. 상태 변경
+        item.setStatus("반품완료");
+        returnItemDao.saveReturnItem(item);
+    }
+
 
 
 }

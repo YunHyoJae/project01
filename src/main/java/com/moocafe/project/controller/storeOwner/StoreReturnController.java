@@ -8,18 +8,21 @@ import com.moocafe.project.repository.ReturnItemRepository;
 import com.moocafe.project.service.ReturnService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("storeOwner")
 @RequiredArgsConstructor
 @Slf4j
-public class StoreReturnController {
+public class
+StoreReturnController {
 
     private final ReturnService returnService;
 
@@ -41,7 +44,35 @@ public class StoreReturnController {
         Integer storeId = userDetails.getStoreId();
         List<ReturnDto> returnList = returnService.getReturnsByStoreId(storeId);
         model.addAttribute("returnList", returnList);
+        model.addAttribute("storeId", storeId);
         return "storeOwner/returnList"; // ⬅ Thymeleaf 페이지를 보여주고 싶을 때
+    }
+
+//
+//    @PostMapping("/returnComplete")
+//    @ResponseBody
+//    public ResponseEntity<String> updateReturnStatus(@RequestParam Integer id ) {
+//        log.info("id: " + id);
+//        returnService.markAsCompleted(id);
+//        return ResponseEntity.ok("updated");
+//    }
+
+
+    @PostMapping("/storeOwner/returnComplete")
+    @ResponseBody
+    public String completeReturn(@RequestBody Map<String, String> payload) {
+        String returnNumber = payload.get("returnNumber");
+        String itemCode = payload.get("itemCode");
+
+        if (returnNumber == null || itemCode == null) {
+            throw new IllegalArgumentException("반품번호 또는 품목코드가 누락되었습니다.");
+        }
+
+        log.info("반품 완료 처리 요청 - returnNumber: {}, itemCode: {}", returnNumber, itemCode);
+
+        returnService.completeItem(returnNumber, itemCode);  // 서비스 호출
+
+        return "ok";
     }
 
 

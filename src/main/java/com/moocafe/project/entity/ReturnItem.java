@@ -1,3 +1,4 @@
+
 package com.moocafe.project.entity;
 
 import jakarta.persistence.*;
@@ -28,5 +29,6 @@ public class ReturnItem {
     private int returnQuantity;
 
     @Column(nullable = false)
+    @Setter
     private String status = "진행중";
 }
