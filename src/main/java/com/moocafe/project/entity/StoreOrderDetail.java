@@ -25,5 +25,6 @@ public class StoreOrderDetail {
     private  int orderedQuantity;
 
     @Column(length = 50)
-    private String status = "주문완료"; // 주문완료/준비중/배송중
+    @Setter
+    private String status = "주문완료";
 }

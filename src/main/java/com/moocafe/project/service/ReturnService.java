@@ -29,6 +29,8 @@ public class ReturnService {
     private final ReturnRepository returnRepository;
     private final InventoryItemRepository inventoryItemRepository;
     private final StoreOrderDao storeOrderDao;
+    private final StoreOrderDetailDao storeOrderDetailDao;
+
 
     @PersistenceContext
     private EntityManager em;
@@ -159,29 +161,34 @@ public class ReturnService {
     }
 
 
+
     @Transactional
     public void completeItem(String returnNumber, String itemCode) {
         // 1. ReturnItem 찾기
         ReturnItem item = returnItemDao.findByReturnNumberAndItemCode(returnNumber, itemCode)
                 .orElseThrow(() -> new RuntimeException("해당 반품 항목이 없습니다."));
 
+        // 이미 완료된 경우는 패스
         if ("반품완료".equals(item.getStatus())) return;
 
         int quantity = item.getReturnQuantity();
 
-        // 2. 매장 재고 감소
         inventoryStoreDao.decreaseStoreStockByReturnNumber(returnNumber);
 
-        // 3. 본사 재고 증가
         inventoryStoreDao.increaseHQStock(itemCode, quantity);
 
-        // 4. 상태 변경
         item.setStatus("반품완료");
         returnItemDao.saveReturnItem(item);
 
+        Long id = item.getReturnEntity().getOrderNumber().getId();
+        StoreOrderDetail detail = storeOrderDetailDao
+                .findByStoreOrder_idAndItemCode(id, itemCode)
+                .orElseThrow(() -> new RuntimeException("해당 주문 상세 항목이 없습니다."));
 
-
+        detail.setStatus("반품완료");
+        storeOrderDetailDao.save(detail);
     }
+
 
 
 
