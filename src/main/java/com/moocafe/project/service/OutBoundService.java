@@ -87,7 +87,7 @@ public class OutBoundService {
             }
 
             if ("출고완료".equals(status)) {
-                //inventoryStoreRepository.decreaseStock(1, itemCode, qty);
+             //inventoryStoreRepository.decreaseStock(1, itemCode, qty);
                 oInventoryStoreDao.decreaseStock(itemCode, qty);
 
                 List<InventoryStore> storeStockList = inventoryStoreRepository
@@ -143,5 +143,3 @@ public class OutBoundService {
 //                (String) obj[7]
 //        )).collect(Collectors.toList());
 //    }
-
-

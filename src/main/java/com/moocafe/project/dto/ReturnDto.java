@@ -28,5 +28,5 @@ public class ReturnDto {
     private String orderNumber;
 
     @Builder.Default
-    private List<ReturnItemDto> items = new ArrayList<>();;
+    private List<ReturnItemDto> items = new ArrayList<>();
 }

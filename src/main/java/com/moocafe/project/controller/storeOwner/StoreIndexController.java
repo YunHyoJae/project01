@@ -164,16 +164,27 @@ public class StoreIndexController {
             }
 
             List<Object[]> orderRawList = storeOrderService.findRecentOrderListByStoreId(storeId);
+
             List<StoreOrderListResponseDto> orderList = orderRawList.stream()
-                    .map(arr -> new StoreOrderListResponseDto(
-                            (String) arr[0],
-                            (String) arr[1],
-                            (String) arr[2],
-                            (String) arr[3],
-                            arr[4] != null ? ((Number) arr[4]).intValue() : 0,
-                            (String) arr[5]
-                    ))
+                    .map(arr -> {
+                        String orderNumber = (String) arr[0];
+                        String itemCode = (String) arr[2];
+
+                        // 🔹 서비스에서 반품 상태 가져오기
+                        String returnStatus = returnService.getReturnStatus(orderNumber, itemCode);
+
+                        return new StoreOrderListResponseDto(
+                                orderNumber,
+                                (String) arr[1],             // orderDate
+                                itemCode,
+                                (String) arr[3],             // itemName
+                                arr[4] != null ? ((Number) arr[4]).intValue() : 0,
+                                (String) arr[5],             // orderStatus
+                                returnStatus                 // ✅ 반품 상태
+                        );
+                    })
                     .collect(Collectors.toList());
+
             model.addAttribute("orderList", orderList);
 
 
