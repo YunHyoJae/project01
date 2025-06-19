@@ -14,105 +14,79 @@
         font-weight: bold;
     }
 
-    table {
-        border-collapse: collapse;
-    }
-
-    td, th {
-        padding: 8px;
-        border: 1px solid #ccc;
-        text-align: center;
-    }
-
-    .table-viewport2 {
-        width: 100%;
-        max-height: 480px; /* 필요에 따라 높이 조정 */
-        overflow-x: scroll;
-        overflow-y: auto; /* 세로 스크롤 허용 */
-        border-radius: 10px;
-        display: block;
-    }
-
-    .stock-table2 {
-        border-collapse: collapse;
-        width: max-content; /* 테이블 너비를 콘텐츠 기준으로 설정 */
-        min-width: 1200px; /* 테이블 최소 너비 설정 */
-        max-width: none; /* 최대 너비 제한 해제 */
-        table-layout: fixed; /* 테이블 너비 고정 */
-        margin-bottom: 0;
-    }
-
-    .stock-table2 thead th {
-        position: sticky;
-        background-color: #F0F0F0;
-        white-space: nowrap; /* 매장명이 줄바꿈되지 않도록 */
-    }
-
-    .stock-table2 th, .stock-table2 td {
-        min-width: 150px;
-        max-width: 200px;
-        text-align: center;
-        padding: 8px;
-    }
-
-    .stock-table2 thead th {
-        position: sticky !important; /* 우선순위 강화 */
-        top: 0 !important;
-        z-index: 100 !important;
-        background-color: #F0F0F0 !important;
-        white-space: nowrap !important; /* 텍스트 줄바꿈 방지 */
-    }
-
-    .stock-table2 th:first-child,
-    .stock-table2 td:first-child {
-        position: sticky;
-    }
-
-    .stock-table2 th:nth-child(2),
-    .stock-table2 td:nth-child(2) {
-        position: sticky;
-    }
-
-    .stock-table2 th:nth-child(3),
-    .stock-table2 td:nth-child(3) {
-        position: sticky;
+    .content {
+        overflow-x: auto; !important;   /* 가로 스크롤 허용 */
     }
 
     .table-wrapper {
         display: flex;
+        overflow: auto;       /* ✅ 여기에서만 스크롤을 맡깁니다 */
+        max-height: 600px;
         border: 1px solid #ccc;
-        border-radius: 8px;
-        overflow: hidden;
+    }
+
+    .table-container {
+        display: flex;
+        position: relative;
     }
 
     .fixed-table {
-        flex: 0 0 300px;
-        background-color: #f9f9f9;
-        border-right: 1px solid #ccc;
+        position: sticky;
+        left: 0;
+        z-index: 2;
+        background-color: #f4f4f4;
+        border-right: 1px solid #7a7a7a;
+        width: max-content; /* 너비를 자동으로 줄이기 위해 추가 */
+    }
+
+    .scrollable-table-wrapper {
+        /* ✅ 스크롤 제거 */
+        overflow: unset;
+        max-height: unset;
     }
 
     .scrollable-table {
-        overflow-x: auto;
-        width: 100%;
+        min-width: 600px;
+        border-collapse: collapse;
     }
 
-    .fixed-table table,
-    .scrollable-table table {
+    table {
         border-collapse: collapse;
-        width: 100%;
     }
 
     th, td {
         padding: 8px;
-        border: 1px solid #ccc;
+        border: 1px solid #737373;
         text-align: center;
         white-space: nowrap;
     }
 
+    thead th {
+        position: sticky;
+        top: 0;
+        background-color: #e3e3e3;
+        z-index: 3;
+    }
 
+    .fixed-table thead th {
+        position: sticky;
+        top: 0;
+        background-color: #e3e3e3;
+        z-index: 10;
+    }
+
+    .scrollable-table thead th {
+        position: sticky;
+        top: 0;
+        background-color: #e3e3e3;
+        z-index: 1; /* 반드시 낮게 설정 */
+    }
 
 </style>
+
 <body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
 <header th:replace="~{/headOffice/tnb}"></header>
 <div class="section">
     <div th:replace="~{/headOffice/header}"></div>
@@ -134,7 +108,9 @@
                         <input type="text" id="searchInput" name="itemName" th:value="${itemName}" placeholder="검색어 입력">
 
                         <button type="submit">검색</button>
+                        <button type="button" onclick="downloadExcel()">엑셀 다운로드</button>
                     </form>
+
                 </div>
 
                 <script>
@@ -151,36 +127,44 @@
                     document.addEventListener("DOMContentLoaded", updateSearchTarget);
                 </script>
 
+                <script>
+                    function syncRowHeights() {
+                        const fixedRows = document.querySelectorAll('.fixed-table tbody tr');
+                        const scrollableRows = document.querySelectorAll('.scrollable-table tbody tr');
 
-                <!-- 🔽 테이블 -->
+                        for (let i = 0; i < fixedRows.length; i++) {
+                            const fixedRow = fixedRows[i];
+                            const scrollableRow = scrollableRows[i];
+                            if (fixedRow && scrollableRow) {
+                                const height = Math.max(
+                                    fixedRow.getBoundingClientRect().height,
+                                    scrollableRow.getBoundingClientRect().height
+                                );
+                                fixedRow.style.height = height + 'px';
+                                scrollableRow.style.height = height + 'px';
+                            }
+                        }
+                    }
 
-                <!--                <div class="table-viewport2">-->
-                <!--                    <table class="stock-table2">-->
-                <!--                        <thead>-->
-                <!--                        <tr>-->
-                <!--                            <th>품목코드</th>-->
-                <!--                            <th>품목명</th>-->
-                <!--                            &lt;!&ndash; 각 매장명을 반복적으로 열로 출력 &ndash;&gt;-->
-                <!--                            <th th:each="store : ${storeList}" th:text="${store.name}">매장명</th>-->
-                <!--                        </tr>-->
-                <!--                        </thead>-->
+                    window.addEventListener('DOMContentLoaded', syncRowHeights);
+                    window.addEventListener('resize', syncRowHeights);
+                </script>
 
-                <!--                        <tbody>-->
-                <!--                        <tr th:each="row : ${pivotList}">-->
-                <!--                            <td th:text="${row.itemCode}"></td>-->
-                <!--                            <td th:text="${row.itemName}"></td>-->
-                <!--                            &lt;!&ndash; 각 매장에 대한 재고 수량 출력 &ndash;&gt;-->
-                <!--                            <td th:each="store : ${storeList}"-->
-                <!--                                th:text="${row.getStockByStoreId(store.id)}"-->
-                <!--                                th:class="${row.getStockCssClass(store.id)}">-->
-                <!--                            </td>-->
-                <!--                        </tr>-->
-                <!--                        </tbody>-->
-                <!--                    </table>-->
+                <script>
+                    window.addEventListener('DOMContentLoaded', function () {
+                        const table = document.getElementById('scrollTable');
+                        if (table) {
+                            table.style.width = '1000px'; // 👈 강제 너비 설정
+                        }
+                    });
+                </script>
+
+
                 <div class="table-wrapper">
-                    <!-- 왼쪽 고정 열 -->
-                    <div class="fixed-table">
-                        <table>
+                    <div class="table-container">
+
+                        <!-- 왼쪽 고정 테이블 -->
+                        <table class="fixed-table">
                             <thead>
                             <tr>
                                 <th>품목코드</th>
@@ -192,37 +176,58 @@
                             <tr th:each="row : ${pivotList}">
                                 <td th:text="${row.itemCode}"></td>
                                 <td th:text="${row.itemName}"></td>
-                                <td th:text="${row.getStockByStoreId(1)}"></td> <!-- 101 = 본사 -->
+                                <td th:text="${row.getStockByStoreId(1)}"></td>
                             </tr>
                             </tbody>
                         </table>
-                    </div>
 
-                    <!-- 오른쪽 가변 열 (매장별 재고) -->
-                    <div class="scrollable-table">
-                        <table>
-                            <thead>
-                            <tr>
-                                <th th:each="store : ${storeList}" th:if="${store.id != 1}"
-                                    th:text="${store.name}"></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:each="row : ${pivotList}">
-                                <td th:each="store : ${storeList}" th:if="${store.id != 1}"
-                                    th:text="${row.getStockByStoreId(store.id)}"
-                                    th:class="${row.getStockCssClass(store.id)}"></td>
-                            </tr>
-                            </tbody>
-                        </table>
+                        <!-- 오른쪽 스크롤 테이블 -->
+                        <div class="scrollable-table-wrapper">
+                            <table class="scrollable-table">
+                                <thead>
+                                <tr>
+                                    <th th:each="store : ${storeList}" th:if="${store.id != 1}" th:text="${store.name}"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="row : ${pivotList}">
+                                    <td th:each="store : ${storeList}" th:if="${store.id != 1}"
+                                        th:text="${row.getStockByStoreId(store.id)}"
+                                        th:class="${row.getStockCssClass(store.id)}">
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
                     </div>
                 </div>
-
-
             </div>
         </div>
     </div>
 </div>
-</div>
+<script>
+    function downloadExcel() {
+        // 고정 테이블과 스크롤 테이블 합치기
+        const fixedRows = Array.from(document.querySelectorAll(".fixed-table tbody tr"));
+        const scrollRows = Array.from(document.querySelectorAll(".scrollable-table tbody tr"));
+        const headersLeft = Array.from(document.querySelectorAll(".fixed-table thead th")).map(th => th.innerText.trim());
+        const headersRight = Array.from(document.querySelectorAll(".scrollable-table thead th")).map(th => th.innerText.trim());
+
+        const ws_data = [ [...headersLeft, ...headersRight] ];
+
+        for (let i = 0; i < fixedRows.length; i++) {
+            const leftTds = Array.from(fixedRows[i].querySelectorAll("td")).map(td => td.innerText.trim());
+            const rightTds = Array.from(scrollRows[i].querySelectorAll("td")).map(td => td.innerText.trim());
+            ws_data.push([...leftTds, ...rightTds]);
+        }
+
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.aoa_to_sheet(ws_data);
+        XLSX.utils.book_append_sheet(wb, ws, "재고현황");
+        XLSX.writeFile(wb, "매장재고현황.xlsx");
+    }
+</script>
+
 </body>
 </html>

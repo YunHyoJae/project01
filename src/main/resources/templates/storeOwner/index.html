@@ -146,8 +146,11 @@
                             </div>
                             <div class="boxContent">
                                 <ul style="margin:8px 0 0 16px; padding:0; font-size:14px;">
-                                    <li th:each="r : ${returnList}"><span th:text="${r.menuName}"></span> <span
-                                            th:text="${r.quantity}"></span>개
+                                    <li th:each="r : ${returnList}">
+                                        <span th:text="${r.returnNumber} + ' - '"></span>
+                                        <span th:text="${r.items[0].itemName + ' / ' + r.items[0].returnQuantity + '개'}"></span>
+                                        <span th:if="${#lists.size(r.items) > 1}"
+                                              th:text="' 외 ' + (${#lists.size(r.items)} - 1) + '건'"></span>
                                     </li>
                                 </ul>
                                 <span th:if="${#lists.isEmpty(returnList)}">반품 내역 없음</span>
@@ -157,15 +160,17 @@
 
                         <div class="notice cont">
                             <div class="cont_top">
-                                <h4>오늘의 할 일</h4>
+                                <h4>매출 목표</h4>
                             </div>
-
-                            <div class="todo_wrap">
-                                <ul class="todo_list">
-                                    <li th:each="t : ${todoList}" th:text="${t}">할 일 예시</li>
-                                </ul>
-                                <span style="display:block; text-align:center; margin:40px 0;" th:if="${#lists.isEmpty(todoList)}">오늘의 할 일이 없습니다.
-                                </span>
+                            <div class="boxContent" style="padding: 20px; text-align: center;">
+                                <p style="font-size: 15px; margin-bottom: 8px;">
+                                    이번 달 목표: <strong th:text="${#numbers.formatInteger(targetSales, 0, 'COMMA')} + '원'"></strong><br>
+                                    현재 매출: <strong th:text="${#numbers.formatInteger(actualSales, 0, 'COMMA')} + '원'"></strong>
+                                </p>
+                                <div style="background-color: #f1f1f1; border-radius: 10px; overflow: hidden; height: 20px; width: 100%; max-width: 300px; margin: 0 auto;">
+                                    <div th:style="'width:' + ${achievementRate} + '%; background-color: #4caf50; height: 100%; transition: width 0.6s ease-in-out;'"></div>
+                                </div>
+                                <p style="margin-top: 6px; font-size: 14px; color: #555;" th:text="'달성률: ' + ${achievementRate} + '%'"></p>
                             </div>
                         </div>
                     </div>

@@ -29,6 +29,7 @@ public class StoreIndexController {
     private final InventoryStoreService inventoryStoreService;
     private final MenuService menuService;
     private final StoreOrderService storeOrderService;
+    private final ReturnService returnService;
 
     @GetMapping("/index")
     public String index(Model model, @AuthenticationPrincipal CustomUserDetails user) {
@@ -93,6 +94,35 @@ public class StoreIndexController {
             model.addAttribute("chartLabels", chartLabels);
             model.addAttribute("menuDatasets", menuDatasets);
 
+            int totalSales = 0;
+            for (int m = 0; m < 3; m++) {
+                for (SalesSummaryDto dto : salesByMonth.get(m)) {
+                    int amount = dto.getTotalAmount() != null ? dto.getTotalAmount().intValue() : 0;
+                    totalSales += amount;
+                }
+            }
+
+            int averageSales = totalSales / 3;
+            int targetSales = (int) Math.round(averageSales * 1.1);
+
+// 이번 달(1일 ~ 오늘) 매출 합산
+            LocalDate startOfThisMonth = now.withDayOfMonth(1);
+            LocalDate today = now;
+            List<SalesSummaryDto> thisMonthSales = salesService.getSalesSummary(storeId, startOfThisMonth, today);
+            int actualThisMonthSales = thisMonthSales.stream()
+                    .mapToInt(dto -> dto.getTotalAmount() != null ? dto.getTotalAmount().intValue() : 0)
+                    .sum();
+
+            int achievementRate = targetSales > 0 ? (int) ((actualThisMonthSales * 100.0) / targetSales) : 0;
+
+            model.addAttribute("targetSales", targetSales);
+            model.addAttribute("actualSales", actualThisMonthSales);
+            model.addAttribute("achievementRate", achievementRate);
+
+
+
+
+
             // 2. 부족재고 (기존 방식 유지)
             List<InventorySummaryDto> rawList = inventoryStoreService.getInventorySummary();
             Map<String, InventorySummaryPivotRowDto> pivotMap = new LinkedHashMap<>();
@@ -147,9 +177,19 @@ public class StoreIndexController {
             model.addAttribute("orderList", orderList);
 
 
+
+
+            List<ReturnDto> fullReturnList = returnService.getReturnListByStoreId(storeId);
+            model.addAttribute("returnList", fullReturnList.stream().limit(4).collect(Collectors.toList()));
             model.addAttribute("shortageList", shortageList);
             model.addAttribute("store", store);
+
+
         }
+
+
+
+
 
         return "storeOwner/index";
     }
