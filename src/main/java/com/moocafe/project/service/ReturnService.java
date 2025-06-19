@@ -130,7 +130,7 @@ public class ReturnService {
         // 1. 해당 반품 조회
         Return returnEntity = returnRepository.findByReturnNumber(returnNumber)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 반품번호: " + returnNumber));
-List<ReturnItem> items = returnEntity.getItems();
+        List<ReturnItem> items = returnEntity.getItems();
         if (items == null || items.isEmpty()) {
             throw new RuntimeException("반품 항목이 없습니다.");
         }
@@ -159,8 +159,6 @@ List<ReturnItem> items = returnEntity.getItems();
         em.clear();
     }
 
-
-
     @Transactional
     public void completeItem(String returnNumber, String itemCode) {
         // 1. ReturnItem 찾기
@@ -187,8 +185,33 @@ List<ReturnItem> items = returnEntity.getItems();
         detail.setStatus("반품완료");
         storeOrderDetailDao.save(detail);
     }
+    @Transactional(readOnly = true)
+    public List<ReturnDto> getReturnListByStoreId(Integer storeId) {
+        List<Return> returns = returnDao.findByStoreIdWithItems(storeId);
 
+        return returns.stream().map(r -> {
+            List<ReturnItemDto> itemDtos = r.getItems().stream().map(item -> ReturnItemDto.builder()
+                    .id(item.getId())
+                    .itemCode(item.getItem().getItemCode())
+                    .itemName(item.getItem().getItemName())
+                    .returnQuantity(item.getReturnQuantity())
+                    .status(item.getStatus())
+                    .returnNumber(r.getReturnNumber())
+                    .orderNumber(r.getOrderNumber().getOrderNumber())
+                    .build()
+            ).collect(Collectors.toList());
 
-
+            return ReturnDto.builder()
+                    .id(r.getId())
+                    .returnNumber(r.getReturnNumber())
+                    .requiredDate(r.getRequiredDate())
+                    .returnNote(r.getReturnNote())
+                    .typeReturn(r.getTypeReturn())
+                    .orderNumber(r.getOrderNumber().getOrderNumber())
+                    .storeId(r.getOrderNumber().getStoreId().toString())
+                    .items(itemDtos)
+                    .build();
+        }).collect(Collectors.toList());
+    }
 
 }
