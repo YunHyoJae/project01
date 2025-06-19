@@ -75,14 +75,4 @@ StoreReturnController {
         return "ok";
     }
 
-
-    @PostMapping("/returnComplete")
-    @ResponseBody
-    public ResponseEntity<String> updateReturnStatus(@RequestParam Integer id ) {
-        log.info("id: " + id);
-        returnService.markAsCompleted(id);
-        return ResponseEntity.ok("updated");
-    }
-
-
 }
