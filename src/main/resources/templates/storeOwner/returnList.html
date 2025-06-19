@@ -16,7 +16,8 @@
     <div class="main-layout">
         <div th:replace="~{/storeOwner/etcLnb::active('return','returnList')}"></div>
 
-        <div class="returnInquiry" style="width: 80%; padding: 40px; background-color: #f9f9f9;">
+        <div class="content">
+        <div class="returnInquiry">
             <h2>반품현황</h2>
 
             <!-- 필터 버튼 -->
@@ -54,7 +55,6 @@
                     </th:block>
                     </tbody>
                 </table>
-                <button type="submit">반품신청</button>
             </form>
 
                 <!-- 페이징 -->
@@ -68,6 +68,7 @@
                     <a href="#">&gt;</a>
                 </div>
         </div> <!-- .returnInquiry -->
+        </div>
     </div> <!-- .main-layout -->
 </div> <!-- .section -->
 <script>

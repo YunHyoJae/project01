@@ -432,14 +432,17 @@
             <th>고객명</th>
             <td><input type="text" name="name" class="full-width" required th:field="*{name}"></td>
           </tr>
+          <tr th:if="${#fields.hasErrors('name')}"><td colspan="2"><p class="error" th:errors="*{name}"></p></td></tr>
           <tr>
             <th>연락처</th>
             <td><input type="tel" name="tel" class="full-width" required th:field="*{tel}"></td>
           </tr>
+          <tr th:if="${#fields.hasErrors('tel')}"><td colspan="2"><p class="error" th:errors="*{tel}"></p></td></tr>
           <tr>
             <th>이메일</th>
             <td><input type="email" name="email" class="full-width" th:field="*{email}"></td>
           </tr>
+          <tr th:if="${#fields.hasErrors('email')}"><td colspan="2"><p class="error" th:errors="*{email}"></p></td></tr>
           <tr>
             <th>창업희망지역</th>
             <td>
@@ -501,6 +504,7 @@
             <th>상세문의내용</th>
             <td><textarea name="content" rows="5" class="full-width" th:field="*{content}"></textarea></td>
           </tr>
+          <tr th:if="${#fields.hasErrors('content')}"><td colspan="2"><p class="error" th:errors="*{content}"></p></td></tr>
           <tr>
             <th>개인정보동의</th>
             <td>
@@ -516,7 +520,7 @@
             </td>
           </tr>
         </table>
-        <p th:if="${error}">[[${error}]]</p>
+        <p th:if="${error}" class="error">[[${error}]]</p>
       </form>
     </div>
 
