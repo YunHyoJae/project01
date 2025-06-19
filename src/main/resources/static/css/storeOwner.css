@@ -388,7 +388,7 @@ body {
 .orderForm .search_td .default_btn {
   padding: 10px;
 }
-.orderForm .result-table button{border:none; box-shadow:none; border-radius:0; padding:0; overflow:visible;padding: 10px;}
+.orderForm .result-table button{border:none; box-shadow:none; border-radius:5px; padding:0; overflow:visible;padding: 4px 10px;}
 .orderForm .addRow_btn {
   float: right;
   font-size: 18px;
@@ -1201,3 +1201,5 @@ body {
 .search_box.typePark .textBox{width:280px;}
 .search_box.typePark .search_btn{background:#ddd;border-radius:5px;padding:6px 15px;width:auto;border:none;}
 .search_box.typePark .default_btn{height:40px;box-sizing:border-box;}
+.stock_low_icon{display:none;}
+.low-stock .stock_low_icon{display: inline-block;width: 1em;height: 1em;background: #f6bb7c;margin-right: 10px;border-radius: 0.5em;}

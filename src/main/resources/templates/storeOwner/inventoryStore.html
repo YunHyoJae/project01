@@ -12,6 +12,15 @@
         color: white;
         font-weight: bold;
     }
+    .stock_low_icon{display:none;}
+    .low-stock .stock_low_icon{
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    background: #f6bb7c;
+    margin-right: 10px;
+    border-radius: 0.5em;
+    }
     .main-layout{
         background-color: #fff;
     }
@@ -98,12 +107,11 @@
                         </td>
                         <td th:text="${row.itemCode}">품목코드</td>
                         <td th:text="${row.itemName}">품목명</td>
-                        <td th:text="${row.getStockByStoreId(store.id)}"
-                            th:class="'stock-cell ' + ${row.getStockCssClass(store.id)}"
+                        <td th:class="'stock-cell ' + ${row.getStockCssClass(store.id)}"
                             th:attr="data-item-code=${row.itemCode},
                data-needed=${(row.getNeededRoundedByStoreId(store.id) - row.getStockByStoreId(store.id)) > 0
                              ? (row.getNeededRoundedByStoreId(store.id) - row.getStockByStoreId(store.id))
-                             : 0}">
+                             : 0}"><span class="stock_low_icon"></span>[[${row.getStockByStoreId(store.id)}]]
                         </td>
                         <td th:text="${row.getNeededRoundedByStoreId(store.id)}">필요재고</td>
                     </tr>
