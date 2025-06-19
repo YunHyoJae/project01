@@ -86,7 +86,7 @@
         <div th:replace="~{/headOffice/etcLnb::active('receiving','purchaseOrder')}"></div>
 
         <div class="content">
-        <div class="receivingOrder" style="margin: 0 auto; width: 80%; padding: 40px;">
+        <div class="receivingOrder">
             <!-- 모달 토글용 체크박스(숨김) -->
             <input type="checkbox" id="order-modal-toggle" style="display:none;">
 
@@ -102,6 +102,7 @@
             <div class="question-box">
                 <form th:action="@{/headOffice/purchaseOrder}" method="post" th:object="${purchaseDto}">
                     <table class="receiving_entry_table">
+                        <colgroup><col style=""/><col style=""/><col style=""/><col style=""/><col style="width:150px;"/><col style="width:150px;"/><col style="width:80px;"/></colgroup>
                         <thead>
                         <tr>
                             <th>품목명</th>
