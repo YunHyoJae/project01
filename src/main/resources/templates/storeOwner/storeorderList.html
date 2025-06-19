@@ -93,11 +93,25 @@
               <td th:text="${order.itemName}"></td>
               <td th:text="${order.orderedQuantity}"></td>
               <td th:text="${order.status}"></td>
+<!--              <td>-->
+<!--                <button type="button"-->
+<!--                        th:if="${order.status == '출고완료'}"-->
+<!--                        onclick="addToReturnList(this)" class="btn-return">반품</button>-->
+<!--              </td>-->
+<!--강동현 추가-->
               <td>
-                <button type="button"
-                        th:if="${order.status == '출고완료'}"
-                        onclick="addToReturnList(this)" class="btn-return">반품</button>
+                <th:block th:if="${order.status == '출고완료'}">
+                  <button type="button"
+                          th:if="${order.returnStatus == null}"
+                          onclick="addToReturnList(this)"
+                          class="btn-return">
+                    반품
+                  </button>
+                  <span th:if="${order.returnStatus == '진행중'}" style="color: orange;">반품 진행중</span>
+                  <span th:if="${order.returnStatus == '반품완료'}" style="color: gray;">반품완료</span>
+                </th:block>
               </td>
+<!--              강동현 추가-->
             </tr>
             </tbody>
           </table>
@@ -193,6 +207,26 @@
       returnIndex = 0;
     }
   }
+  //강동현 추가부분
+
+  document.getElementById("returnForm").addEventListener("submit", function(event) {
+    const rows = document.querySelectorAll("#returnTableBody tr");
+
+    for (const row of rows) {
+      const itemCode = row.querySelector('input[name$=".itemCode"]').value;
+      const qtyInput = row.querySelector('input[name$=".returnQuantity"]');
+      const quantity = parseInt(qtyInput.value);
+      const maxQty = parseInt(qtyInput.max);
+
+      if (quantity > maxQty) {
+        alert(`[${itemCode}]의 반품 수량이 현재 재고보다 많습니다.`);
+        qtyInput.focus();
+        event.preventDefault(); // 전송 중단
+        return;
+      }
+    }
+  });
+  //강동현 추가부분
 </script>
 </body>
 </html>

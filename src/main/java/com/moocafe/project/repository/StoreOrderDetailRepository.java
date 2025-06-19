@@ -16,21 +16,48 @@ import java.util.Optional;
 
 @Repository
 public interface StoreOrderDetailRepository extends JpaRepository<StoreOrderDetail, StoreOrderDetailId> {
-    @Query(value = """
-        SELECT o.orderNumber, TO_CHAR(o.orderDate, 'YYYY-MM-DD'), d.itemCode,
-               ir.itemName, d.orderedQuantity, d.status
-        FROM StoreOrder o
-        JOIN StoreOrderDetail d ON o.id = d.orderId
-        JOIN InventoryStore s ON d.itemCode = s.itemCode AND s.storeId = 1
-        JOIN InventoryRegistration ir ON s.itemCode = ir.itemCode
-        WHERE o.storeId = :storeId
-        AND TRUNC(o.orderDate) BETWEEN TO_DATE(:startDate, 'YYYY-MM-DD') AND TO_DATE(:endDate, 'YYYY-MM-DD')
-        """, nativeQuery = true)
-    List<Object[]> findOrderListByStoreAndDate(
-            @Param("storeId") Integer storeId,
-            @Param("startDate") String startDate,
-            @Param("endDate") String endDate
-    );
+//    @Query(value = """
+//        SELECT o.orderNumber, TO_CHAR(o.orderDate, 'YYYY-MM-DD'), d.itemCode,
+//               ir.itemName, d.orderedQuantity, d.status
+//        FROM StoreOrder o
+//        JOIN StoreOrderDetail d ON o.id = d.orderId
+//        JOIN InventoryStore s ON d.itemCode = s.itemCode AND s.storeId = 1
+//        JOIN InventoryRegistration ir ON s.itemCode = ir.itemCode
+//        WHERE o.storeId = :storeId
+//        AND TRUNC(o.orderDate) BETWEEN TO_DATE(:startDate, 'YYYY-MM-DD') AND TO_DATE(:endDate, 'YYYY-MM-DD')
+//        """, nativeQuery = true)
+//    List<Object[]> findOrderListByStoreAndDate(
+//            @Param("storeId") Integer storeId,
+//            @Param("startDate") String startDate,
+//            @Param("endDate") String endDate
+//    );
+//강동현 수정 부분
+@Query(value = """
+    SELECT o.orderNumber,
+           TO_CHAR(o.orderDate, 'YYYY-MM-DD'),
+           d.itemCode,
+           ir.itemName,
+           d.orderedQuantity,
+           d.status,
+           ri.status AS returnStatus
+    FROM StoreOrder o
+    JOIN StoreOrderDetail d ON o.id = d.orderId
+    JOIN InventoryStore s ON d.itemCode = s.itemCode AND s.storeId = 1
+    JOIN InventoryRegistration ir ON s.itemCode = ir.itemCode
+    LEFT JOIN ReturnItem ri ON ri.returnNumber = o.orderNumber AND ri.itemCode = d.itemCode
+    WHERE o.storeId = :storeId
+    AND TRUNC(o.orderDate) BETWEEN TO_DATE(:startDate, 'YYYY-MM-DD') AND TO_DATE(:endDate, 'YYYY-MM-DD')
+    """, nativeQuery = true)
+List<Object[]> findOrderListByStoreAndDate(
+        @Param("storeId") Integer storeId,
+        @Param("startDate") String startDate,
+        @Param("endDate") String endDate
+);
+
+
+//강동현 수정 부분
+
+
 
     @Query("""
     SELECT d FROM StoreOrderDetail d

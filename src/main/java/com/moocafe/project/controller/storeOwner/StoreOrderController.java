@@ -94,7 +94,10 @@ public String showOrderForm(
 
         ReturnDto returnDto = new ReturnDto();
         returnDto.setItems(items); //returnDto.setReturnItems(items);
-        returnDto.setReturnNumber(generateReturnNumber());
+
+
+        String returnNumber = returnService.generateUniqueReturnNumber();
+        returnDto.setReturnNumber(returnNumber);
 
         log.info("orderList: {}", orderList);
 
@@ -116,11 +119,11 @@ public String showOrderForm(
         return showOrderListPage(userDetails, startDate, endDate, model);
     }
 
-    private String generateReturnNumber() {
-        String date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        String random = UUID.randomUUID().toString().substring(0, 4).toUpperCase();
-        return "RE" + date + "-" + random;
-    }
+//    private String generateReturnNumber() {
+//        String date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+//        String random = UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+//        return "RE" + date + "-" + random;
+//    }
 
 //    @PostMapping("/storeOrderReturn")
 //    public String submitReturn(@ModelAttribute ReturnDto returnDto, int storeId) {

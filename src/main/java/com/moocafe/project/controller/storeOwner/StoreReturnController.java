@@ -5,7 +5,6 @@ import com.moocafe.project.dto.ReturnDto;
 import com.moocafe.project.dto.ReturnItemDto;
 import com.moocafe.project.entity.Return;
 import com.moocafe.project.entity.ReturnItem;
-import com.moocafe.project.repository.ReturnItemRepository;
 import com.moocafe.project.service.ReturnService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -70,34 +69,62 @@ StoreReturnController {
         return "storeOwner/returnList"; // ⬅ Thymeleaf 페이지를 보여주고 싶을 때
     }
 
-//
-//    @PostMapping("/returnComplete")
-//    @ResponseBody
-//    public ResponseEntity<String> updateReturnStatus(@RequestParam Integer id ) {
-//        log.info("id: " + id);
-//        returnService.markAsCompleted(id);
-//        return ResponseEntity.ok("updated");
-//    }
+    @PostMapping("/storeOwner/returnComplete")
+    @ResponseBody
+    public ResponseEntity<String> completeReturn(@RequestBody Map<String, String> payload,
+                                                 @AuthenticationPrincipal CustomUserDetails userDetails) {
+        String returnNumber = payload.get("returnNumber");
+        String itemCode = payload.get("itemCode");
+
+        if (returnNumber == null || itemCode == null) {
+            return ResponseEntity.badRequest().body("❌ 반품번호 또는 품목코드가 누락되었습니다.");
+        }
+
+        log.info("반품 완료 처리 요청 - returnNumber: {}, itemCode: {}", returnNumber, itemCode);
+
+        if (!returnService.existsByReturnNumber(returnNumber)) {
+            return ResponseEntity.badRequest().body("❌ 존재하지 않는 반품번호입니다.");
+        }
+
+        // ✅ 현재 재고 확인
+        Integer storeId = userDetails.getStoreId();
+        int currentStock = returnService.getStockQuantity(storeId, itemCode);
+        int returnQty = returnService.getReturnQuantity(returnNumber, itemCode); // 아래 구현 설명
+
+        log.info("storeId={}, itemCode={}, currentStock={}, returnQty={}", storeId, itemCode, currentStock, returnQty);
+
+        if (currentStock < returnQty) {
+            return ResponseEntity.badRequest().body("❌ 현재 재고보다 반품 수량이 많습니다. 반품 불가합니다.");
+        }
+
+        returnService.completeItem(returnNumber, itemCode);
+        return ResponseEntity.ok("✅ 반품 완료 처리되었습니다.");
+    }
+
+
+
+
+
 
     //강동현 입력
 
 
 
-    @PostMapping("/storeOwner/returnComplete")
-    @ResponseBody
-    public String completeReturn(@RequestBody Map<String, String> payload) {
-        String returnNumber = payload.get("returnNumber");
-        String itemCode = payload.get("itemCode");
-
-        if (returnNumber == null || itemCode == null) {
-            throw new IllegalArgumentException("반품번호 또는 품목코드가 누락되었습니다.");
-        }
-
-        log.info("반품 완료 처리 요청 - returnNumber: {}, itemCode: {}", returnNumber, itemCode);
-
-        returnService.completeItem(returnNumber, itemCode);
-
-        return "ok";
-    }
+//    @PostMapping("/storeOwner/returnComplete")
+//    @ResponseBody
+//    public String completeReturn(@RequestBody Map<String, String> payload) {
+//        String returnNumber = payload.get("returnNumber");
+//        String itemCode = payload.get("itemCode");
+//
+//        if (returnNumber == null || itemCode == null) {
+//            throw new IllegalArgumentException("반품번호 또는 품목코드가 누락되었습니다.");
+//        }
+//
+//        log.info("반품 완료 처리 요청 - returnNumber: {}, itemCode: {}", returnNumber, itemCode);
+//
+//        returnService.completeItem(returnNumber, itemCode);
+//
+//        return "ok";
+//    }
 
 }

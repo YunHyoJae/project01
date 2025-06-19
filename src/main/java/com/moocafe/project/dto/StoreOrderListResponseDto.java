@@ -5,7 +5,6 @@ import lombok.*;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @ToString
 public class StoreOrderListResponseDto {
     private String orderNumber;
@@ -14,4 +13,19 @@ public class StoreOrderListResponseDto {
     private String itemName;
     private int orderedQuantity;
     private String status;
+    private String returnStatus;
+
+    public StoreOrderListResponseDto(String orderNumber, String orderDate, String itemCode,
+                                     String itemName, int orderedQuantity, String status,
+                                     String returnStatus) {
+        this.orderNumber = orderNumber;
+        this.orderDate = orderDate;
+        this.itemCode = itemCode;
+        this.itemName = itemName;
+        this.orderedQuantity = orderedQuantity;
+        this.status = status;
+        this.returnStatus = returnStatus;
+    }
+
+
 }

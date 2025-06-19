@@ -44,4 +44,9 @@ public class InventoryStoreDao {
         inventoryStoreRepository.increaseHQStock(itemCode, quantity);
     }; // storeId = 1로 고정 처리
 
+
+    public void decreaseStoreStock(Integer storeId, String itemCode, int quantity) {
+        inventoryStoreRepository.decreaseStock(storeId, itemCode, quantity);
+    }
+
 }

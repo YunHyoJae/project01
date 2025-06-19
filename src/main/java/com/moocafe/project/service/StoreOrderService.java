@@ -123,12 +123,13 @@ public class StoreOrderService {
     public List<StoreOrderListResponseDto> getOrderList(Integer storeId, String startDate, String endDate) {
         List<Object[]> rawResults = storeOrderDetailDao.findOrderListByStoreAndDate(storeId, startDate, endDate);
         return rawResults.stream().map(obj -> new StoreOrderListResponseDto(
-                (String) obj[0],
-                (String) obj[1],
-                (String) obj[2],
-                (String) obj[3],
-                ((Number) obj[4]).intValue(),
-                (String) obj[5]
+                (String) obj[0],                     // orderNumber
+                (String) obj[1],                     // orderDate
+                (String) obj[2],                     // itemCode
+                (String) obj[3],                     // itemName
+                ((Number) obj[4]).intValue(),        // orderedQuantity
+                (String) obj[5],                     // orderStatus
+                obj[6] != null ? (String) obj[6] : null
         )).toList();
     }
 
