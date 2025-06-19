@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,46 +36,46 @@ public class ReturnService {
     @PersistenceContext
     private EntityManager em;
 
-    @Transactional
-    public void saveReturn(ReturnDto returnDto) {
-        String orderNumber = returnDto.getItems().get(0).getOrderNumber();
-        StoreOrder storeOrder = storeOrderDao.findByOrderNumber(orderNumber)
-                .orElseThrow(() -> new RuntimeException("해당 주문번호 없음"));
-
-
-        // 1. Return 저장
-        Return returnEntity = Return.builder()
-                .returnNumber(returnDto.getReturnNumber())
-                .returnNote(returnDto.getReturnNote())
-                .requiredDate(LocalDateTime.now())
-                .orderNumber(storeOrder)  // 연관관계 저장
-                .typeReturn("반품")
-                .build();
-
-        returnDao.saveReturn(returnEntity);
-
-        // 2. ReturnItem 저장 + 검증
-        for (ReturnItemDto dto : returnDto.getItems()) {
-            List<InventoryStore> itemList = inventoryStoreRepository.findByItemCode(dto.getItemCode());
-
-            if (itemList.isEmpty()) {
-                throw new RuntimeException("등록되지 않은 품목코드: " + dto.getItemCode());
-            }
-
-            InventoryItem invItem = inventoryItemRepository.findByItemCode(dto.getItemCode())
-                    .orElseThrow(() -> new RuntimeException("존재하지 않는 품목코드: " + dto.getItemCode()));
-
-            ReturnItem returnItem = ReturnItem.builder()
-                    .item(invItem)
-                    .returnQuantity(dto.getReturnQuantity())
-                    .status("진행중")
-                    .returnEntity(returnEntity)
-                    .build();
-
-            returnItemDao.saveReturnItem(returnItem);
-        }
-
-    }
+//    @Transactional
+//    public void saveReturn(ReturnDto returnDto) {
+//        String orderNumber = returnDto.getItems().get(0).getOrderNumber();
+//        StoreOrder storeOrder = storeOrderDao.findByOrderNumber(orderNumber)
+//                .orElseThrow(() -> new RuntimeException("해당 주문번호 없음"));
+//
+//
+//        // 1. Return 저장
+//        Return returnEntity = Return.builder()
+//                .returnNumber(returnDto.getReturnNumber())
+//                .returnNote(returnDto.getReturnNote())
+//                .requiredDate(LocalDateTime.now())
+//                .orderNumber(storeOrder)  // 연관관계 저장
+//                .typeReturn("반품")
+//                .build();
+//
+//        returnDao.saveReturn(returnEntity);
+//
+//        // 2. ReturnItem 저장 + 검증
+//        for (ReturnItemDto dto : returnDto.getItems()) {
+//            List<InventoryStore> itemList = inventoryStoreRepository.findByItemCode(dto.getItemCode());
+//
+//            if (itemList.isEmpty()) {
+//                throw new RuntimeException("등록되지 않은 품목코드: " + dto.getItemCode());
+//            }
+//
+//            InventoryItem invItem = inventoryItemRepository.findByItemCode(dto.getItemCode())
+//                    .orElseThrow(() -> new RuntimeException("존재하지 않는 품목코드: " + dto.getItemCode()));
+//
+//            ReturnItem returnItem = ReturnItem.builder()
+//                    .item(invItem)
+//                    .returnQuantity(dto.getReturnQuantity())
+//                    .status("진행중")
+//                    .returnEntity(returnEntity)
+//                    .build();
+//
+//            returnItemDao.saveReturnItem(returnItem);
+//        }
+//
+//    }
 
 
 //    public StoreOrder findByOrderNumber(String orderNumber) {
@@ -213,5 +214,88 @@ public class ReturnService {
                     .build();
         }).collect(Collectors.toList());
     }
+
+    //강동현 추가부분//
+    public List<ReturnDto> mapToReturnDto(List<Return> returns) {
+        return returns.stream().map(r -> {
+            List<ReturnItemDto> itemDtos = r.getItems().stream().map(item -> ReturnItemDto.builder()
+                    .id(item.getId())
+                    .itemCode(item.getItem().getItemCode())
+                    .itemName(item.getItem().getItemName())
+                    .returnQuantity(item.getReturnQuantity())
+                    .status(item.getStatus())
+                    .returnNumber(r.getReturnNumber())
+                    .orderNumber(r.getOrderNumber().getOrderNumber())
+                    .build()
+            ).collect(Collectors.toList());
+
+            return ReturnDto.builder()
+                    .id(r.getId())
+                    .returnNumber(r.getReturnNumber())
+                    .requiredDate(r.getRequiredDate())
+                    .returnNote(r.getReturnNote())
+                    .typeReturn(r.getTypeReturn())
+                    .orderNumber(r.getOrderNumber().getOrderNumber())
+                    .storeId(r.getOrderNumber().getStoreId().toString())
+                    .items(itemDtos)
+                    .build();
+        }).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void saveReturn(ReturnDto returnDto) {
+        String returnNumber = returnDto.getReturnNumber();
+        String orderNumber = returnDto.getItems().get(0).getOrderNumber();
+
+        // ✅ 중복된 반품번호 있는지 먼저 확인
+        if (returnRepository.findByReturnNumber(returnNumber).isPresent()) {
+            log.warn("❗ 이미 존재하는 반품번호입니다: {}", returnNumber);
+            throw new IllegalStateException("이미 존재하는 반품번호입니다: " + returnNumber);
+        }
+
+        StoreOrder storeOrder = storeOrderDao.findByOrderNumber(orderNumber)
+                .orElseThrow(() -> new RuntimeException("해당 주문번호 없음: " + orderNumber));
+
+        // ✅ Return 저장
+        Return returnEntity = Return.builder()
+                .returnNumber(returnNumber)
+                .returnNote(returnDto.getReturnNote())
+                .requiredDate(LocalDateTime.now())
+                .orderNumber(storeOrder)
+                .typeReturn("반품")
+                .build();
+
+        returnDao.saveReturn(returnEntity);
+        log.info("✅ 반품 저장 완료: {}", returnNumber);
+
+        // ✅ ReturnItem 저장
+        for (ReturnItemDto dto : returnDto.getItems()) {
+            List<InventoryStore> itemList = inventoryStoreRepository.findByItemCode(dto.getItemCode());
+
+            if (itemList.isEmpty()) {
+                log.error("❌ 등록되지 않은 품목코드: {}", dto.getItemCode());
+                throw new RuntimeException("등록되지 않은 품목코드: " + dto.getItemCode());
+            }
+
+            InventoryItem invItem = inventoryItemRepository.findByItemCode(dto.getItemCode())
+                    .orElseThrow(() -> new RuntimeException("존재하지 않는 품목코드: " + dto.getItemCode()));
+
+            ReturnItem returnItem = ReturnItem.builder()
+                    .item(invItem)
+                    .returnQuantity(dto.getReturnQuantity())
+                    .status("진행중")
+                    .returnEntity(returnEntity)
+                    .build();
+
+            returnItemDao.saveReturnItem(returnItem);
+            log.info("📝 반품 품목 저장 - itemCode: {}, 수량: {}", dto.getItemCode(), dto.getReturnQuantity());
+        }
+    }
+
+
+
+
+
+
 
 }

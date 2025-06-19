@@ -25,7 +25,7 @@ public class Return {
     @Column(unique = true, nullable = false)
     private String returnNumber;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "orderNumber", referencedColumnName = "orderNumber", nullable = false)
     private StoreOrder orderNumber;
 

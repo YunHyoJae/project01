@@ -70,20 +70,7 @@ StoreReturnController {
         return "storeOwner/returnList"; // ⬅ Thymeleaf 페이지를 보여주고 싶을 때
     }
 
-//
-//    @PostMapping("/returnComplete")
-//    @ResponseBody
-//    public ResponseEntity<String> updateReturnStatus(@RequestParam Integer id ) {
-//        log.info("id: " + id);
-//        returnService.markAsCompleted(id);
-//        return ResponseEntity.ok("updated");
-//    }
-
-    //강동현 입력
-
-
-
-    @PostMapping("/storeOwner/returnComplete")
+    @PostMapping("/returnComplete") // ✅ 여기만 고치면 됩니다
     @ResponseBody
     public String completeReturn(@RequestBody Map<String, String> payload) {
         String returnNumber = payload.get("returnNumber");
@@ -99,5 +86,33 @@ StoreReturnController {
 
         return "ok";
     }
+
+    @PostMapping("/return")
+    public String saveReturn(@ModelAttribute ReturnDto returnDto) {
+        returnService.saveReturn(returnDto);  // ⬅ 여기서 중복 체크 포함되어 있음
+        return "redirect:/storeOwner/returnList";
+    }
+
+
+    //강동현 입력
+
+
+
+//    @PostMapping("/storeOwner/returnComplete")
+//    @ResponseBody
+//    public String completeReturn(@RequestBody Map<String, String> payload) {
+//        String returnNumber = payload.get("returnNumber");
+//        String itemCode = payload.get("itemCode");
+//
+//        if (returnNumber == null || itemCode == null) {
+//            throw new IllegalArgumentException("반품번호 또는 품목코드가 누락되었습니다.");
+//        }
+//
+//        log.info("반품 완료 처리 요청 - returnNumber: {}, itemCode: {}", returnNumber, itemCode);
+//
+//        returnService.completeItem(returnNumber, itemCode);
+//
+//        return "ok";
+//    }
 
 }

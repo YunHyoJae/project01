@@ -88,7 +88,7 @@ public class OutBoundService {
 
             if ("출고완료".equals(status)) {
                 //inventoryStoreRepository.decreaseStock(1, itemCode, qty);
-                oInventoryStoreDao.decreaseStock(itemCode, outBoundId);
+                oInventoryStoreDao.decreaseStock(itemCode, qty);
 
                 List<InventoryStore> storeStockList = inventoryStoreRepository
                         .findByItemCodeAndStoreId(itemCode, origin.getStoreId());
