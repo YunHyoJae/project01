@@ -192,8 +192,8 @@
                                 <tbody>
                                 <tr th:each="row : ${pivotList}">
                                     <td th:each="store : ${storeList}" th:if="${store.id != 1}"
-                                        th:text="${row.getStockByStoreId(store.id)}"
                                         th:class="${row.getStockCssClass(store.id)}">
+                                        <span class="stock_low_icon"></span>[[${row.getStockByStoreId(store.id)}]]
                                     </td>
                                 </tr>
                                 </tbody>

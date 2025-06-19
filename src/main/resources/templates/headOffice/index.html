@@ -71,6 +71,36 @@
     /*  padding: 0;*/
     /*  list-style: none;*/
     /*}*/
+
+    .chart-toggle-btn-wrap {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin: 0;
+    }
+    .chart-toggle-btn {
+        background: rgba(75, 192, 192, 0.2);
+        color: #236b75;
+        border: 1px solid rgba(75, 192, 192, 0.8);
+        border-radius: 4px;
+        padding: 3px 8px;
+        font-size: 12px;
+        font-weight: bold;
+        margin-right: 0;
+        cursor: pointer;
+        transition: background 0.2s, color 0.2s;
+        letter-spacing:-0.05em;
+    }
+    .chart-toggle-btn:hover,
+    .chart-toggle-btn:focus {
+        background: rgba(75, 192, 192, 0.35);
+        color: #155b66;
+    }
+    .chart-toggle-btn[style*="font-weight:bold"] {
+        background: rgba(75, 192, 192, 0.45);
+        color: #155b66;
+        border-color: #35bfc7;
+    }
 </style>
 
 
@@ -91,7 +121,7 @@
                             <h4>전체 매출</h4>
                             <span><a href="/headOffice/salesList" class="moreLink">더보기</a></span>
                         </div>
-                        <div class="btnsWrap">
+                        <div class="chart-toggle-btn-wrap btnsWrap">
                             <button id="btnYear" class="chart-toggle-btn" style="font-weight:bold;">금년</button>
                             <button id="btnThisMonth" class="chart-toggle-btn">금월</button>
                             <button id="btnPrevMonth" class="chart-toggle-btn">전월</button>

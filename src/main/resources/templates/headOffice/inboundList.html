@@ -54,12 +54,6 @@
         text-align: center;
         word-wrap: break-word;
     }
-
-    th {
-        background: #eaf0ff;
-        font-weight: 600;
-    }
-
     .complete-btn {
         padding: 6px 10px;
         background-color: #0033cc;
@@ -131,16 +125,16 @@
 
     <div class="main-layout">
         <div th:replace="~{/headOffice/etcLnb::active('receiving','inboundList')}"></div>
-        <div class="content">
+        <div class="content receivingStatus">
             <h2>입고현황</h2>
-            <div class="tabs">
+            <div class="receiving_status_filter_buttons">
                 <!--                <button type="button" class="tab-btn" data-status="ALL" onclick="setTab('ALL')">주문전체</button>-->
                 <!--                <button type="button" class="tab-btn" data-status="ING" onclick="setTab('ING')">진행중</button>-->
-                <button type="button" class="tab-btn active" data-status="ORDER" onclick="setTab('ORDER')">발주조회</button>
-                <button type="button" class="tab-btn" data-status="RETURN" onclick="setTab('RETURN')">매장반품조회</button>
+                <label class="active" data-status="ORDER" onclick="setTab('ORDER')">발주조회</label>
+                <label data-status="RETURN" onclick="setTab('RETURN')">매장반품조회</label>
             </div>
 
-            <table class="tab-table" data-status="ORDER">
+            <table class="receiving_status_table tab-table" data-status="ORDER">
                 <thead>
                 <tr>
                     <th>번호</th>
@@ -169,7 +163,7 @@
                 </tbody>
             </table>
 
-            <table class="tab-table" data-status="RETURN">
+            <table class="receiving_status_table tab-table" data-status="RETURN">
                 <thead>
                 <tr>
                     <th>반품번호</th>
@@ -197,12 +191,12 @@
                                     th:if="${item.status == '진행중'}"
                                     th:data-return-number="${returnDto.returnNumber}"
                                     th:data-item-code="${item.itemCode}"
-                                    class="btn-send">완료처리
+                                    class="btn-send complete-btn">완료처리
                             </button>
 
                             <button type="button"
                                     th:if="${item.status == '반품완료'}"
-                                    class="btn-send" disabled>완료됨
+                                    class="btn-send complete-btn" disabled>완료됨
                             </button>
 
                         </td>
@@ -273,7 +267,7 @@
 
             // 탭 상태 전환 함수
             function setTab(status) {
-                document.querySelectorAll('.tab-btn').forEach(btn => {
+                document.querySelectorAll('.receiving_status_filter_buttons label').forEach(btn => {
                     btn.classList.toggle("active", btn.dataset.status === status);
                 });
                 document.querySelectorAll('.tab-table').forEach(table => {
