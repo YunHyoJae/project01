@@ -1167,6 +1167,7 @@ body {
   overflow-y: auto;
   overflow-x:hidden;
 }
+.headOfficeMain .notice_wrap > span{text-align:center;color:#888;display:block;margin-top:20px;}
 .headOfficeMain .stock_notice {
   list-style: disc;
   margin-left: 10px;
@@ -1205,7 +1206,7 @@ body {
 /* 전체매출 */
 .headOfficeMain .chart_wrap {
   width: 80%; height: 80%;
-  margin: 0 auto;
+  margin: 0 auto 0 140px;
 }
 .headOfficeMain .chart_wrap canvas{
   width: 100%;

@@ -8,69 +8,71 @@
     <div class="main-layout">
         <div th:replace="~{/storeOwner/etcLnb::active('order','storeorderForm')}"></div>
 
-        <div class="orderForm content">
-            <h2 class="title">주문신청</h2>
-            <h3>주문번호: <span id="orderNumber" th:text="${orderNumber}">ORD-XXXX</span></h3>
-            <button class="addRow_btn" onclick="addRow()">행 추가 ➕</button>
-            <div class="orderForm-box box">
-                <table id="orderFormTable">
-                    <thead>
-                    <tr>
-                        <th><input type="checkbox" onclick="selectAll(this)" /></th>
-                        <th>주문번호</th>
-                        <th>품목코드</th>
-                        <th>품목명</th>
-                        <th></th>
-                        <th>수량</th>
-                        <th>재고</th>
-                        <th>단가</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody id="order-items"></tbody>
-                    <tfoot>
-                    <tr>
-                        <th colspan="4">총 금액</th>
-                        <td colspan="5"><span id="totalAmount">0</span>원</td>
-                    </tr>
-                    </tfoot>
-                </table>
-                <button class="default_btn apply_btn" onclick="submitOrder()">신청</button>
-            </div>
-
-            <!-- 모달창 -->
-            <div id="modalBg">
-                <div class="modal" style="max-height: 80vh; overflow-y: auto;">
-                    <h2 class="modal_tit">품목 검색</h2>
-                    <form class="search-box" onsubmit="return false;">
-                        <div class="search_row">
-                            <label>품목명검색</label>
-                            <label>품목코드검색</label>
-                        </div>
-                        <div class="search_row">
-                            <input id="searchName" type="text" placeholder="품목명검색" oninput="debouncedSearch()" />
-                            <input id="searchCode" type="text" placeholder="품목코드검색" oninput="debouncedSearch()" />
-                        </div>
-                    </form>
-
-                    <table class="result-table">
+        <div class="content">
+            <div class="orderForm">
+                <h2 class="title">주문신청</h2>
+                <h3>주문번호: <span id="orderNumber" th:text="${orderNumber}">ORD-XXXX</span></h3>
+                <button class="addRow_btn" onclick="addRow()">행 추가 ➕</button>
+                <div class="orderForm-box box">
+                    <table id="orderFormTable">
                         <thead>
                         <tr>
+                            <th><input type="checkbox" onclick="selectAll(this)" /></th>
+                            <th>주문번호</th>
                             <th>품목코드</th>
                             <th>품목명</th>
+                            <th></th>
+                            <th>수량</th>
+                            <th>재고</th>
                             <th>단가</th>
-                            <th>선택</th>
+                            <th></th>
                         </tr>
                         </thead>
-                        <tbody id="modalResultBody">
-                        <tr><td colspan="4">검색 결과 없음</td></tr>
-                        </tbody>
+                        <tbody id="order-items"></tbody>
+                        <tfoot>
+                        <tr>
+                            <th colspan="4">총 금액</th>
+                            <td colspan="5"><span id="totalAmount">0</span>원</td>
+                        </tr>
+                        </tfoot>
                     </table>
+                    <button class="default_btn apply_btn" onclick="submitOrder()">신청</button>
+                </div>
 
-                    <div style="text-align: center; margin: 10px 0;" id="paginationArea"></div>
+                <!-- 모달창 -->
+                <div id="modalBg">
+                    <div class="modal" style="max-height: 80vh; overflow-y: auto;">
+                        <h2 class="modal_tit">품목 검색</h2>
+                        <form class="search-box" onsubmit="return false;">
+                            <div class="search_row">
+                                <label>품목명검색</label>
+                                <label>품목코드검색</label>
+                            </div>
+                            <div class="search_row">
+                                <input id="searchName" type="text" placeholder="품목명검색" oninput="debouncedSearch()" />
+                                <input id="searchCode" type="text" placeholder="품목코드검색" oninput="debouncedSearch()" />
+                            </div>
+                        </form>
 
-                    <div class="modal-footer">
-                        <label class="close-btn" onclick="hideModal()">닫기</label>
+                        <table class="result-table">
+                            <thead>
+                            <tr>
+                                <th>품목코드</th>
+                                <th>품목명</th>
+                                <th>단가</th>
+                                <th>선택</th>
+                            </tr>
+                            </thead>
+                            <tbody id="modalResultBody">
+                            <tr><td colspan="4">검색 결과 없음</td></tr>
+                            </tbody>
+                        </table>
+
+                        <div style="text-align: center; margin: 10px 0;" id="paginationArea" class="pagination"></div>
+
+                        <div class="modal-footer">
+                            <label class="close-btn" onclick="hideModal()">닫기</label>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -194,7 +196,7 @@
         const pagination = document.getElementById("paginationArea");
         pagination.innerHTML = "";
         for (let i = 0; i < totalPages; i++) {
-            const btn = document.createElement("button");
+            const btn = document.createElement("span");
             btn.innerText = i + 1;
             btn.style.margin = "0 5px";
             if (i === page) btn.style.fontWeight = "bold";

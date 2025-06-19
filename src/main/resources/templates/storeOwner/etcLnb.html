@@ -22,7 +22,7 @@
     <li class="return" th:if="${#strings.equals(title,'return')}">
       <a href="/storeOwner/returnList">반품</a>
       <ul class="submenu">
-        <li><a href="/storeOwner/returnList">반품현황</a></li>
+        <li><a href="/storeOwner/returnList" th:classappend="${#strings.equals(sub, 'returnList') ? 'active' : ''}">반품현황</a></li>
       </ul>
     </li>
     <li class="inventory" th:if="${#strings.equals(title,'inventory')}">

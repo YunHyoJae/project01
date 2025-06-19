@@ -42,12 +42,13 @@
         color: #236b75;
         border: 1px solid rgba(75, 192, 192, 0.8);
         border-radius: 4px;
-        padding: 3px 10px;
+        padding: 3px 8px;
         font-size: 0.93em;
         font-weight: bold;
         margin-right: 0;
         cursor: pointer;
         transition: background 0.2s, color 0.2s;
+        letter-spacing:-0.05em;
     }
     .chart-toggle-btn:hover,
     .chart-toggle-btn:focus {
@@ -82,13 +83,12 @@
                             <h4>최근 3개월 매출</h4>
                             <span><a href="/storeOwner/salesList" class="moreLink">더보기</a></span>
                         </div>
-
-                        <div class="chart_wrap" style="margin-top: 30px;">
-                            <canvas id="monthlySalesChart" height="80"></canvas>
-                            <div class="chart-toggle-btn-wrap">
-                                <button id="btnMonth" class="chart-toggle-btn" style="font-weight:bold; font-size: 12px;">월별보기</button>
-                                <button id="btnMenu" class="chart-toggle-btn" style="font-size: 12px;">메뉴별보기</button>
-                            </div>
+                        <div class="chart-toggle-btn-wrap btnsWrap">
+                            <button id="btnMonth" class="chart-toggle-btn" style="font-weight:bold; font-size: 12px;">월별보기</button>
+                            <button id="btnMenu" class="chart-toggle-btn" style="font-size: 12px;">메뉴별보기</button>
+                        </div>
+                        <div class="chart_wrap">
+                            <canvas id="monthlySalesChart" height="170"></canvas>
                         </div>
 
                         <div class="chartCaption">
@@ -103,8 +103,8 @@
                                 <h4>재고현황</h4>
                                 <span><a href="/storeOwner/inventoryStore" class="moreLink">더보기</a></span>
                             </div>
-                            <div class="boxContent shortage-scroll">
-                                <ul>
+                            <div class="notice_wrap">
+                                <ul class="franchise_notice">
                                     <li th:each="s : ${shortageList}">
                                         <span th:text="${s.itemName}"></span>
                                         <span th:text="'(' + ${s.storeName} + ')'"></span>
@@ -122,8 +122,8 @@
                                 <h4>주문내역</h4>
                                 <span><a href="/storeOwner/storeorderList" class="moreLink">더보기</a></span>
                             </div>
-                            <div class="boxContent">
-                                <ul style="margin:8px 0 0 16px; padding:0; font-size:14px;">
+                            <div class="notice_wrap">
+                                <ul class="franchise_notice">
                                     <li th:each="o : ${orderList}">
                                         <span th:text="${o.orderNumber}"></span>
                                         <span th:if="${o.itemName != null}" th:text="' | ' + ${o.itemName}"></span>
@@ -144,8 +144,8 @@
                                 <h4>반품현황</h4>
                                 <span><a href="/storeOwner/returnList" class="moreLink">더보기</a></span>
                             </div>
-                            <div class="boxContent">
-                                <ul style="margin:8px 0 0 16px; padding:0; font-size:14px;">
+                            <div class="notice_wrap">
+                                <ul class="franchise_notice">
                                     <li th:each="r : ${returnList}">
                                         <span th:text="${r.returnNumber} + ' - '"></span>
                                         <span th:text="${r.items[0].itemName + ' / ' + r.items[0].returnQuantity + '개'}"></span>
@@ -162,15 +162,17 @@
                             <div class="cont_top">
                                 <h4>매출 목표</h4>
                             </div>
-                            <div class="boxContent" style="padding: 20px; text-align: center;">
+                            <div class="boxContent main_progress" style="padding: 20px; text-align: center;">
                                 <p style="font-size: 15px; margin-bottom: 8px;">
                                     이번 달 목표: <strong th:text="${#numbers.formatInteger(targetSales, 0, 'COMMA')} + '원'"></strong><br>
                                     현재 매출: <strong th:text="${#numbers.formatInteger(actualSales, 0, 'COMMA')} + '원'"></strong>
                                 </p>
-                                <div style="background-color: #f1f1f1; border-radius: 10px; overflow: hidden; height: 20px; width: 100%; max-width: 300px; margin: 0 auto;">
-                                    <div th:style="'width:' + ${achievementRate} + '%; background-color: #4caf50; height: 100%; transition: width 0.6s ease-in-out;'"></div>
+                                <div>
+                                    <div style="background-color: #f1f1f1; border-radius: 10px; overflow: hidden; height: 20px; width: 100%; max-width: 300px; margin: 0 auto;">
+                                        <div th:style="'width:' + ${achievementRate} + '%; background-color: #4caf50; height: 100%; transition: width 0.6s ease-in-out;'"></div>
+                                    </div>
+                                    <p style="margin-top: 6px; font-size: 14px; color: #555;" th:text="'달성률: ' + ${achievementRate} + '%'"></p>
                                 </div>
-                                <p style="margin-top: 6px; font-size: 14px; color: #555;" th:text="'달성률: ' + ${achievementRate} + '%'"></p>
                             </div>
                         </div>
                     </div>
@@ -284,6 +286,7 @@
                     }
                 },
                 responsive: true,
+                maintainAspectRatio:false,
                 layout: {padding: {bottom: 20}},
                 scales: {
                     x: {

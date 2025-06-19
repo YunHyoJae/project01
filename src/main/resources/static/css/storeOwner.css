@@ -231,11 +231,7 @@ body {
   left: 50%;  bottom: 30px;
   transform: translate(-50%);
 }
-
-.pagination a {
-  margin: 0 5px;
-  cursor: pointer;
-}
+.pagination span, .pagination a {margin: 0 5px;cursor: pointer;}
 
 /* ------------- 페이지 css ----------- */
 
@@ -270,6 +266,8 @@ body {
 .salesStatus .input_name { width: 330px; }
 
 /*     주문현황     */
+.order_wrap > .orderList{flex:1;}
+.order_wrap > .return-wrapper{flex:1;}
 .orderList .search-section-orderlist {
   font-size: 18px;
 }
@@ -380,8 +378,8 @@ body {
 }
 
 /*    주문신청    */
-.orderForm table input[type="text"] {
-  height: 10px;
+.orderForm table input[type="text"], .orderForm table input[type="number"] {
+  width:100%;box-sizing:border-box;
 }
 .orderForm .addRow_btn,
 .orderForm .del_rowBtn {
@@ -390,6 +388,7 @@ body {
 .orderForm .search_td .default_btn {
   padding: 10px;
 }
+.orderForm .result-table button{border:none; box-shadow:none; border-radius:0; padding:0; overflow:visible;padding: 10px;}
 .orderForm .addRow_btn {
   float: right;
   font-size: 18px;
@@ -413,7 +412,7 @@ body {
 }
 .orderForm #modalBg .modal {
   width: 800px;
-  height: 370px;
+  height: 560px;
   position: fixed; left: 50%; top: 50%;
   transform: translate(-50%, -50%);
   background-color: #fff;
@@ -475,6 +474,7 @@ body {
   border-radius: 8px;
   display: inline-block;
   text-align: center;
+  white-space: pre;
 }
 
 .orderForm .close-btn {
@@ -502,7 +502,7 @@ body {
 
 .order_wrap {
   display: flex;
-  gap: 0px 100px;
+  gap: 0px 40px;
 }
 .return-wrapper {
   margin-top: 80px;
@@ -1048,7 +1048,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  position: absolute; top: 10px;
+  position: absolute; top: 18px;
 }
 .storeOwnerMain .sales .cont_top {
   width: 95%;
@@ -1060,9 +1060,13 @@ body {
 
 /*   컨텐츠 내용   */
 .storeOwnerMain .chart_wrap {
-  width: 80%; height: 95%;
-  margin: 0 auto;
+  width: 75%; height: 190px;
+  margin: 10px auto 0 200px;
 }
+.storeOwnerMain .chart_wrap canvas{
+  width: 100%;
+}
+.storeOwnerMain .btnsWrap{position:absolute;top:50px;left:20px;}
 .storeOwnerMain input {
   height: 10px;
 }
@@ -1107,6 +1111,29 @@ body {
   margin-bottom: 8px;
   font-size: 14px;
 }
+.storeOwnerMain .notice_wrap {
+  width: 100%; height: 70%;
+  margin-top: 50px;
+  overflow-y: auto;
+  overflow-x:hidden;
+}
+.storeOwnerMain .notice_wrap > span{text-align:center;color:#888;display:block;margin-top:20px;}
+.storeOwnerMain .franchise_notice{list-style-type: disc;}
+.storeOwnerMain .franchise_notice > li {
+  width: 75%;
+  margin-left: 60px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+.storeOwnerMain .franchise_notice .date {
+  float: right;
+  font-size: 12px;
+}
+.storeOwnerMain .main_progress{
+  display:flex;width:90%;line-height:2.2em;margin-top:10px;
+}
+.storeOwnerMain .main_progress > p{flex:1}
+.storeOwnerMain .main_progress > div{flex:1.5;padding-top:10px;}
 
 /*    매장 재고 현황    */
 .salesInventory select, input {

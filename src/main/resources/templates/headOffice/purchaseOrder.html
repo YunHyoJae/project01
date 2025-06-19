@@ -91,16 +91,14 @@
             <input type="checkbox" id="order-modal-toggle" style="display:none;">
 
             <!-- 제목 및 모달 열기 버튼 -->
-            <div style="display: flex; align-items: flex-start; gap: 20px;">
-                <h2 style="margin: 0;">발주서</h2>
-                <button type="button" class="ask-btn-receiving-madal" onclick="openItemModal()" style="margin-top: 6px;">
-                    품목 검색
-                </button>
-            </div>
+            <h2>발주서</h2>
+            <button type="button" class="ask-btn-receiving-madal" onclick="openItemModal()">
+                품목 검색
+            </button>
 
             <!-- 발주서 폼 시작 -->
+            <form th:action="@{/headOffice/purchaseOrder}" method="post" th:object="${purchaseDto}">
             <div class="question-box">
-                <form th:action="@{/headOffice/purchaseOrder}" method="post" th:object="${purchaseDto}">
                     <table class="receiving_entry_table">
                         <colgroup><col style=""/><col style=""/><col style=""/><col style=""/><col style="width:150px;"/><col style="width:150px;"/><col style="width:80px;"/></colgroup>
                         <thead>
@@ -117,16 +115,14 @@
                         <tbody id="itemTableBody">
                         </tbody>
                     </table>
-
-                    <div class="form-section">
-                        <label class="po_number">발주번호:
-                            <input type="text" th:field="*{purchaseNumber}" readonly />
-                        </label>
-                    </div>
-
-                    <button class="ask-btn default_btn" type="submit">저장</button>
-                </form>
             </div>
+            <button class="ask-btn default_btn" type="submit">저장</button>
+            <div class="form-section">
+                <label class="po_number">발주번호:
+                    <input type="text" th:field="*{purchaseNumber}" readonly />
+                </label>
+            </div>
+            </form>
 
             <!-- 모달창 영역 -->
             <div class="receiving_modal">
