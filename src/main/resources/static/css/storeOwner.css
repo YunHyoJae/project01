@@ -72,6 +72,11 @@ body {
   color: #fff;
 }
 .error{color:red;font-size:0.85em;margin:0 0.5em 1em;}
+.ml-10{margin-left:10px;}
+.mr-10{margin-right:10px;}
+.pl-10{padding-left:10px;}
+.pr-10{padding-right:10px;}
+.pb-80{padding-bottom:80px !important;}
 
 /*    상단 메뉴바    */
 .menu-bar {

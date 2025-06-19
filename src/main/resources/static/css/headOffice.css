@@ -71,6 +71,11 @@ body {
 
 .error{color:red;font-size:0.85em;margin:0 0.5em 1em;}
 
+.ml-10{margin-left:10px;}
+.mr-10{margin-right:10px;}
+.pl-10{padding-left:10px;}
+.pr-10{padding-right:10px;}
+
 /* 상단 메뉴바 */
 .menu-bar {
   height: 50px;
@@ -594,6 +599,7 @@ body {
 }
 
 /*      출고관리     */
+.shippingForm.content{padding-bottom:80px;}
 .shippingForm .filter-section {
   display: flex;
   flex-direction: column;
