@@ -116,7 +116,7 @@
                         </tbody>
                     </table>
             </div>
-            <button class="ask-btn default_btn" type="submit">저장</button>
+            <button onclick="return handleSubmit();" class="ask-btn default_btn" type="submit">저장</button>
             <div class="form-section">
                 <label class="po_number">발주번호:
                     <input type="text" th:field="*{purchaseNumber}" readonly />
@@ -203,7 +203,7 @@
         newRow.innerHTML = `
       <td><input type="text" name="items[${index}].itemName" value="${name}" /></td>
       <td><input type="text" name="items[${index}].itemCode" value="${code}" /></td>
-      <td><input type="text" name="items[${index}].supplier" value="${supplier}" /></td>
+      <td><input type="text" name="supplier" class="supplier-input" placeholder="필수 항목입니다" /></td>
       <td><input type="number" name="items[${index}].receivedQuantity" value="${quantity}" /></td>
       <td><input type="date" name="items[${index}].dueDate" /></td>
       <td><input type="date" name="items[${index}].expirationDate" /></td>
@@ -276,14 +276,21 @@
         });
 
         closeModal();
+
+        alert("발주 항목이 추가되었습니다!");
     }
 
     function deleteRow(button) {
         const row = button.closest("tr");
         row.remove();
-
-
     }
+
+    function handleSubmit() {
+        alert("저장되었습니다!");
+        return true;
+    }
+
+
 </script>
 
 </body>
