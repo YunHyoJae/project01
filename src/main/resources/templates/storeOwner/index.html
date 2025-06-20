@@ -188,28 +188,29 @@
     let chartLabels = /*[[${chartLabels}]]*/ [];
     let menuDatasets = /*[[${menuDatasets}]]*/ [];
 
-    // 블루톤 파레트 설정함요
-    // const blueColors = [
-    //     'rgba(54, 162, 235, 0.8)',
-    //     'rgba(255, 99, 132, 0.8)',
-    //     'rgba(255, 223, 195, 0.8)',
-    //     'rgba(255, 205, 86, 0.8)',
-    //     'rgba(54, 162, 235, 0.8)',
-    //     'rgba(255, 99, 132, 0.8)',
-    //     'rgba(255, 223, 195, 0.8)',
-    //     'rgba(255, 205, 86, 0.8)',
-    // ];
+    //블루톤 파레트 설정함요
+    const blueColors = [
+         'rgba(54, 162, 235, 0.8)',
+         'rgba(255, 99, 132, 0.8)',
+         'rgba(255, 223, 195, 0.8)',
+         'rgba(255, 205, 86, 0.8)',
+         'rgba(54, 162, 235, 0.8)',
+         'rgba(255, 99, 132, 0.8)',
+         'rgba(255, 223, 195, 0.8)',
+         'rgba(255, 205, 86, 0.8)',
+    ];
 
     // [1] 월별 데이터(기존)
     chartLabels = chartLabels.slice().reverse();
     menuDatasets = menuDatasets.map((ds, i) => ({
         ...ds,
         data: ds.data.slice().reverse(),
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        borderColor: `rgba(75, 192, 192, 1)`,
-        borderWidth: 1,
+        //backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        //borderColor: `rgba(75, 192, 192, 1)`,
+        //borderWidth: 1,
         fill: true,
-        pointBorderColor: 'rgba(75, 192, 192, 1)',
+        //pointBorderColor: 'rgba(75, 192, 192, 1)',
+        backgroundColor: blueColors[i % blueColors.length],
     }));
 
     // [2] 메뉴별 데이터(동적으로 변환)
@@ -221,11 +222,12 @@
         // labels: 메뉴명 배열, datasets: [{ label: 월, data: [각 메뉴별 매출]}]
         const newDatasets = labels.map((month, idx) => ({
             label: month,
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            borderColor: `rgba(75, 192, 192, 1)`,
-            borderWidth: 1,
+            backgroundColor: blueColors[idx % blueColors.length],
+            //backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            //borderColor: `rgba(75, 192, 192, 1)`,
+            //borderWidth: 1,
             fill: true,
-            pointBorderColor: 'rgba(75, 192, 192, 1)',
+            //pointBorderColor: 'rgba(75, 192, 192, 1)',
             data: datasets.map(ds => ds.data[idx] || 0)
         }));
         return {

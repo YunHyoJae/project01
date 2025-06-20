@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,7 +39,7 @@ public class OutBoundController {
         }
 
         int safePage = Math.max(page, 1);
-        Pageable pageable = PageRequest.of(safePage - 1, 10);
+        Pageable pageable = PageRequest.of(safePage - 1, 10, Sort.by(Sort.Direction.DESC, "DUEDATE"));
         Page<OutBoundListResponseDto> pageResult =
                 outBoundService.getOutBoundListWithConditions(startDate, endDate, storeName, pageable);
 

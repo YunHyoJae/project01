@@ -63,11 +63,11 @@ public class ReturnService {
 
         // 2. ReturnItem 저장 + 검증
         for (ReturnItemDto dto : returnDto.getItems()) {
-            List<InventoryStore> itemList = inventoryStoreRepository.findByItemCode(dto.getItemCode());
+            // List<InventoryStore> itemList = inventoryStoreRepository.findByItemCode(dto.getItemCode());
 
-            if (itemList.isEmpty()) {
-                throw new RuntimeException("등록되지 않은 품목코드: " + dto.getItemCode());
-            }
+            // if (itemList.isEmpty()) {
+            //     throw new RuntimeException("등록되지 않은 품목코드: " + dto.getItemCode());
+            // }
 
             InventoryItem invItem = inventoryItemRepository.findByItemCode(dto.getItemCode())
                     .orElseThrow(() -> new RuntimeException("존재하지 않는 품목코드: " + dto.getItemCode()));
