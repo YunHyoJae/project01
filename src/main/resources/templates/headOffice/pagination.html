@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<div class="pagination" th:fragment="pagination(pageDto)">
-    <span th:if="${pageDto.page.hasPrevious()}">
-        <a th:href="@{${pageDto.url}(category=${pageDto.category}, keyword=${pageDto.keyword}, page=${pageDto.page.number - 1})}"><</a>
-    </span>
-    <span th:each="i : ${#numbers.sequence(0, pageDto.page.totalPages - 1)}">
-        <a th:href="@{${pageDto.url}(category=${pageDto.category}, keyword=${pageDto.keyword}, page=${i})}" th:text="${i + 1}" th:classappend="${i == pageDto.page.number} ? 'active'"></a>
-    </span>
-    <span th:if="${pageDto.page.hasNext()}"><a th:href="@{${pageDto.url}(category=${pageDto.category}, keyword=${pageDto.keyword}, page=${pageDto.page.number + 1})}">&gt;</a></span>
+<div class="pagination paginationTest" th:fragment="pagination(pageDto)">
+    <th:block th:if="${pageDto != null}">
+        <span th:if="${pageDto.page.hasPrevious()}">
+            <a th:href="@{${pageDto.url}(category=${pageDto.category}, keyword=${pageDto.keyword}, page=${pageDto.page.number - 1})}"><</a>
+        </span>
+        <span th:each="i : ${#numbers.sequence(0, pageDto.page.totalPages - 1)}">
+            <a th:href="@{${pageDto.url}(category=${pageDto.category}, keyword=${pageDto.keyword}, page=${i})}" th:text="${i + 1}" th:classappend="${i == pageDto.page.number} ? 'active'"></a>
+        </span>
+        <span th:if="${pageDto.page.hasNext()}"><a th:href="@{${pageDto.url}(category=${pageDto.category}, keyword=${pageDto.keyword}, page=${pageDto.page.number + 1})}">&gt;</a></span>
+    </th:block>
 </div>
 </html>

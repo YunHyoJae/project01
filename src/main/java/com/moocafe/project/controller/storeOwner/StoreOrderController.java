@@ -66,7 +66,7 @@ public String showOrderForm(
     model.addAttribute("orderItems", orderItems);
 
     model.addAttribute("orderDto", new StoreOrderDto());
-    return "/storeOwner/storeorderForm";
+    return "storeOwner/storeorderForm";
 }
 
 
@@ -106,7 +106,7 @@ public String showOrderForm(
         model.addAttribute("startDate", startDate);
         model.addAttribute("endDate", endDate);
 //        returnService.processReturn(returnDto.getReturnNumber());
-        return "/storeOwner/storeorderList";
+        return "storeOwner/storeorderList";
     }
 
     @GetMapping("/orderList")
