@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{/headOffice/meta::myHead('발주신청')}"></head>
+<head th:replace="~{headOffice/meta::myHead('발주신청')}"></head>
 <style>
     .delete-btn {
         background-color: #ff4d4f;
@@ -77,13 +77,13 @@
 
 </style>
 <body>
-<header th:replace="~{/headOffice/tnb}"></header>
+<header th:replace="~{headOffice/tnb}"></header>
 
 <div class="section">
-    <div th:replace="~{/headOffice/header}"></div>
+    <div th:replace="~{headOffice/header}"></div>
 
     <div class="main-layout">
-        <div th:replace="~{/headOffice/etcLnb::active('receiving','purchaseOrder')}"></div>
+        <div th:replace="~{headOffice/etcLnb::active('receiving','purchaseOrder')}"></div>
 
         <div class="content">
         <div class="receivingOrder">

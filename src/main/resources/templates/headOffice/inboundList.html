@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{/headOffice/meta::myHead('입고현황')}"></head>
+<head th:replace="~{headOffice/meta::myHead('입고현황')}"></head>
 <style>
     body {
         font-family: 'Malgun Gothic', sans-serif;
@@ -118,13 +118,13 @@
     }
 </style>
 <body>
-<header th:replace="~{/headOffice/tnb}"></header>
+<header th:replace="~{headOffice/tnb}"></header>
 
 <div class="section">
-    <div th:replace="~{/headOffice/header}"></div>
+    <div th:replace="~{headOffice/header}"></div>
 
     <div class="main-layout">
-        <div th:replace="~{/headOffice/etcLnb::active('receiving','inboundList')}"></div>
+        <div th:replace="~{headOffice/etcLnb::active('receiving','inboundList')}"></div>
         <div class="content receivingStatus">
             <h2>입고현황</h2>
             <div class="receiving_status_filter_buttons">

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{/storeOwner/meta::myHead('매장 재고현황')}">
+<head th:replace="~{storeOwner/meta::myHead('매장 재고현황')}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>매장 재고현황</title>
@@ -22,10 +22,10 @@
 
 </style>
 <body>
-<header th:replace="~{/storeOwner/tnb}"></header>
+<header th:replace="~{storeOwner/tnb}"></header>
 
 <div class="section">
-    <div th:replace="~{/storeOwner/header}"></div>
+    <div th:replace="~{storeOwner/header}"></div>
 
     <div class="main-layout">
         <div th:replace="storeOwner/etcLnb :: active('inventory', 'inventoryStore')"></div>

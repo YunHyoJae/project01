@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{/headOffice/meta::myHead('메뉴등록')}">
+<head th:replace="~{headOffice/meta::myHead('메뉴등록')}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>메뉴등록</title>
@@ -74,11 +74,11 @@
 </script>
 <body>
 
-<header th:replace="~{/headOffice/tnb}"></header>
+<header th:replace="~{headOffice/tnb}"></header>
 <div class="section">
-    <div th:replace="~{/headOffice/header}"></div>
+    <div th:replace="~{headOffice/header}"></div>
     <div class="main-layout">
-        <div th:replace="~{/headOffice/etcLnb::active('inventory','menuRegister')}"></div>
+        <div th:replace="~{headOffice/etcLnb::active('inventory','menuRegister')}"></div>
         <div class="content">
 
 

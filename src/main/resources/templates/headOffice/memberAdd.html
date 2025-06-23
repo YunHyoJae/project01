@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{/headOffice/meta::myHead('멤버 및 매장 등록')}"></head>
+<head th:replace="~{headOffice/meta::myHead('멤버 및 매장 등록')}"></head>
 <body>
-<header th:replace="~{/headOffice/tnb}"></header>
+<header th:replace="~{headOffice/tnb}"></header>
 <div class="section">
-  <div th:replace="~{/headOffice/header}"></div>
+  <div th:replace="~{headOffice/header}"></div>
   <div class="main-layout">
-    <div th:replace="~{/headOffice/etcLnb::active('etc','memberAdd')}"></div>
+    <div th:replace="~{headOffice/etcLnb::active('etc','memberAdd')}"></div>
     <div class="content">
       <div class="form-wrapper">
         <h2>매장 등록</h2>

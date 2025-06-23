@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{/headOffice/meta::myHead('출고관리')}"></head>
-<header th:replace="~{/headOffice/tnb}"></header>
+<head th:replace="~{headOffice/meta::myHead('출고관리')}"></head>
+<header th:replace="~{headOffice/tnb}"></header>
 <div class="section">
-    <div th:replace="~{/headOffice/header}"></div>
+    <div th:replace="~{headOffice/header}"></div>
     <div class="main-layout">
-        <div th:replace="~{/headOffice/etcLnb::active('shipping','outboundManagement')}"></div>
+        <div th:replace="~{headOffice/etcLnb::active('shipping','outboundManagement')}"></div>
 
         <div class="shippingForm content">
             <h2>출고관리</h2>

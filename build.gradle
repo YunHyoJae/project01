@@ -19,6 +19,19 @@ configurations {
     }
 }
 
+processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    from('src/main/resources/templates/headOffice') {
+        include '**/*.html'
+        into 'headOffice'
+    }
+    from('src/main/resources/templates/storeOwner') {
+        include '**/*.html'
+        into 'storeOwner'
+    }
+}
+
 repositories {
     mavenCentral()
 }

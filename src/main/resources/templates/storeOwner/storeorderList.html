@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{/storeOwner/meta::myHead('주문현황')}"></head>
+<head th:replace="~{storeOwner/meta::myHead('주문현황')}"></head>
 <style>
   .btn-return,
   .btn-remove{
@@ -54,11 +54,11 @@
   }
 </style>
 <body>
-<header th:replace="~{/storeOwner/tnb}"></header>
+<header th:replace="~{storeOwner/tnb}"></header>
 <div class="section">
-  <div th:replace="~{/storeOwner/header}"></div>
+  <div th:replace="~{storeOwner/header}"></div>
   <div class="main-layout">
-    <div th:replace="~{/storeOwner/etcLnb::active('order','storeorderList')}"></div>
+    <div th:replace="~{storeOwner/etcLnb::active('order','storeorderList')}"></div>
     <div class="content">
     <div class="order_wrap">
       <div class="orderList">

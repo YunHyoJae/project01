@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{/storeOwner/meta::myHead('판매현황')}">
+<head th:replace="~{storeOwner/meta::myHead('판매현황')}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>판매현황</title>
     <link rel="stylesheet" href="/css/storeOwner.css">
 </head>
 <body>
-<header th:replace="~{/storeOwner/tnb}"></header>
+<header th:replace="~{storeOwner/tnb}"></header>
 
 <div class="section">
-    <div th:replace="~{/storeOwner/header}"></div>
+    <div th:replace="~{storeOwner/header}"></div>
 
     <div class="main-layout">
         <div th:replace="storeOwner/etcLnb :: active('sale', 'salesList')"></div>

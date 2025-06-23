@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{/storeOwner/meta::myHead('주문신청')}"></head>
-<header th:replace="~{/storeOwner/tnb}"></header>
+<head th:replace="~{storeOwner/meta::myHead('주문신청')}"></head>
+<header th:replace="~{storeOwner/tnb}"></header>
 
 <div class="section">
-    <div th:replace="~{/storeOwner/header}"></div>
+    <div th:replace="~{storeOwner/header}"></div>
     <div class="main-layout">
-        <div th:replace="~{/storeOwner/etcLnb::active('order','storeorderForm')}"></div>
+        <div th:replace="~{storeOwner/etcLnb::active('order','storeorderForm')}"></div>
 
         <div class="content">
             <div class="orderForm">

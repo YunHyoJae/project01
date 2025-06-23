@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{/headOffice/meta::myHead('매장현황')}"></head>
+<head th:replace="~{headOffice/meta::myHead('매장현황')}"></head>
 <body>
-<header th:replace="~{/headOffice/tnb}"></header>
+<header th:replace="~{headOffice/tnb}"></header>
 <div class="section">
-    <div th:replace="~{/headOffice/header}"></div>
+    <div th:replace="~{headOffice/header}"></div>
 
 
     <div class="main-layout">
-        <div th:replace="~{/headOffice/etcLnb::active('etc','member')}"></div>
+        <div th:replace="~{headOffice/etcLnb::active('etc','member')}"></div>
 
         <!-- 본문 컨텐츠 -->
         <div class="content franchiseInquiry" style="padding-bottom:100px;">

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{/storeOwner/meta::myHead('메인')}">
+<head th:replace="~{storeOwner/meta::myHead('메인')}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>관리자 페이지</title>
@@ -66,9 +66,9 @@
     }
 </style>
 <body>
-<header th:replace="~{/storeOwner/tnb}"></header>
+<header th:replace="~{storeOwner/tnb}"></header>
 <div class="section">
-    <div th:replace="~{/storeOwner/header}"></div>
+    <div th:replace="~{storeOwner/header}"></div>
     <div class="mainLayout">
         <div class="content">
 

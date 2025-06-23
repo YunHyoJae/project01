@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{/headOffice/meta::myHead('재고')}">
+<head th:replace="~{headOffice/meta::myHead('재고')}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>매장 재고현황</title>
@@ -90,11 +90,11 @@
 <body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-<header th:replace="~{/headOffice/tnb}"></header>
+<header th:replace="~{headOffice/tnb}"></header>
 <div class="section">
-    <div th:replace="~{/headOffice/header}"></div>
+    <div th:replace="~{headOffice/header}"></div>
     <div class="main-layout">
-        <div th:replace="~{/headOffice/etcLnb::active('inventory','inventoryStore')}"></div>
+        <div th:replace="~{headOffice/etcLnb::active('inventory','inventoryStore')}"></div>
         <div class="content">
 
             <div class="inventoryStatus">

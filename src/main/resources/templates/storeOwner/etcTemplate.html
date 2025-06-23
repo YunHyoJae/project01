@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{/storeOwner/meta::myHead('고객센터')}"></head> <!-- 화면제목 -->
+<head th:replace="~{storeOwner/meta::myHead('고객센터')}"></head> <!-- 화면제목 -->
 <body>
-<header th:replace="~{/storeOwner/tnb}"></header> <!-- 최상단 -->
+<header th:replace="~{storeOwner/tnb}"></header> <!-- 최상단 -->
 <div class="section">
-  <div th:replace="~{/storeOwner/header}"></div> <!-- 상단메뉴 -->
+  <div th:replace="~{storeOwner/header}"></div> <!-- 상단메뉴 -->
 
 
   <div class="main-layout">
-    <div th:replace="~{/storeOwner/etcLnb::active('etc','etcTemplate')}"></div> <!-- 왼쪽메뉴 -->
+    <div th:replace="~{storeOwner/etcLnb::active('etc','etcTemplate')}"></div> <!-- 왼쪽메뉴 -->
 
     <!-- s:본문 컨텐츠 -->
     <div class="content">

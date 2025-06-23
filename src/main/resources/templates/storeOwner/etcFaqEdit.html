@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{/storeOwner/meta::myHead('고객센터')}"></head>
+<head th:replace="~{storeOwner/meta::myHead('고객센터')}"></head>
 <body>
 <style>
   .help .help-box .statusBox{padding:8px;height:54px;min-width:100px;width:100%;}
   .help .help-box .write_tit{height:54px;box-sizing:border-box;width:100%;}
 </style>
-<header th:replace="~{/storeOwner/tnb}"></header>
+<header th:replace="~{storeOwner/tnb}"></header>
 <div class="section">
-  <div th:replace="~{/storeOwner/header}"></div>
+  <div th:replace="~{storeOwner/header}"></div>
 
 
   <div class="main-layout">
-    <div th:replace="~{/storeOwner/etcLnb::active('etc','edit')}"></div>
+    <div th:replace="~{storeOwner/etcLnb::active('etc','edit')}"></div>
 
     <!-- 본문 컨텐츠 -->
     <div class="content help">
